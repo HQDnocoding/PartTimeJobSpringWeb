@@ -12,10 +12,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -42,14 +42,10 @@ import java.util.Date;
     @NamedQuery(name = "Candidate.findBySelfDescription", query = "SELECT c FROM Candidate c WHERE c.selfDescription = :selfDescription"),
     @NamedQuery(name = "Candidate.findByPhone", query = "SELECT c FROM Candidate c WHERE c.phone = :phone"),
     @NamedQuery(name = "Candidate.findByCurriculumVitae", query = "SELECT c FROM Candidate c WHERE c.curriculumVitae = :curriculumVitae")})
-public class Candidate implements Serializable {
+public class Candidate extends User implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
@@ -90,9 +86,9 @@ public class Candidate implements Serializable {
     private String curriculumVitae;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "candidateId")
     private Collection<Follow> followCollection;
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private User userId;
+    @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
+    @OneToOne(optional = false)
+    private User user;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "candidateId")
     private Collection<Application> applicationCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "candidateId")
@@ -101,27 +97,6 @@ public class Candidate implements Serializable {
     public Candidate() {
     }
 
-    public Candidate(Integer id) {
-        this.id = id;
-    }
-
-    public Candidate(Integer id, String fullName, String email, Date dateOfBirth, String city, String avatar, String phone) {
-        this.id = id;
-        this.fullName = fullName;
-        this.email = email;
-        this.dateOfBirth = dateOfBirth;
-        this.city = city;
-        this.avatar = avatar;
-        this.phone = phone;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getFullName() {
         return fullName;
@@ -195,12 +170,12 @@ public class Candidate implements Serializable {
         this.followCollection = followCollection;
     }
 
-    public User getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Collection<Application> getApplicationCollection() {
@@ -222,7 +197,7 @@ public class Candidate implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (this.getId() != null ? this.getId().hashCode() : 0);
         return hash;
     }
 
@@ -233,7 +208,7 @@ public class Candidate implements Serializable {
             return false;
         }
         Candidate other = (Candidate) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.getId() == null && other.getId() != null) || (this.getId() != null && !this.getId().equals(other.getId()))) {
             return false;
         }
         return true;
@@ -241,7 +216,7 @@ public class Candidate implements Serializable {
 
     @Override
     public String toString() {
-        return "com.myweb.pojo.Candidate[ id=" + id + " ]";
+        return "com.myweb.pojo.Candidate[ id=" + this.getId() + " ]";
     }
     
 }

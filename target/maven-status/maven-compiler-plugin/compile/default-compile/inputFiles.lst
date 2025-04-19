@@ -2,9 +2,12 @@ P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\backend\JakartaRestCo
 P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\backend\resources\JakartaEE11Resource.java
 P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\configs\DispatcherServletInit.java
 P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\configs\HibernateConfigs.java
+P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\configs\SecurityWebApplicationInitializer.java
+P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\configs\SpringSecurityConfigs.java
 P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\configs\ThymeleafConfig.java
 P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\configs\WebApplicationContextConfig.java
 P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\controllers\IndexController.java
+P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\controllers\UserController.java
 P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\pojo\Application.java
 P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\pojo\Candidate.java
 P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\pojo\CandidateReview.java
@@ -18,3 +21,8 @@ P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\pojo\Job.java
 P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\pojo\Major.java
 P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\pojo\MarjorJob.java
 P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\pojo\User.java
+P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\repositories\impl\UserRepositoryImplement.java
+P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\repositories\UserRepository.java
+P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\services\impl\UserServiceImplement.java
+P:\PartTimeJobSearchSystem\Backend\src\main\java\com\myweb\services\UserService.java
+P:\PartTimeJobSearchSystem\Backend\src\main\java\test.java

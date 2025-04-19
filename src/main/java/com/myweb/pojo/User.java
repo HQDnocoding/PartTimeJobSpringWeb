@@ -11,16 +11,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -29,6 +30,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "user")
+@Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
@@ -69,10 +71,10 @@ public class User implements Serializable {
     @NotNull
     @Column(name = "is_active")
     private boolean isActive;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<Candidate> candidateCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Collection<Company> companyCollection;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private Candidate candidate;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private Company company;
 
     public User() {
     }
@@ -138,20 +140,20 @@ public class User implements Serializable {
         this.isActive = isActive;
     }
 
-    public Collection<Candidate> getCandidateCollection() {
-        return candidateCollection;
+    public Candidate getCandidate() {
+        return candidate;
     }
 
-    public void setCandidateCollection(Collection<Candidate> candidateCollection) {
-        this.candidateCollection = candidateCollection;
+    public void setCandidate(Candidate candidate) {
+        this.candidate = candidate;
     }
 
-    public Collection<Company> getCompanyCollection() {
-        return companyCollection;
+    public Company getCompany() {
+        return company;
     }
 
-    public void setCompanyCollection(Collection<Company> companyCollection) {
-        this.companyCollection = companyCollection;
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     @Override

@@ -12,10 +12,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -40,14 +40,10 @@ import java.util.Collection;
     @NamedQuery(name = "Company.findByCity", query = "SELECT c FROM Company c WHERE c.city = :city"),
     @NamedQuery(name = "Company.findByDistrict", query = "SELECT c FROM Company c WHERE c.district = :district"),
     @NamedQuery(name = "Company.findByStatus", query = "SELECT c FROM Company c WHERE c.status = :status")})
-public class Company implements Serializable {
+public class Company extends User implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -98,38 +94,15 @@ public class Company implements Serializable {
     private Collection<Follow> followCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyId")
     private Collection<CandidateReview> candidateReviewCollection;
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private User userId;
+    @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
+    @OneToOne(optional = false)
+    private User user;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyId")
     private Collection<Job> jobCollection;
 
     public Company() {
     }
 
-    public Company(Integer id) {
-        this.id = id;
-    }
-
-    public Company(Integer id, String name, String email, String avatar, String taxCode, String fullAddress, String city, String district, String status) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.avatar = avatar;
-        this.taxCode = taxCode;
-        this.fullAddress = fullAddress;
-        this.city = city;
-        this.district = district;
-        this.status = status;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -227,12 +200,12 @@ public class Company implements Serializable {
         this.candidateReviewCollection = candidateReviewCollection;
     }
 
-    public User getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Collection<Job> getJobCollection() {
@@ -246,7 +219,7 @@ public class Company implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (this.getId() != null ? this.getId().hashCode() : 0);
         return hash;
     }
 
@@ -257,7 +230,7 @@ public class Company implements Serializable {
             return false;
         }
         Company other = (Company) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.getId() == null && other.getId() != null) || (this.getId() != null && !this.getId().equals(other.getId()))) {
             return false;
         }
         return true;
@@ -265,7 +238,7 @@ public class Company implements Serializable {
 
     @Override
     public String toString() {
-        return "com.myweb.pojo.Company[ id=" + id + " ]";
+        return "com.myweb.pojo.Company[ id=" + this.getId() + " ]";
     }
     
 }
