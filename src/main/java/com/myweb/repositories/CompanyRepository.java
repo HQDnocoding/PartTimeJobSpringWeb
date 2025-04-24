@@ -1,0 +1,37 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.myweb.repositories;
+
+import com.myweb.pojo.Company;
+import java.util.List;
+
+/**
+ *
+ * @author dat
+ */
+public interface CompanyRepository {
+
+    List<Object[]> getListCompany(int page);
+
+    Company addCompany(Company c);
+
+//    Company getDetailCompany(int companyId);
+
+//    List<Object[]> getListCompanyByCity(String city);
+
+//    List<Object[]> getListCompanyBycityAndCompany(String company, String city);
+
+//    List<Object[]> getListCompanyByCompany(String company);
+
+//    long countCompany();
+
+//    List<Company> getListCompany();
+
+//    List<Company> getListCompanyByCheckAdmin();
+
+//    void checkCompany(int companyID);
+
+//    List<Company> getListCompanyForManage();
+}

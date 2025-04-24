@@ -22,6 +22,8 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -60,8 +62,8 @@ public class User implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "register_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date registerDate;
+//    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime registerDate;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 40)
@@ -83,7 +85,7 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String username, String password, Date registerDate, String role, boolean isActive) {
+    public User(Integer id, String username, String password, LocalDateTime registerDate, String role, boolean isActive) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -116,11 +118,11 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public Date getRegisterDate() {
+    public LocalDateTime getRegisterDate() {
         return registerDate;
     }
 
-    public void setRegisterDate(Date registerDate) {
+    public void setRegisterDate(LocalDateTime registerDate) {
         this.registerDate = registerDate;
     }
 

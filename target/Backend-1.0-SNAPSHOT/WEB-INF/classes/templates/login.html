@@ -1,12 +1,34 @@
 <!doctype html>
 
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
+    <head>  
         <title>Đăng nhập</title>
     <th:block th:replace="base :: bootstrap"></th:block>
 </head>
 <body>
-     <div th:replace="base :: header"></div>
+    <div th:replace="base :: header"></div>
+    <main class="container">
+        <h1 class="text-center text-info mt-1">ĐĂNG NHẬP</h1>
+
+        <div th:if="${param.error}" class="error">
+            Username không tồn tại hoặc mật khẩu không chính xác
+        </div>
+        <form class="mx-5" th:action="@{/login}" method="post" >
+            <div class="form-floating mb-3">
+                <input id="username" for="username" class="form-control" placeholder="Username" required><!-- comment -->
+
+                <label for="username">Username</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input id="password" for="password" type="password" class="form-control" placeholder="Password" required ><!-- comment -->
+                <label for="password">Password</label>
+            </div>
+            <div class="d-flex justify-content-center d-block">                
+                <button type="submit" class="btn btn-primary btn-lg btn-block shadow-lg mt-2 d-block">Đăng nhập</button>
+            </div>
+        </form>
+    </main>
+    <div th:replace="base :: footer"></div>
 </body>
 
 

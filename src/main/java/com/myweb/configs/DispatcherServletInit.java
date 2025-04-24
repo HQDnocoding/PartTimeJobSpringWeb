@@ -12,13 +12,13 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
  */
 public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherServletInitializer {
 
+    
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return new Class[]{
             ThymeleafConfig.class,
             HibernateConfigs.class,
-            SpringSecurityConfigs.class
-        };
+            SpringSecurityConfigs.class        };
     }
 
     @Override
