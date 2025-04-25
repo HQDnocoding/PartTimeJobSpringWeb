@@ -11,8 +11,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToOne;
@@ -22,17 +20,14 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
  *
- * @author huaquangdat
+ * @author dat
  */
 @Entity
 @Table(name = "user")
-@Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
@@ -62,8 +57,8 @@ public class User implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "register_date")
-//    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime registerDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date registerDate;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 40)
@@ -73,9 +68,9 @@ public class User implements Serializable {
     @NotNull
     @Column(name = "is_active")
     private boolean isActive;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "userId")
     private Candidate candidate;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "userId")
     private Company company;
 
     public User() {
@@ -85,7 +80,7 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String username, String password, LocalDateTime registerDate, String role, boolean isActive) {
+    public User(Integer id, String username, String password, Date registerDate, String role, boolean isActive) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -118,11 +113,11 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public LocalDateTime getRegisterDate() {
+    public Date getRegisterDate() {
         return registerDate;
     }
 
-    public void setRegisterDate(LocalDateTime registerDate) {
+    public void setRegisterDate(Date registerDate) {
         this.registerDate = registerDate;
     }
 

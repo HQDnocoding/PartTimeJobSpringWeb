@@ -29,10 +29,21 @@ public class GeneralUtils {
         public String getLabel() {
             return label;
         }
+    };
 
+    public static enum Role {
+        ADMIN("Quản trị viên"),
+        COMPANY("Công ty"),
+        CANDIDATE("Ứng viên");
+        private final String label;
 
-        
-        
+        Role(String label) {
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
     }
 
     public static LocalDate dateFormatter(String input, String pattern) {

@@ -24,7 +24,7 @@ import java.util.Date;
 
 /**
  *
- * @author huaquangdat
+ * @author dat
  */
 @Entity
 @Table(name = "candidate_review")

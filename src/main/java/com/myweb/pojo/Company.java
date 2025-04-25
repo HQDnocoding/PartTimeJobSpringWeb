@@ -19,15 +19,15 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
 import org.springframework.web.multipart.MultipartFile;
 
+
 /**
  *
- * @author huaquangdat
+ * @author dat
  */
 @Entity
 @Table(name = "company")
@@ -43,16 +43,20 @@ import org.springframework.web.multipart.MultipartFile;
     @NamedQuery(name = "Company.findByCity", query = "SELECT c FROM Company c WHERE c.city = :city"),
     @NamedQuery(name = "Company.findByDistrict", query = "SELECT c FROM Company c WHERE c.district = :district"),
     @NamedQuery(name = "Company.findByStatus", query = "SELECT c FROM Company c WHERE c.status = :status")})
-public class Company extends User implements Serializable {
+public class Company implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
     @Column(name = "name")
     private String name;
-    @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message = "Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -97,16 +101,41 @@ public class Company extends User implements Serializable {
     private Collection<Follow> followCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyId")
     private Collection<CandidateReview> candidateReviewCollection;
-    @JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id",unique = true)
     @OneToOne(optional = false)
-    private User user;
+    private User userId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyId")
     private Collection<Job> jobCollection;
 
     @Transient
     private MultipartFile file;
-
+    
+    
     public Company() {
+    }
+
+    public Company(Integer id) {
+        this.id = id;
+    }
+
+    public Company(Integer id, String name, String email, String avatar, String taxCode, String fullAddress, String city, String district, String status) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.avatar = avatar;
+        this.taxCode = taxCode;
+        this.fullAddress = fullAddress;
+        this.city = city;
+        this.district = district;
+        this.status = status;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -205,12 +234,12 @@ public class Company extends User implements Serializable {
         this.candidateReviewCollection = candidateReviewCollection;
     }
 
-    public User getUser() {
-        return user;
+    public User getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(User userId) {
+        this.userId = userId;
     }
 
     public Collection<Job> getJobCollection() {
@@ -224,7 +253,7 @@ public class Company extends User implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (this.getId() != null ? this.getId().hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -235,7 +264,7 @@ public class Company extends User implements Serializable {
             return false;
         }
         Company other = (Company) object;
-        if ((this.getId() == null && other.getId() != null) || (this.getId() != null && !this.getId().equals(other.getId()))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -243,7 +272,7 @@ public class Company extends User implements Serializable {
 
     @Override
     public String toString() {
-        return "com.myweb.pojo.Company[ id=" + this.getId() + " ]";
+        return "com.myweb.pojo.Company[ id=" + id + " ]";
     }
 
     /**
@@ -259,5 +288,5 @@ public class Company extends User implements Serializable {
     public void setFile(MultipartFile file) {
         this.file = file;
     }
-
+    
 }

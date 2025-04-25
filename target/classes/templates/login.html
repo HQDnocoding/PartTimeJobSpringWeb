@@ -10,12 +10,13 @@
     <main class="container">
         <h1 class="text-center text-info mt-1">ĐĂNG NHẬP</h1>
 
-        <div th:if="${param.error}" class="error">
-            Username không tồn tại hoặc mật khẩu không chính xác
-        </div>
         <form class="mx-5" th:action="@{/login}" method="post" >
+
+            <div th:if="${param.error}" class="error text-danger py-2 px-4">
+                Username không tồn tại hoặc mật khẩu không chính xác
+            </div>
             <div class="form-floating mb-3">
-                <input id="username" for="username" class="form-control" placeholder="Username" required><!-- comment -->
+                <input id="username" for="username" type="text" class="form-control" placeholder="Username" required><!-- comment -->
 
                 <label for="username">Username</label>
             </div>

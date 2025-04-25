@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author huaquangdat
+ * @author dat
  */
 @Entity
 @Table(name = "day_job")

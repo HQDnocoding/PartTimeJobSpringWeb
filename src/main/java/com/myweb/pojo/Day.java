@@ -21,7 +21,7 @@ import java.util.Collection;
 
 /**
  *
- * @author huaquangdat
+ * @author dat
  */
 @Entity
 @Table(name = "day")

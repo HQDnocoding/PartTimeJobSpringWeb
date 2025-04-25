@@ -64,8 +64,8 @@ public class UserServiceImplement implements UserService {
     @Override
     public User addUser(Map<String, String> params, MultipartFile avatar) {
 
-        switch (params.get("role")) {
-            case "ROLE_CANDIDATE":
+//        switch (params.get("role")) {
+//            case "ROLE_CANDIDATE":
 //                Candidate candidate=new Candidate();
 //                candidate.setFullName(params.get("fullname"));
 //                candidate.setUsername(params.get("username"));
@@ -74,33 +74,33 @@ public class UserServiceImplement implements UserService {
 //                candidate.setCity(params.get("city"));
 //                candidate.set(LocalDate.pparams.get("birthDay"));
 //                
-                break;
-            case "ROLE_COMPANY":
-                Company company = new Company();
-                company.setName(params.get("name"));
-                company.setCity(params.get("city"));
-                company.setDistrict(params.get("district"));
-                company.setUsername(params.get("username"));
-                company.setPassword(this.passwordEncoder.encode(params.get("password")));
-                company.setEmail(params.get("email"));
-                company.setTaxCode(params.get("tax"));
-                company.setFullAddress(params.get("fullAddress"));
-                company.setSelfDescription(params.get("seftDes"));
-                company.setStatus(GeneralUtils.Status.pending.toString());
-                company.setRegisterDate(LocalDateTime.now());
-
-                if (!avatar.isEmpty()) {
-                    try {
-                        Map res = cloudinary.uploader().upload(avatar.getBytes(),
-                                ObjectUtils.asMap("resource_type", "auto"));
-                        company.setAvatar(res.get("secure_url").toString());
-                    } catch (IOException ex) {
-                        Logger.getLogger(UserServiceImplement.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-
-                return this.userRepo.addUser(company);
-        }
+//                break;
+//            case "ROLE_COMPANY":
+//                Company company = new Company();
+//                company.setName(params.get("name"));
+//                company.setCity(params.get("city"));
+//                company.setDistrict(params.get("district"));
+//                company.setUsername(params.get("username"));
+//                company.setPassword(this.passwordEncoder.encode(params.get("password")));
+//                company.setEmail(params.get("email"));
+//                company.setTaxCode(params.get("tax"));
+//                company.setFullAddress(params.get("fullAddress"));
+//                company.setSelfDescription(params.get("seftDes"));
+//                company.setStatus(GeneralUtils.Status.pending.toString());
+//                company.setRegisterDate(LocalDateTime.now());
+//
+//                if (!avatar.isEmpty()) {
+//                    try {
+//                        Map res = cloudinary.uploader().upload(avatar.getBytes(),
+//                                ObjectUtils.asMap("resource_type", "auto"));
+//                        company.setAvatar(res.get("secure_url").toString());
+//                    } catch (IOException ex) {
+//                        Logger.getLogger(UserServiceImplement.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                }
+//
+//                return this.userRepo.addUser(company);
+//        }
 
         return null;
     }

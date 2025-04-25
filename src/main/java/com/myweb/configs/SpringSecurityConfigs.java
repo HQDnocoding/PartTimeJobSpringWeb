@@ -8,11 +8,11 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -40,12 +40,15 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 public class SpringSecurityConfigs {
 
     @Autowired
+    @Qualifier("userDetailsService")
     private UserDetailsService userDetailsService;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    
 
     @Bean
     public HandlerMappingIntrospector
@@ -66,22 +69,18 @@ public class SpringSecurityConfigs {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
-            Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(c -> c.disable()).authorizeHttpRequests(requests
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(c -> c.disable()).authorizeHttpRequests(requests
                 -> requests.requestMatchers("/", "/home").authenticated()
-                        .requestMatchers("/api/**").permitAll()
-                        .requestMatchers("/images/**", "/styles/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/products").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET,
-                                "/products/**").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().authenticated())
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/js/**").permitAll()
+                        .requestMatchers("/api/**").permitAll())
                 .formLogin(form -> form.loginPage("/login")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/", true)
                 .failureUrl("/login?error=true").permitAll())
                 .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
+
         return http.build();
     }
 

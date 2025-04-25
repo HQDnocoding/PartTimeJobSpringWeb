@@ -23,6 +23,7 @@ com/myweb/controllers/IndexController.class
 com/myweb/pojo/Follow.class
 com/myweb/pojo/ImageWorkplace.class
 com/myweb/pojo/User.class
+com/myweb/utils/GeneralUtils$Role.class
 com/myweb/pojo/Job.class
 com/myweb/configs/DispatcherServletInit.class
 com/myweb/pojo/CompanyReview.class

@@ -29,7 +29,7 @@ public class CompanyServiceImplement implements CompanyService {
         try {
             Map r = this.cloudinary.uploader().upload(c.getFile().getBytes(), ObjectUtils.asMap("resource_type", "auto"));
             c.setAvatar((String) r.get("secure_url"));
-            return this.compRe.addCompany(c);
+            
         } catch (IOException ex) {
             ex.printStackTrace();
         }
