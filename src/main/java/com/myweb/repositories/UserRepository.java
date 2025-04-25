@@ -11,6 +11,6 @@ import com.myweb.pojo.User;
  * @author huaquangdat
  */
 public interface UserRepository {
-    User getUserByUserName(String username);
+    User getUserByUsername(String username);
     User addUser(User user);
 }

@@ -44,12 +44,13 @@ public class UserServiceImplement implements UserService {
 
     @Override
     public User getUserByUsername(String username) {
-        return this.userRepo.getUserByUserName(username);
+        return this.userRepo.getUserByUsername(username);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User u = this.getUserByUsername(username);
+        User u = this.userRepo.getUserByUsername(username);
+        System.err.println(u);
         if (u == null) {
             throw new UsernameNotFoundException("Invalid username!");
         }
@@ -101,7 +102,6 @@ public class UserServiceImplement implements UserService {
 //
 //                return this.userRepo.addUser(company);
 //        }
-
         return null;
     }
 
