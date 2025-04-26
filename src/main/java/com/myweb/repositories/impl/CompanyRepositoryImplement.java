@@ -5,10 +5,15 @@
 package com.myweb.repositories.impl;
 
 import com.myweb.pojo.Company;
+import com.myweb.pojo.Job;
 import com.myweb.pojo.User;
 import com.myweb.repositories.CompanyRepository;
 import jakarta.persistence.Query;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import java.util.List;
+import java.util.Map;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -38,12 +43,16 @@ public class CompanyRepositoryImplement implements CompanyRepository {
     }
 
     @Override
-    public List<Object[]> getListCompany(int page) {
-//        Session session = this.factory.getObject().getCurrentSession();
-//        Query query = s.createNamedQuery("User.findByUsername", User.class);
-//        query.setParameter("username", username);
-
-//        return query.getResultList();
-        return null;
+    public List<Object[]> getListCompany(Map<String, String> params) {
+       Session s=this.factory.getObject().getCurrentSession();
+       CriteriaBuilder cb=s.getCriteriaBuilder();
+        CriteriaQuery<Company> cq= cb.createQuery(Company.class);
+        Root root=cq.from(Company.class);
+        cq.select(root);
+        
+        Query query = s.createQuery(cq);
+        
+        return query.getResultList();   
+ 
     }
 }

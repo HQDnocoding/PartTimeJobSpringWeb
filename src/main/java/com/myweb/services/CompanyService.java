@@ -5,11 +5,15 @@
 package com.myweb.services;
 
 import com.myweb.pojo.Company;
+import java.util.List;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author dat
  */
+@Service
 public interface CompanyService {
-    Company addCompany(Company c);
+
+    List<Object[]> getListCompany(int page);
 }

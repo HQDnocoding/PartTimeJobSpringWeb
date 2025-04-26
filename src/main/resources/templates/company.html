@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quản lý các công ty</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="base :: bootstrap"></th:block>
+    <style>
+        /* Đảm bảo tiêu đề bảng cố định */
+        .table-responsive thead {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+    <main class="container column-gap-3 min-vh-90" style="display: flex; flex-direction: row">
+        <div style="flex-grow: 3; max-height: 90vh; overflow-y: auto" class="table-responsive">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>List of Companies</h5>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Hành động
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="actionDropdown">
+                        <li><a class="dropdown-item" href="#" id="deleteSelected">Xóa</a></li>
+                        <li><a class="dropdown-item" href="#" id="viewDetails">Xem chi tiết công ty</a></li>
+                    </ul>
+                </div>
+            </div>
+            <table class="table caption-top">
+                <thead class="position-sticky top-0 z-3">
+                    <tr>
+                        <th scope="col"><input type="checkbox" id="selectAll"></th>
+                        <th scope="col" th:each="h : ${headCols}" th:text="${h}"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="c : ${companies}">
+                        <td><input type="checkbox" class="company-checkbox" th:value="${c.id}"></td>
+                        <td th:text="${c.id}"></td>
+                        <td th:text="${c.name}"></td>
+                        <td th:text="${c.email}"></td>
+                        <td th:text="${c.fullAddress}"></td>
+                        <td th:text="${c.taxCode}"></td>
+                        <td th:text="${c.status}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="flex-grow: 1">
+            <form th:action="@{/companies}" method="get" class="p-3 bg-light rounded">
+                <h5 class="mb-3">Tìm kiếm công ty</h5>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Tên công ty</label>
+                    <input type="text" class="form-control" id="name" name="name" th:value="${param.name}" placeholder="Nhập tên công ty...">
+                </div>
+                <div class="mb-3">
+                    <label for="taxCode" class="form-label">Mã số thuế</label>
+                    <input type="text" class="form-control" id="taxCode" name="taxCode" th:value="${param.taxCode}" placeholder="Nhập mã số thuế...">
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">Trạng thái</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="" th:selected="${param.status == null}">Tất cả</option>
+                        <option value="pending" th:selected="${param.status == 'pending'}">Pending</option>
+                        <option value="approved" th:selected="${param.status == 'approved'}">Approved</option>
+                        <option value="refused" th:selected="${param.status == 'refused'}">Refused</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="city" class="form-label">Thành phố</label>
+                    <select class="form-select" id="city" name="city">
+                        <option value="" th:selected="${param.city == null}">Tất cả</option>
+                        <!-- Danh sách thành phố được tải động bằng JavaScript -->
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="district" class="form-label">Quận/Huyện</label>
+                    <select class="form-select" id="district" name="district">
+                        <option value="" th:selected="${param.district == null}">Tất cả</option>
+                        <!-- Danh sách quận/huyện được tải động khi chọn thành phố -->
+                    </select>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                    <button type="reset" class="btn btn-secondary" onclick="window.location.href='/companies'">Xóa bộ lọc</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <div th:replace="base :: footer"></div>
+
+    <script>
+        // Chọn tất cả checkbox
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.company-checkbox');
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        });
+
+        // Xóa các công ty đã chọn
+        document.getElementById('deleteSelected').addEventListener('click', function(e) {
+            e.preventDefault();
+            const selectedIds = Array.from(document.querySelectorAll('.company-checkbox:checked'))
+                .map(checkbox => checkbox.value);
+
+            if (selectedIds.length === 0) {
+                alert('Vui lòng chọn ít nhất một công ty để xóa!');
+                return;
+            }
+
+            if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.length} công ty đã chọn?`)) {
+                Promise.all(selectedIds.map(id => 
+                    fetch(`/api/companies/${id}`, { method: 'DELETE' })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`Lỗi khi xóa công ty ID ${id}`);
+                            }
+                            return id;
+                        })
+                ))
+                .then(() => {
+                    alert('Xóa công ty thành công!');
+                    location.reload(); // Tải lại trang để cập nhật danh sách
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                    alert('Đã xảy ra lỗi khi xóa công ty!');
+                });
+            }
+        });
+
+        // Xem chi tiết công ty
+        document.getElementById('viewDetails').addEventListener('click', function(e) {
+            e.preventDefault();
+            const selectedIds = Array.from(document.querySelectorAll('.company-checkbox:checked'))
+                .map(checkbox => checkbox.value);
+
+            if (selectedIds.length === 0) {
+                alert('Vui lòng chọn một công ty để xem chi tiết!');
+                return;
+            }
+
+            if (selectedIds.length > 1) {
+                alert('Vui lòng chỉ chọn một công ty để xem chi tiết!');
+                return;
+            }
+
+            window.location.href = `/companies/${selectedIds[0]}`;
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('https://provinces.open-api.vn/api/p/')
+                .then(response => response.json())
+                .then(provinces => {
+                    const citySelect = document.getElementById('city');
+                    provinces.forEach(province => {
+                        const option = document.createElement('option');
+                        option.value = province.code;
+                        option.text = province.name;
+                        citySelect.appendChild(option);
+                    });
+
+                    // Khôi phục giá trị thành phố đã chọn 
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const selectedCity = urlParams.get('city');
+                    if (selectedCity) {
+                        citySelect.value = selectedCity;
+                        loadDistricts(selectedCity);
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi khi tải danh sách thành phố:', error);
+                    alert('Không thể tải danh sách thành phố!');
+                });
+        });
+
+        // Tải danh sách quận/huyện khi chọn thành phố
+        document.getElementById('city').addEventListener('change', function() {
+            const cityCode = this.value;
+            const districtSelect = document.getElementById('district');
+            districtSelect.innerHTML = '<option value="">Tất cả</option>';
+
+            if (cityCode) {
+                loadDistricts(cityCode);
+            }
+        });
+
+        // Hàm tải quận/huyện
+        function loadDistricts(cityCode) {
+            fetch(`https://provinces.open-api.vn/api/p/${cityCode}?depth=2`)
+                .then(response => response.json())
+                .then(data => {
+                    const districtSelect = document.getElementById('district');
+                    data.districts.forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district.code;
+                        option.text = district.name;
+                        districtSelect.appendChild(option);
+                    });
+
+                    // Khôi phục giá trị quận/huyện đã chọn
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const selectedDistrict = urlParams.get('district');
+                    if (selectedDistrict) {
+                        districtSelect.value = selectedDistrict;
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi khi tải danh sách quận/huyện:', error);
+                    alert('Không thể tải danh sách quận/huyện!');
+                });
+        }
+    </script>
+</body>
+</html>

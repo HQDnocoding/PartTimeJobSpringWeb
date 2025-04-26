@@ -6,6 +6,7 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\SecurityWebApp
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\SpringSecurityConfigs.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\ThymeleafConfig.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\WebApplicationContextConfig.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\CompanyController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\IndexController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\UserController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Application.java

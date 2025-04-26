@@ -6,6 +6,7 @@ package com.myweb.repositories;
 
 import com.myweb.pojo.Company;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -13,7 +14,7 @@ import java.util.List;
  */
 public interface CompanyRepository {
 
-    List<Object[]> getListCompany(int page);
+    List<Object[]> getListCompany(Map<String, String> params);
 
     Company addCompany(Company c);
 

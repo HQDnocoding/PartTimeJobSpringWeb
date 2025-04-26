@@ -21,6 +21,7 @@ com\myweb\utils\GeneralUtils$Status.class
 com\myweb\controllers\UserController.class
 com\myweb\backend\JakartaRestConfiguration.class
 com\myweb\pojo\ImageWorkplace.class
+com\myweb\controllers\CompanyController.class
 com\myweb\services\CompanyService.class
 com\myweb\configs\WebApplicationContextConfig.class
 com\myweb\pojo\CandidateReview.class

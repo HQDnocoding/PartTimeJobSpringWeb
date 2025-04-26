@@ -10,30 +10,26 @@ import com.myweb.pojo.Company;
 import com.myweb.repositories.CompanyRepository;
 import com.myweb.services.CompanyService;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author dat
  */
+@Service
 public class CompanyServiceImplement implements CompanyService {
 
     @Autowired
-    private CompanyRepository compRe;
+    private CompanyRepository companyRepository;
     @Autowired
     private Cloudinary cloudinary;
 
     @Override
-    public Company addCompany(Company c) {
-        try {
-            Map r = this.cloudinary.uploader().upload(c.getFile().getBytes(), ObjectUtils.asMap("resource_type", "auto"));
-            c.setAvatar((String) r.get("secure_url"));
-            
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return c;
+    public List<Object[]> getListCompany(Map<String, String> params) {
+        return this.companyRepository.getListCompany(params);
     }
 
 }
