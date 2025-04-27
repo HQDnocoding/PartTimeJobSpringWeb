@@ -4,7 +4,9 @@
  */
 package com.myweb.controllers;
 
+import com.myweb.pojo.Company;
 import com.myweb.services.CompanyService;
+import jakarta.data.page.Page;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,11 +31,18 @@ public class CompanyController {
     private CompanyService cpnyService;
 
     @GetMapping("/company")
-    public String companyView(Model model, @RequestParam Map<String, String> params) {
-        Collection<String> headCols = new ArrayList<>(List.of("Id", "Tên công ty", "Email", "Địa chỉ",
-                "Mã số thuế", "Trạng thái"));
-        model.addAttribute("companies", cpnyService.getListCompany(params));
-        model.addAttribute("heaedCols", headCols);
+   public String companyView(Model model, @RequestParam Map<String, String> params) {
+        Collection<String> headCols = new ArrayList<>(List.of("Id", "Tên công ty", "Email", "Địa chỉ", "Mã số thuế","Ngày đăng ký", "Trạng thái"));
+
+        Map<String, Object> result = cpnyService.getListCompany(params);
+
+        model.addAttribute("companies", result.get("companies"));
+        model.addAttribute("currentPage", result.get("currentPage"));
+        model.addAttribute("pageSize", result.get("pageSize"));
+        model.addAttribute("totalPages", result.get("totalPages"));
+        model.addAttribute("totalItems", result.get("totalItems"));
+        model.addAttribute("headCols", headCols);
+
         return "company";
     }
 }

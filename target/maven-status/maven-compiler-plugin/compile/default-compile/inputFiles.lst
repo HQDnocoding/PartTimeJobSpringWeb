@@ -9,6 +9,7 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\WebApplication
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\CompanyController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\IndexController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\UserController.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\CompanyDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Application.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Candidate.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\CandidateReview.java

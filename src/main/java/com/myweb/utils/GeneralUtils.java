@@ -4,6 +4,7 @@
  */
 package com.myweb.utils;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -15,6 +16,9 @@ import java.util.Map;
  * @author dat
  */
 public class GeneralUtils {
+
+    public static final int PAGE_SIZE = 15;
+    public static final String PAGE = "1";
 
     public static enum Status {
         pending("Chờ xử lý"),
@@ -46,12 +50,21 @@ public class GeneralUtils {
         }
     }
 
-    public static LocalDate dateFormatter(String input, String pattern) {
+    public static String dateFormatter(String input, String pattern) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-            return LocalDate.parse(input, formatter);
+            return LocalDate.parse(input, formatter).toString();
         } catch (Exception e) {
             return null;
         }
     }
+
+    public static String formatDate(Date date) {
+        if (date == null) {
+            return null;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+        return sdf.format(date);
+    }
+
 }

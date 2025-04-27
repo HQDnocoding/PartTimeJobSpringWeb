@@ -5,7 +5,9 @@
 package com.myweb.services;
 
 import com.myweb.pojo.Company;
+import jakarta.data.page.Page;
 import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,5 +17,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CompanyService {
 
-    List<Object[]> getListCompany(int page);
+    Map<String, Object> getListCompany(Map<String, String> params);
+    
+
+
 }

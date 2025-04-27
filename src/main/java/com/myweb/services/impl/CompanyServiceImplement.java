@@ -28,7 +28,7 @@ public class CompanyServiceImplement implements CompanyService {
     private Cloudinary cloudinary;
 
     @Override
-    public List<Object[]> getListCompany(Map<String, String> params) {
+    public Map<String, Object> getListCompany(Map<String, String> params) {
         return this.companyRepository.getListCompany(params);
     }
 

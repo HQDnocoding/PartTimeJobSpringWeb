@@ -14,25 +14,17 @@ import java.util.Map;
  */
 public interface CompanyRepository {
 
-    List<Object[]> getListCompany(Map<String, String> params);
+    Map<String, Object> getListCompany(Map<String, String> params);
 
     Company addCompany(Company c);
 
-//    Company getDetailCompany(int companyId);
-
+    Company getCompanyById(int companyId);
 //    List<Object[]> getListCompanyByCity(String city);
-
 //    List<Object[]> getListCompanyBycityAndCompany(String company, String city);
-
 //    List<Object[]> getListCompanyByCompany(String company);
-
 //    long countCompany();
-
 //    List<Company> getListCompany();
-
 //    List<Company> getListCompanyByCheckAdmin();
-
 //    void checkCompany(int companyID);
-
 //    List<Company> getListCompanyForManage();
 }
