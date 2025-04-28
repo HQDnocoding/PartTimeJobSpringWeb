@@ -134,9 +134,14 @@ public class CompanyRepositoryImplement implements CompanyRepository {
 
     @Override
     public Company getCompanyById(int companyId) {
+<<<<<<< HEAD
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+=======
         Session s = this.factory.getObject().getCurrentSession();
         System.out.println(s.get(Company.class, companyId).getImageWorkplaceCollection());
         return s.get(Company.class, companyId);
     }
 
+>>>>>>> 84f5a613ec66965a208552f340e6ce811ef650d5
 }

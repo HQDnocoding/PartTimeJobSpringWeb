@@ -1,3 +1,6 @@
+<!--Tệp applicationContext.xml là một tệp cấu hình XML trong Spring Framework,
+được sử dụng để định nghĩa và quản lý các bean (đối tượng được Spring IoC container quản lý)-->
+
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
