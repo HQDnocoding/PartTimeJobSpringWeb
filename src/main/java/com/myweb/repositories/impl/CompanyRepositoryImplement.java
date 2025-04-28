@@ -41,10 +41,15 @@ public class CompanyRepositoryImplement implements CompanyRepository {
     private LocalSessionFactoryBean factory;
 
     @Override
-    public Company addCompany(Company c) {
+    public Company addOrUpdateCompany(Company c) {
         Session session = this.factory.getObject().getCurrentSession();
+        System.out.println(c.getId());
         try {
-            session.persist(c);
+            if (c.getId() == null) {
+                session.persist(c);
+            } else {
+                session.merge(c);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,7 +67,6 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         // Thực hiện join với User qua trường userId
         Root<User> userRoot = cq.from(User.class);
 
-        
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.equal(companyRoot.get("userId").get("id"), userRoot.get("id")));
 
@@ -96,7 +100,7 @@ public class CompanyRepositoryImplement implements CompanyRepository {
             String district = params.get("district");
             if (district != null && !district.isEmpty()) {
                 predicates.add(cb.equal(companyRoot.get("district"), district)); // Sửa districtCode thành district nếu
-                                                                                 // đúng
+                // đúng
             }
         }
 
@@ -146,7 +150,7 @@ public class CompanyRepositoryImplement implements CompanyRepository {
                 (String) row[7], // city
                 (String) row[8], // district
                 (String) row[9], // status
-                (Date)  row[10], // registerDate
+                (Date) row[10], // registerDate
                 (Boolean) row[11] // isActive
         )).collect(Collectors.toList());
 
@@ -166,6 +170,14 @@ public class CompanyRepositoryImplement implements CompanyRepository {
 
     @Override
     public Company getCompanyById(int companyId) {
+<<<<<<< HEAD
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+=======
+        Session s = this.factory.getObject().getCurrentSession();
+        System.out.println(s.get(Company.class, companyId).getImageWorkplaceCollection());
+        return s.get(Company.class, companyId);
+    }
+
+>>>>>>> 84f5a613ec66965a208552f340e6ce811ef650d5
 }

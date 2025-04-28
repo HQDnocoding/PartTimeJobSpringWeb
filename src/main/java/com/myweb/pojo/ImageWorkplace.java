@@ -104,7 +104,7 @@ public class ImageWorkplace implements Serializable {
 
     @Override
     public String toString() {
-        return "com.myweb.pojo.ImageWorkplace[ id=" + id + " ]";
+        return imageUrl;
     }
     
 }

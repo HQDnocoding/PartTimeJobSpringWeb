@@ -19,6 +19,8 @@ public interface CompanyService {
 
     Map<String, Object> getListCompany(Map<String, String> params);
     
-
+    Company getCompany(int companyId);
+    
+    Company addOrUpdate(Company p);
 
 }

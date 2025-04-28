@@ -16,9 +16,10 @@ public interface CompanyRepository {
 
     Map<String, Object> getListCompany(Map<String, String> params);
 
-    Company addCompany(Company c);
+    Company addOrUpdateCompany(Company c);
 
     Company getCompanyById(int companyId);
+    
 //    List<Object[]> getListCompanyByCity(String city);
 //    List<Object[]> getListCompanyBycityAndCompany(String company, String city);
 //    List<Object[]> getListCompanyByCompany(String company);
