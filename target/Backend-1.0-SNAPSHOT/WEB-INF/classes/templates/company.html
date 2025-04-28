@@ -32,7 +32,7 @@
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="actionDropdown">
                                     <li><a class="dropdown-item" href="#" id="deleteSelected">Xóa</a></li>
-                                    <li><a class="dropdown-item" href="#" id="viewDetails">Xem chi tiết công ty</a></li>
+
                                 </ul>
                             </div>
                         </div>
@@ -51,12 +51,20 @@
                                 <tr th:each="c : ${companies}">
                                     <td><input type="checkbox" class="company-checkbox" th:value="${c.id}"></td>
                                     <td th:text="${c.id}"></td>
-                                    <td th:text="${c.name}"></td>
+                                    <td><a th:href="@{/company/{id}(id=${c.id})}" th:text="${c.name}"></a></td>
                                     <td th:text="${c.email}"></td>
                                     <td th:text="${c.fullAddress}"></td>
                                     <td th:text="${c.taxCode}"></td>
                                     <td th:text="${c.registerDate}"></td>
-                                    <td th:text="${c.status}"></td>
+                                    <td th:switch="${c.status}">
+                                        <span th:case="'approved'" class="text-success" th:text="${c.status}"></span>
+                                        <span th:case="'pending'" class="text-warning" th:text="${c.status}"></span>
+                                        <span th:case="'refused'" class="text-danger" th:text="${c.status}"></span>
+                                        <span th:case="*"
+                                              th:text="${c.status}"></span> 
+                                    </td>
+
+
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(companies)}">
                                     <td colspan="7" class="text-center">Không có dữ liệu</td>
@@ -168,24 +176,6 @@
             }
         });
 
-        // Xem chi tiết công ty
-        document.getElementById('viewDetails').addEventListener('click', function (e) {
-            e.preventDefault();
-            const selectedIds = Array.from(document.querySelectorAll('.company-checkbox:checked'))
-                    .map(checkbox => checkbox.value);
-
-            if (selectedIds.length === 0) {
-                alert('Vui lòng chọn một công ty để xem chi tiết!');
-                return;
-            }
-
-            if (selectedIds.length > 1) {
-                alert('Vui lòng chỉ chọn một công ty để xem chi tiết!');
-                return;
-            }
-
-            window.location.href = `/company/${selectedIds[0]}`;
-        });
 
         // Tải danh sách thành phố và quận/huyện
         document.addEventListener('DOMContentLoaded', function () {

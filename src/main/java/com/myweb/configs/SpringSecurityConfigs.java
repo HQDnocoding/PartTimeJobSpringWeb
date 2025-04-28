@@ -33,9 +33,9 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableTransactionManagement
 @EnableWebSecurity
 @ComponentScan(basePackages = {
-    "com.myweb.controllers",
-    "com.myweb.repositories",
-    "com.myweb.services"
+        "com.myweb.controllers",
+        "com.myweb.repositories",
+        "com.myweb.services"
 })
 public class SpringSecurityConfigs {
 
@@ -48,40 +48,44 @@ public class SpringSecurityConfigs {
         return new BCryptPasswordEncoder();
     }
 
-    
-
     @Bean
-    public HandlerMappingIntrospector
-            mvcHandlerMappingIntrospector() {
+    public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
         return new HandlerMappingIntrospector();
-    }
+    } 
 
     @Bean
     public Cloudinary cloudinary() {
         String apiSecret = System.getenv("API_SECRET_CLOUDINARY");
-        Cloudinary cloudinary
-                = new Cloudinary(ObjectUtils.asMap(
-                        "cloud_name", "dmbvjjg5a",
-                        "api_key", "463513198463353",
-                        "api_secret", "HsIK1yhx7av6BeoVqVjKKVceikY",
-                        "secure", true));
+        Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", "dmbvjjg5a",
+                "api_key", "463513198463353",
+                "api_secret", "HsIK1yhx7av6BeoVqVjKKVceikY",
+                "secure", true));
         return cloudinary;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(c -> c.disable()).authorizeHttpRequests(requests
-                -> requests.requestMatchers("/", "/home").permitAll()
+        http.csrf(c -> c.disable())
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/", "/home").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/admin").permitAll()
                         .requestMatchers("/company").permitAll()
+                        .requestMatchers("/company/**").permitAll()
+                        .requestMatchers("/update-status").permitAll()
                         .requestMatchers("/js/**").permitAll()
-                        .requestMatchers("/api/**").permitAll())
-                .formLogin(form -> form.loginPage("/login")
-                .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/", true)
-                .failureUrl("/login?error=true").permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
+                        .requestMatchers("/api/**").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/", true)
+                        .failureUrl("/login?error=true")
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login")
+                        .permitAll());
 
         return http.build();
     }

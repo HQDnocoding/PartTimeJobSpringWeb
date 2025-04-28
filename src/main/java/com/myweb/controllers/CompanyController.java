@@ -17,6 +17,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -31,8 +34,8 @@ public class CompanyController {
     private CompanyService cpnyService;
 
     @GetMapping("/company")
-   public String companyView(Model model, @RequestParam Map<String, String> params) {
-        Collection<String> headCols = new ArrayList<>(List.of("Id", "Tên công ty", "Email", "Địa chỉ", "Mã số thuế","Ngày đăng ký", "Trạng thái"));
+    public String companyView(Model model, @RequestParam Map<String, String> params) {
+        Collection<String> headCols = new ArrayList<>(List.of("Id", "Tên công ty", "Email", "Địa chỉ", "Mã số thuế", "Ngày đăng ký", "Trạng thái"));
 
         Map<String, Object> result = cpnyService.getListCompany(params);
 
@@ -44,5 +47,19 @@ public class CompanyController {
         model.addAttribute("headCols", headCols);
 
         return "company";
+    }
+
+    @GetMapping("/company/{companyId}")
+    public String companyDetailView(Model model, @PathVariable(value = "companyId") int id) {
+        model.addAttribute("company", this.cpnyService.getCompany(id));
+        return "company-detail";
+    }
+
+    @PostMapping("/company/{companyId}/update-status")
+    public String updateCompanyStatus(@PathVariable("companyId") int id, @RequestParam("status") String status) {
+        Company c = this.cpnyService.getCompany(id);
+        c.setStatus(status);
+        this.cpnyService.addOrUpdate(c);
+        return "redirect:/company/" + id;
     }
 }
