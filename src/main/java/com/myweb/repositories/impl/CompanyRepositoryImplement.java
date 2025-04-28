@@ -60,13 +60,13 @@ public class CompanyRepositoryImplement implements CompanyRepository {
     public Map<String, Object> getListCompany(Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder cb = s.getCriteriaBuilder();
-    
+
         // Tạo CriteriaQuery cho Company
         CriteriaQuery<Company> cq = cb.createQuery(Company.class);
         Root<Company> companyRoot = cq.from(Company.class);
-    
+
         List<Predicate> predicates = new ArrayList<>();
-    
+
         // Tìm kiếm
         if (params != null) {
             String name = params.get("name");
@@ -90,18 +90,18 @@ public class CompanyRepositoryImplement implements CompanyRepository {
                 predicates.add(cb.equal(companyRoot.get("district"), district));
             }
         }
-    
+
         // Áp dụng điều kiện
         if (!predicates.isEmpty()) {
             cq.where(cb.and(predicates.toArray(Predicate[]::new)));
         }
-        
+
         // Tạo truy vấn chính
         Query query = s.createQuery(cq);
         // Đếm tổng số bản ghi
 
         int totalRecords = query.getResultList().size();
-    
+
         // Phân trang
         int page = 1;
         try {
@@ -113,14 +113,14 @@ public class CompanyRepositoryImplement implements CompanyRepository {
 
         query.setFirstResult(start);
         query.setMaxResults(GeneralUtils.PAGE_SIZE);
-    
+
         // Lấy danh sách kết quả
         List<Company> results = query.getResultList();
         System.out.println("Results: " + results);
-    
+
         // Tính tổng số trang
         int totalPages = (int) Math.ceil((double) totalRecords / GeneralUtils.PAGE_SIZE);
-    
+
         // Tạo kết quả trả về
         Map<String, Object> result = new HashMap<>();
         result.put("companies", results);
@@ -128,20 +128,14 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         result.put("pageSize", GeneralUtils.PAGE_SIZE);
         result.put("totalPages", totalPages);
         result.put("totalItems", totalRecords);
-    
+
         return result;
     }
 
     @Override
     public Company getCompanyById(int companyId) {
-<<<<<<< HEAD
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-=======
         Session s = this.factory.getObject().getCurrentSession();
         System.out.println(s.get(Company.class, companyId).getImageWorkplaceCollection());
         return s.get(Company.class, companyId);
     }
-
->>>>>>> 84f5a613ec66965a208552f340e6ce811ef650d5
 }
