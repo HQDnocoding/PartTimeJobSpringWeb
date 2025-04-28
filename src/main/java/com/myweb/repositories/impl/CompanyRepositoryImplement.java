@@ -163,4 +163,9 @@ public class CompanyRepositoryImplement implements CompanyRepository {
 
         return result;
     }
+
+    @Override
+    public Company getCompanyById(int companyId) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
