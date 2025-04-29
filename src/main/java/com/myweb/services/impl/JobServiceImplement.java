@@ -1,10 +1,9 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://nbformat/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.myweb.services.impl;
 
-import com.myweb.dto.JobDTO;
 import com.myweb.pojo.Job;
 import com.myweb.repositories.JobRepository;
 import com.myweb.services.JobService;
@@ -26,17 +25,17 @@ public class JobServiceImplement implements JobService {
     }
 
     @Override
-    public List<JobDTO> getListJobByMajor(int majorId) {
+    public List<Job> getListJobByMajor(int majorId) {
         return jobRepository.getListJobByMajor(majorId);
     }
 
     @Override
-    public JobDTO getDetailJobById(int jobId) {
-        return jobRepository.getDetailJobById(jobId);
+    public Job getJobById(int jobId) {
+        return jobRepository.getJobById(jobId);
     }
 
     @Override
-    public List<JobDTO> getListJobByRecommend(int majorId, int cityId) {
+    public List<Job> getListJobByRecommend(int majorId, int cityId) {
         return jobRepository.getListJobByRecommend(majorId, cityId);
     }
 
@@ -46,12 +45,12 @@ public class JobServiceImplement implements JobService {
     }
 
     @Override
-    public List<JobDTO> getListJobByCompanyId1(int companyId) {
+    public List<Job> getListJobByCompanyId1(int companyId) {
         return jobRepository.getListJobByCompanyId1(companyId);
     }
 
     @Override
-    public List<JobDTO> getListJobByCompanyExceptCurrentJob(int companyId, int jobId) {
+    public List<Job> getListJobByCompanyExceptCurrentJob(int companyId, int jobId) {
         return jobRepository.getListJobByCompanyExceptCurrentJob(companyId, jobId);
     }
 
@@ -61,17 +60,17 @@ public class JobServiceImplement implements JobService {
     }
 
     @Override
-    public List<JobDTO> getListJobByCandidate(int candidateId) {
+    public List<Job> getListJobByCandidate(int candidateId) {
         return jobRepository.getListJobByCandidate(candidateId);
     }
 
     @Override
-    public List<JobDTO> getListJobByCheckAdmin() {
+    public List<Job> getListJobByCheckAdmin() {
         return jobRepository.getListJobByCheckAdmin();
     }
 
     @Override
-    public List<JobDTO> getListJobByMajorAndCity(int majorId, String city, String kw) {
+    public List<Job> getListJobByMajorAndCity(int majorId, String city, String kw) {
         return jobRepository.getListJobByMajorAndCity(majorId, city, kw);
     }
 
@@ -86,12 +85,12 @@ public class JobServiceImplement implements JobService {
     }
 
     @Override
-    public List<JobDTO> getListJobByCityKw(String city, String kw) {
+    public List<Job> getListJobByCityKw(String city, String kw) {
         return jobRepository.getListJobByCityKw(city, kw);
     }
 
     @Override
-    public List<JobDTO> getListJobByCityKwPage(String city, String kw, int page) {
+    public List<Job> getListJobByCityKwPage(String city, String kw, int page) {
         return jobRepository.getListJobByCityKwPage(city, kw, page);
     }
 
@@ -106,7 +105,7 @@ public class JobServiceImplement implements JobService {
     }
 
     @Override
-    public List<JobDTO> getListJobForManage() {
+    public List<Job> getListJobForManage() {
         return jobRepository.getListJobForManage();
     }
 
@@ -116,8 +115,8 @@ public class JobServiceImplement implements JobService {
     }
 
     @Override
-    public List<JobDTO> getAllJobs() {
+    public List<Job> getAllJobs() {
         return jobRepository.searchJobs(null).get("jobs") != null ?
-                (List<JobDTO>) jobRepository.searchJobs(null).get("jobs") : List.of();
+                (List<Job>) jobRepository.searchJobs(null).get("jobs") : List.of();
     }
 }

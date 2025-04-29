@@ -1,34 +1,29 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://.netbeans/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://.netbeans/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package com.myweb.repositories.impl;
 
-import com.myweb.dto.JobDTO;
-import com.myweb.pojo.Company;
 import com.myweb.pojo.Job;
-import com.myweb.pojo.Major;
-import com.myweb.pojo.Day;
 import com.myweb.repositories.JobRepository;
 import com.myweb.utils.GeneralUtils;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of JobRepository for managing Job entities.
@@ -46,16 +41,59 @@ public class JobRepositoryImplement implements JobRepository {
     private SessionFactory sessionFactory;
 
     @Override
-    @SuppressWarnings("unchecked")
     public Map<String, Object> searchJobs(Map<String, String> params) {
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
-        Root<Job> jobRoot = cq.from(Job.class);
-        Join<Job, Company> companyJoin = jobRoot.join("companyId");
-        Join<Job, Major> majorJoin = jobRoot.join("marjorJobCollection").join("majorId");
-        Join<Job, Day> dayJoin = jobRoot.join("dayJobCollection").join("dayId");
 
+        // Đếm tổng số bản ghi
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<Job> countRoot = countQuery.from(Job.class);
+        List<Predicate> countPredicates = buildPredicates(params, cb, countRoot);
+        countQuery.select(cb.count(countRoot)).where(countPredicates.toArray(new Predicate[0]));
+        Long totalRecords = session.createQuery(countQuery).getSingleResult();
+
+        // Truy vấn danh sách công việc với phân trang và JOIN
+        CriteriaQuery<Job> cq = cb.createQuery(Job.class);
+        Root<Job> jobRoot = cq.from(Job.class);
+
+        // Sử dụng JOIN để tham gia các bảng liên quan
+        jobRoot.fetch("companyId", JoinType.LEFT);
+        jobRoot.join("marjorJobCollection", JoinType.LEFT);
+        jobRoot.join("dayJobCollection", JoinType.LEFT);
+
+        List<Predicate> predicates = buildPredicates(params, cb, jobRoot);
+        cq.where(predicates.toArray(new Predicate[0]));
+
+        // Phân trang
+        int page = 1;
+        if (params != null) {
+            try {
+                page = Integer.parseInt(params.getOrDefault("page", GeneralUtils.PAGE));
+            } catch (NumberFormatException e) {
+                logger.warning("Invalid page format: " + params.get("page"));
+            }
+        }
+        int start = (page - 1) * GeneralUtils.PAGE_SIZE;
+        List<Job> jobs = session.createQuery(cq)
+            .setFirstResult(start)
+            .setMaxResults(GeneralUtils.PAGE_SIZE)
+            .getResultList();
+
+        // Tính tổng số trang
+        int totalPages = (int) Math.ceil((double) totalRecords / GeneralUtils.PAGE_SIZE);
+
+        // Trả về kết quả
+        Map<String, Object> result = new HashMap<>();
+        result.put("jobs", jobs);
+        result.put("currentPage", page);
+        result.put("pageSize", GeneralUtils.PAGE_SIZE);
+        result.put("totalPages", totalPages);
+        result.put("totalItems", totalRecords);
+
+        return result;
+    }
+
+    private List<Predicate> buildPredicates(Map<String, String> params, CriteriaBuilder cb, Root<Job> jobRoot) {
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.equal(jobRoot.get("isActive"), true));
         predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
@@ -72,7 +110,7 @@ public class JobRepositoryImplement implements JobRepository {
             String majorId = params.get("majorId");
             if (majorId != null && !majorId.isEmpty()) {
                 try {
-                    predicates.add(cb.equal(majorJoin.get("id"), Integer.parseInt(majorId)));
+                    predicates.add(cb.equal(jobRoot.join("marjorJobCollection").join("majorId").get("id"), Integer.parseInt(majorId)));
                 } catch (NumberFormatException e) {
                     logger.warning("Invalid majorId format: " + majorId);
                 }
@@ -107,312 +145,159 @@ public class JobRepositoryImplement implements JobRepository {
             String dayId = params.get("dayId");
             if (dayId != null && !dayId.isEmpty()) {
                 try {
-                    predicates.add(cb.equal(dayJoin.get("id"), Integer.parseInt(dayId)));
+                    predicates.add(cb.equal(jobRoot.join("dayJobCollection").join("dayId").get("id"), Integer.parseInt(dayId)));
                 } catch (NumberFormatException e) {
                     logger.warning("Invalid dayId format: " + dayId);
                 }
             }
         }
 
-        if (!predicates.isEmpty()) {
-            cq.where(cb.and(predicates.toArray(Predicate[]::new)));
-        }
-
-        cq.multiselect(
-            jobRoot.get("id"),
-            jobRoot.get("jobName"),
-            jobRoot.get("description"),
-            jobRoot.get("jobRequired"),
-            jobRoot.get("salaryMin"),
-            jobRoot.get("salaryMax"),
-            jobRoot.get("fullAddress"),
-            jobRoot.get("city"),
-            jobRoot.get("district"),
-            jobRoot.get("status"),
-            jobRoot.get("isActive"),
-            jobRoot.get("postedDate"),
-            companyJoin.get("name"),
-            majorJoin.get("name"),
-            dayJoin.get("name")
-        );
-
-        CriteriaQuery<Long> countCq = cb.createQuery(Long.class);
-        countCq.select(cb.count(countCq.from(Job.class)));
-        countCq.where(cb.and(predicates.toArray(Predicate[]::new)));
-        Long totalRecords = session.createQuery(countCq).getSingleResult();
-
-        jakarta.persistence.Query query = session.createQuery(cq);
-        int page = 1;
-        if (params != null) {
-            try {
-                page = Integer.parseInt(params.getOrDefault("page", GeneralUtils.PAGE));
-            } catch (NumberFormatException e) {
-                logger.warning("Invalid page format: " + params.get("page"));
-            }
-        }
-        int start = (page - 1) * GeneralUtils.PAGE_SIZE;
-        query.setFirstResult(start);
-        query.setMaxResults(GeneralUtils.PAGE_SIZE);
-
-        List<Object[]> rawResults = query.getResultList();
-        List<JobDTO> results = mapToJobDTOList(rawResults);
-
-        int totalPages = (int) Math.ceil((double) totalRecords / GeneralUtils.PAGE_SIZE);
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("jobs", results);
-        result.put("currentPage", page);
-        result.put("pageSize", GeneralUtils.PAGE_SIZE);
-        result.put("totalPages", totalPages);
-        result.put("totalItems", totalRecords);
-
-        return result;
+        return predicates;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<JobDTO> getListJobByMajor(int majorID) {
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
-        Root<Job> jobRoot = cq.from(Job.class);
-        Join<Job, Company> companyJoin = jobRoot.join("companyId");
-        Join<Job, Major> majorJoin = jobRoot.join("marjorJobCollection").join("majorId");
-        Join<Job, Day> dayJoin = jobRoot.join("dayJobCollection").join("dayId");
-
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(jobRoot.get("isActive"), true));
-        predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
-        predicates.add(cb.equal(majorJoin.get("id"), majorID));
-
-        cq.where(cb.and(predicates.toArray(Predicate[]::new)));
-
-        cq.multiselect(
-            jobRoot.get("id"),
-            jobRoot.get("jobName"),
-            jobRoot.get("description"),
-            jobRoot.get("jobRequired"),
-            jobRoot.get("salaryMin"),
-            jobRoot.get("salaryMax"),
-            jobRoot.get("fullAddress"),
-            jobRoot.get("city"),
-            jobRoot.get("district"),
-            jobRoot.get("status"),
-            jobRoot.get("isActive"),
-            jobRoot.get("postedDate"),
-            companyJoin.get("name"),
-            majorJoin.get("name"),
-            dayJoin.get("name")
-        );
-
-        List<Object[]> rawResults = session.createQuery(cq).getResultList();
-        return mapToJobDTOList(rawResults);
-    }
-
-    private List<JobDTO> mapToJobDTOList(List<Object[]> rawResults) {
-        return rawResults.stream().map(row -> new JobDTO(
-            (Integer) row[0],           // id
-            (String) row[1],            // jobName
-            (String) row[2],            // description
-            (String) row[3],            // jobRequired
-            (BigInteger) row[4],        // salaryMin
-            (BigInteger) row[5],        // salaryMax
-            (String) row[6],            // fullAddress
-            (String) row[7],            // city
-            (String) row[8],            // district
-            (String) row[9],            // status
-            (Boolean) row[10],          // isActive
-            (java.util.Date) row[11],   // postedDate
-            (String) row[12],           // companyName
-            (String) row[13],           // majorName
-            (String) row[14]            // dayName
-        )).collect(Collectors.toList());
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public JobDTO getDetailJobById(int jobID) {
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
-        Root<Job> jobRoot = cq.from(Job.class);
-        Join<Job, Company> companyJoin = jobRoot.join("companyId");
-        Join<Job, Major> majorJoin = jobRoot.join("marjorJobCollection").join("majorId");
-        Join<Job, Day> dayJoin = jobRoot.join("dayJobCollection").join("dayId");
-
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(jobRoot.get("id"), jobID));
-        predicates.add(cb.equal(jobRoot.get("isActive"), true));
-        predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
-
-        cq.where(cb.and(predicates.toArray(Predicate[]::new)));
-
-        cq.multiselect(
-            jobRoot.get("id"),
-            jobRoot.get("jobName"),
-            jobRoot.get("description"),
-            jobRoot.get("jobRequired"),
-            jobRoot.get("salaryMin"),
-            jobRoot.get("salaryMax"),
-            jobRoot.get("fullAddress"),
-            jobRoot.get("city"),
-            jobRoot.get("district"),
-            jobRoot.get("status"),
-            jobRoot.get("isActive"),
-            jobRoot.get("postedDate"),
-            companyJoin.get("name"),
-            majorJoin.get("name"),
-            dayJoin.get("name")
-        );
-
-        List<Object[]> rawResults = session.createQuery(cq).getResultList();
-        List<JobDTO> results = mapToJobDTOList(rawResults);
-
-        return results.isEmpty() ? null : results.get(0);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<JobDTO> getListJobByRecommend(int majorID, int cityID) {
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
-        Root<Job> jobRoot = cq.from(Job.class);
-        Join<Job, Company> companyJoin = jobRoot.join("companyId");
-        Join<Job, Major> majorJoin = jobRoot.join("marjorJobCollection").join("majorId");
-        Join<Job, Day> dayJoin = jobRoot.join("dayJobCollection").join("dayId");
-
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(jobRoot.get("isActive"), true));
-        predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
-        predicates.add(cb.equal(majorJoin.get("id"), majorID));
-        predicates.add(cb.equal(jobRoot.get("city"), String.valueOf(cityID)));
-
-        cq.where(cb.and(predicates.toArray(Predicate[]::new)));
-
-        cq.multiselect(
-            jobRoot.get("id"),
-            jobRoot.get("jobName"),
-            jobRoot.get("description"),
-            jobRoot.get("jobRequired"),
-            jobRoot.get("salaryMin"),
-            jobRoot.get("salaryMax"),
-            jobRoot.get("fullAddress"),
-            jobRoot.get("city"),
-            jobRoot.get("district"),
-            jobRoot.get("status"),
-            jobRoot.get("isActive"),
-            jobRoot.get("postedDate"),
-            companyJoin.get("name"),
-            majorJoin.get("name"),
-            dayJoin.get("name")
-        );
-
-        List<Object[]> rawResults = session.createQuery(cq).getResultList();
-        return mapToJobDTOList(rawResults);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Job> getListJobByCompanyId(int companyID) {
+    public List<Job> getListJobByMajor(int majorId) {
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<Job> cq = cb.createQuery(Job.class);
         Root<Job> jobRoot = cq.from(Job.class);
 
+        jobRoot.fetch("companyId", JoinType.LEFT);
+        jobRoot.join("marjorJobCollection", JoinType.LEFT);
+        jobRoot.join("dayJobCollection", JoinType.LEFT);
+
         List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(jobRoot.get("companyId").get("id"), companyID));
         predicates.add(cb.equal(jobRoot.get("isActive"), true));
         predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
+        predicates.add(cb.equal(jobRoot.join("marjorJobCollection").join("majorId").get("id"), majorId));
 
-        cq.where(cb.and(predicates.toArray(Predicate[]::new)));
-        cq.select(jobRoot);
-
+        cq.where(cb.and(predicates.toArray(new Predicate[0])));
         return session.createQuery(cq).getResultList();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<JobDTO> getListJobByCompanyId1(int companyID) {
+    public Job getJobById(int jobId) {
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+        CriteriaQuery<Job> cq = cb.createQuery(Job.class);
         Root<Job> jobRoot = cq.from(Job.class);
-        Join<Job, Company> companyJoin = jobRoot.join("companyId");
-        Join<Job, Major> majorJoin = jobRoot.join("marjorJobCollection").join("majorId");
-        Join<Job, Day> dayJoin = jobRoot.join("dayJobCollection").join("dayId");
+
+        jobRoot.fetch("companyId", JoinType.LEFT);
+        jobRoot.join("marjorJobCollection", JoinType.LEFT);
+        jobRoot.join("dayJobCollection", JoinType.LEFT);
 
         List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(jobRoot.get("companyId").get("id"), companyID));
+        predicates.add(cb.equal(jobRoot.get("id"), jobId));
         predicates.add(cb.equal(jobRoot.get("isActive"), true));
         predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
 
-        cq.where(cb.and(predicates.toArray(Predicate[]::new)));
-
-        cq.multiselect(
-            jobRoot.get("id"),
-            jobRoot.get("jobName"),
-            jobRoot.get("description"),
-            jobRoot.get("jobRequired"),
-            jobRoot.get("salaryMin"),
-            jobRoot.get("salaryMax"),
-            jobRoot.get("fullAddress"),
-            jobRoot.get("city"),
-            jobRoot.get("district"),
-            jobRoot.get("status"),
-            jobRoot.get("isActive"),
-            jobRoot.get("postedDate"),
-            companyJoin.get("name"),
-            majorJoin.get("name"),
-            dayJoin.get("name")
-        );
-
-        List<Object[]> rawResults = session.createQuery(cq).getResultList();
-        return mapToJobDTOList(rawResults);
+        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        return session.createQuery(cq).uniqueResult();
     }
 
     @Override
-    public List<JobDTO> getListJobByCompanyExceptCurrentJob(int companyID, int jobID) {
+    public List<Job> getListJobByRecommend(int majorId, int cityId) {
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Job> cq = cb.createQuery(Job.class);
+        Root<Job> jobRoot = cq.from(Job.class);
+
+        jobRoot.fetch("companyId", JoinType.LEFT);
+        jobRoot.join("marjorJobCollection", JoinType.LEFT);
+        jobRoot.join("dayJobCollection", JoinType.LEFT);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(jobRoot.get("isActive"), true));
+        predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
+        predicates.add(cb.equal(jobRoot.join("marjorJobCollection").join("majorId").get("id"), majorId));
+        predicates.add(cb.equal(jobRoot.get("city"), String.valueOf(cityId)));
+
+        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        return session.createQuery(cq).getResultList();
+    }
+
+    @Override
+    public List<Job> getListJobByCompanyId(int companyId) {
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Job> cq = cb.createQuery(Job.class);
+        Root<Job> jobRoot = cq.from(Job.class);
+
+        jobRoot.fetch("companyId", JoinType.LEFT);
+        jobRoot.join("marjorJobCollection", JoinType.LEFT);
+        jobRoot.join("dayJobCollection", JoinType.LEFT);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(jobRoot.get("companyId").get("id"), companyId));
+        predicates.add(cb.equal(jobRoot.get("isActive"), true));
+        predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
+
+        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        return session.createQuery(cq).getResultList();
+    }
+
+    @Override
+    public List<Job> getListJobByCompanyId1(int companyId) {
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Job> cq = cb.createQuery(Job.class);
+        Root<Job> jobRoot = cq.from(Job.class);
+
+        jobRoot.fetch("companyId", JoinType.LEFT);
+        jobRoot.join("marjorJobCollection", JoinType.LEFT);
+        jobRoot.join("dayJobCollection", JoinType.LEFT);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(jobRoot.get("companyId").get("id"), companyId));
+        predicates.add(cb.equal(jobRoot.get("isActive"), true));
+        predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
+
+        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        return session.createQuery(cq).getResultList();
+    }
+
+    @Override
+    public List<Job> getListJobByCompanyExceptCurrentJob(int companyId, int jobId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Job getNameJob(int jobID) {
+    public Job getNameJob(int jobId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<JobDTO> getListJobByCandidate(int candidateID) {
+    public List<Job> getListJobByCandidate(int candidateId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<JobDTO> getListJobByCheckAdmin() {
+    public List<Job> getListJobByCheckAdmin() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<JobDTO> getListJobByMajorAndCity(int majorID, String city, String kw) {
+    public List<Job> getListJobByMajorAndCity(int majorId, String city, String kw) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<Job> getListJobForManageCompany(int companyID) {
+    public List<Job> getListJobForManageCompany(int companyId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void updateJob(int jobID) {
+    public void updateJob(int jobId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<JobDTO> getListJobByCityKw(String city, String kw) {
+    public List<Job> getListJobByCityKw(String city, String kw) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<JobDTO> getListJobByCityKwPage(String city, String kw, int page) {
+    public List<Job> getListJobByCityKwPage(String city, String kw, int page) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -422,12 +307,12 @@ public class JobRepositoryImplement implements JobRepository {
     }
 
     @Override
-    public void deleteJob(int jobID) {
+    public void deleteJob(int jobId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<JobDTO> getListJobForManage() {
+    public List<Job> getListJobForManage() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

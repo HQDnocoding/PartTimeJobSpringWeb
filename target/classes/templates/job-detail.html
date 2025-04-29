@@ -13,18 +13,33 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title" th:text="${job.jobName}"></h5>
-                <p><strong>Công ty:</strong> <span th:text="${job.companyName}"></span></p>
+                <p><strong>Công ty:</strong> <span th:text="${job.companyId.name}"></span></p>
                 <p><strong>Mô tả:</strong> <span th:text="${job.description}"></span></p>
                 <p><strong>Yêu cầu:</strong> <span th:text="${job.jobRequired}"></span></p>
                 <p><strong>Lương:</strong> <span th:text="${job.salaryMin} + ' - ' + ${job.salaryMax} + ' VNĐ'"></span></p>
                 <p><strong>Địa chỉ:</strong> <span th:text="${job.fullAddress} + ', ' + ${job.district} + ', ' + ${job.city}"></span></p>
-                <p><strong>Ngành nghề:</strong> <span th:text="${job.majorName}"></span></p>
-                <p><strong>Thời gian làm việc:</strong> <span th:text="${job.dayName}"></span></p>
-                <p><strong>Ngày đăng:</strong> <span th:text="${job.postedDate}"></span></p>
+                <p><strong>Ngành nghề:</strong>
+                    <span th:each="majorJob, iterStat : ${job.marjorJobCollection}" th:if="${!iterStat.last}">
+                        <span th:text="${majorJob.majorId.name} + ', '"></span>
+                    </span>
+                    <span th:each="majorJob : ${job.marjorJobCollection}" th:if="${iterStat.last}">
+                        <span th:text="${majorJob.majorId.name}"></span>
+                    </span>
+                </p>
+                <p><strong>Thời gian làm việc:</strong>
+                    <span th:each="dayJob, iterStat : ${job.dayJobCollection}" th:if="${!iterStat.last}">
+                        <span th:text="${dayJob.dayId.name} + ', '"></span>
+                    </span>
+                    <span th:each="dayJob : ${job.dayJobCollection}" th:if="${iterStat.last}">
+                        <span th:text="${dayJob.dayId.name}"></span>
+                    </span>
+                </p>
+                <p><strong>Ngày đăng:</strong> <span th:text="${#dates.format(job.postedDate, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
                 <p><strong>Trạng thái:</strong> <span th:text="${job.status}"></span></p>
+                <p><strong>Trạng thái hoạt động:</strong> <span th:text="${job.isActive} ? 'Hoạt động' : 'Không hoạt động'"></span></p>
             </div>
         </div>
-        <a th:href="@{/jobs}" class="btn btn-primary mt-3">Quay lại danh sách</a>
+        <a th:href="@{/job}" class="btn btn-primary mt-3">Quay lại danh sách</a>
     </main>
     <div th:replace="base :: footer"></div>
 </body>

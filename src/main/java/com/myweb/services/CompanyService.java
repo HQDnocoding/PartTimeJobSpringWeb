@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  *
  * @author dat
  */
-@Service
+
 public interface CompanyService {
 
     Map<String, Object> getListCompany(Map<String, String> params);
