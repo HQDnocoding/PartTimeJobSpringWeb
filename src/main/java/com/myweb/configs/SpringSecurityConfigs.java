@@ -72,7 +72,7 @@ public class SpringSecurityConfigs {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/admin").permitAll()
                         .requestMatchers("/company").permitAll()
-                        .requestMatchers("/job").permitAll()
+                        .requestMatchers("/job/**").permitAll()
                         .requestMatchers("/applications").permitAll()
                         .requestMatchers("/candidates").permitAll()
                         .requestMatchers("/company/**").permitAll()

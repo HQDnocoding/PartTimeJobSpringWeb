@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Danh sách công việc</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <th:block th:replace="base :: bootstrap"></th:block>
+    <th:block th:replace="~{base :: bootstrap}"></th:block>
     <style>
         .table-responsive thead {
             position: sticky;
@@ -18,52 +18,52 @@
     </style>
 </head>
 <body>
-    <div th:replace="base :: header"></div>
+    <div th:replace="~{base :: header}"></div>
     <main class="container column-gap-3 min-vh-90" style="display: flex; flex-direction: row">
         <div style="flex-grow: 3; max-height: 90vh; overflow-y: auto" class="table-responsive">
             <div class="d-flex flex-column h-100">
                 <div class="header-section" style="flex: 1;">
-                    <h5 class="mb-3">Danh sách công việc</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>Danh sách công việc</h5>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Hành động
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="actionDropdown">
+                                <li><a class="dropdown-item" href="#" id="deleteSelected">Xóa</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
                 <div class="table-section" style="flex: 8; overflow-y: auto;">
                     <table class="table caption-top">
                         <thead class="position-sticky top-0 z-3">
                             <tr>
-                                <th scope="col" th:each="h : ${headCols}" th:text="${h}"></th>
-                                <th scope="col" th:if="${#lists.isEmpty(headCols)}">No columns defined</th>
+                                <th scope="col"><input type="checkbox" id="selectAll"></th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Tên công việc</th>
+                                <th scope="col">Công ty</th>
+                                <th scope="col">Lương</th>
+                                <th scope="col">Thành phố</th>
+                                <th scope="col">Ngành nghề</th>
+                                <th scope="col">Thời gian làm việc</th>
+                                <th scope="col">Ngày đăng</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="job : ${jobs}">
+                                <td><input type="checkbox" class="job-checkbox" th:value="${job.id}"></td>
+                                <td th:text="${job.id}"></td>
                                 <td><a th:href="@{/job/{id}(id=${job.id})}" th:text="${job.jobName}"></a></td>
-                                <td th:text="${job.description}"></td>
-                                <td th:text="${job.jobRequired}"></td>
-                                <td th:text="${job.salaryMin} + ' - ' + ${job.salaryMax}"></td>
-                                <td th:text="${job.fullAddress} + ', ' + ${job.district} + ', ' + ${job.city}"></td>
-                                <td th:text="${job.city}"></td>
-                                <td th:text="${job.district}"></td>
-                                <td th:text="${job.status}"></td>
-                                <td th:text="${#dates.format(job.postedDate, 'dd/MM/yyyy HH:mm:ss')}"></td>
                                 <td th:text="${job.companyId.name}"></td>
-                                <td>
-                                    <span th:each="majorJob, iterStat : ${job.marjorJobCollection}" th:if="${!iterStat.last}">
-                                        <span th:text="${majorJob.majorId.name} + ', '"></span>
-                                    </span>
-                                    <span th:each="majorJob : ${job.marjorJobCollection}" th:if="${iterStat.last}">
-                                        <span th:text="${majorJob.majorId.name}"></span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span th:each="dayJob, iterStat : ${job.dayJobCollection}" th:if="${!iterStat.last}">
-                                        <span th:text="${dayJob.dayId.name} + ', '"></span>
-                                    </span>
-                                    <span th:each="dayJob : ${job.dayJobCollection}" th:if="${iterStat.last}">
-                                        <span th:text="${dayJob.dayId.name}"></span>
-                                    </span>
-                                </td>
+                                <td th:text="${job.salaryMin} + ' - ' + ${job.salaryMax} + ' VNĐ'"></td>
+                                <td th:text="${job.city}"></td>
+                                <td th:text="${job.marjorJobCollection != null and !#lists.isEmpty(job.marjorJobCollection)} ? ${#strings.listJoin(job.marjorJobCollection.![majorId.name], ', ')} : '-'"></td>
+                                <td th:text="${job.dayJobCollection != null and !#lists.isEmpty(job.dayJobCollection)} ? ${#strings.listJoin(job.dayJobCollection.![dayId.name], ', ')} : '-'"></td>
+                                <td th:text="${#dates.format(job.postedDate, 'dd/MM/yyyy HH:mm:ss')}"></td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(jobs)}">
-                                <td colspan="13" class="text-center">Không có dữ liệu</td>
+                                <td colspan="9" class="text-center">Không có dữ liệu</td>
                             </tr>
                         </tbody>
                     </table>
@@ -134,9 +134,49 @@
             </form>
         </div>
     </main>
-    <div th:replace="base :: footer"></div>
+    <div th:replace="~{base :: footer}"></div>
 
     <script>
+        // Chọn tất cả checkbox
+        document.getElementById('selectAll').addEventListener('change', function () {
+            document.querySelectorAll('.job-checkbox').forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // Xóa các công việc đã chọn
+        document.getElementById('deleteSelected').addEventListener('click', function (e) {
+            e.preventDefault();
+            const selectedIds = Array.from(document.querySelectorAll('.job-checkbox:checked'))
+                .map(checkbox => checkbox.value);
+
+            if (selectedIds.length === 0) {
+                alert('Vui lòng chọn ít nhất một công việc để xóa!');
+                return;
+            }
+
+            if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.length} công việc đã chọn?`)) {
+                Promise.all(selectedIds.map(id =>
+                    fetch(`/api/job/${id}`, { method: 'DELETE' })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`Lỗi khi xóa công việc ID ${id}`);
+                            }
+                            return id;
+                        })
+                ))
+                .then(() => {
+                    alert('Xóa công việc thành công!');
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                    alert('Đã xảy ra lỗi khi xóa công việc!');
+                });
+            }
+        });
+
+        // Tải danh sách thành phố và quận/huyện
         document.addEventListener('DOMContentLoaded', function () {
             fetch('https://provinces.open-api.vn/api/p/')
                 .then(response => response.json())
