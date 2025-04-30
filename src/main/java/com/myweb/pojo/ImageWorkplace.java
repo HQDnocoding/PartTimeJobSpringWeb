@@ -4,19 +4,11 @@
  */
 package com.myweb.pojo;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.Serializable;
 
 /**
@@ -45,12 +37,19 @@ public class ImageWorkplace implements Serializable {
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Company companyId;
+    @Transient
+    private MultipartFile file;
 
     public ImageWorkplace() {
     }
 
     public ImageWorkplace(Integer id) {
         this.id = id;
+    }
+
+    public ImageWorkplace(String imageUrl, Company company) {
+        this.imageUrl = imageUrl;
+        this.companyId=company;
     }
 
     public ImageWorkplace(Integer id, String imageUrl) {
@@ -106,5 +105,12 @@ public class ImageWorkplace implements Serializable {
     public String toString() {
         return imageUrl;
     }
-    
+
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    public void setFile(MultipartFile file) {
+        this.file = file;
+    }
 }

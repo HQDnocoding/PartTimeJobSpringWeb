@@ -13,4 +13,8 @@ import com.myweb.pojo.User;
 public interface UserRepository {
     User getUserByUsername(String username);
     User addUser(User user);
+    
+    void deleteUser(int id);
+    
+    User getUserById(int id);
 }

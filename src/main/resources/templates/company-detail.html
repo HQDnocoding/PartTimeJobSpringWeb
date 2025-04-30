@@ -1,94 +1,130 @@
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
         <title>Chi tiết công ty</title>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <th:block th:replace="base :: bootstrap"></th:block>
+    <style>
+        .company-avatar {
+            max-width: 200px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .company-info p {
+            margin-bottom: 0.4rem;
+        }
+        .carousel img {
+            max-height: fit-content;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
     <div th:replace="base :: header"></div>
 
     <main class="container my-5">
-        <!-- Tiêu đề trang -->
-        <h1 class="text-justified mb-4">Chi tiết công ty</h1>
-
-        <!-- Card thông tin công ty -->
-        <div class="card shadow-sm">
+        <div class="card shadow-lg border-0">
             <div class="card-header bg-primary text-white">
-                <h3 class="mb-0" th:text="${company.name}">Tên công ty</h3>
+                <h2 class="mb-0" th:text="${company.name}">Tên công ty</h2>
             </div>
-            <div class="card-body d-flex flex-row">
-                <!-- Avatar công ty -->
-                <div class="text-center mb-4 me-5">
-                    <img th:src="${company.avatar}" alt="Avatar công ty" class="img-fluid rounded" style="max-width: 200px;"/>
-                </div>
 
-                <!-- Thông tin cơ bản -->
+            <div class="card-body">
                 <div class="row">
-                    <p><strong>Mã số thuế:</strong> <span th:text="${company.taxCode}">Mã số thuế</span></p>
-                    <p><strong>Địa chỉ:</strong> <span th:text="${company.fullAddress}">Địa chỉ</span></p>
-                    <p><strong>Email:</strong> <a th:href="'mailto:' + ${company.email}" th:text="${company.email}">Email</a></p>
-                    <p><strong>Trạng thái:</strong> <span th:text="${company.status}">Trạng thái</span></p>
-                    <p><strong>Thành phố:</strong> <span th:text="${company.city}">Thành phố</span></p>
-                    <p><strong>Quận/Huyện:</strong> <span th:text="${company.district}">Quận</span></p>
-                </div>
-            </div>
+                    <!-- Avatar -->
+                    <div class="col-md-4 text-center mb-4">
+                        <img th:src="${company.avatar}" alt="Avatar công ty" class="img-fluid company-avatar"/>
+                    </div>
 
-            <!-- Mô tả công ty -->
-            <hr/>
-            <h4 class="px-4">Mô tả</h4>
-            <p class="px-5" th:utext="${company.selfDescription}">Mô tả công ty</p>
-
-            <!-- Hình ảnh nơi làm việc -->
-            <hr/>
-            <h4 class="px-4">Hình ảnh nơi làm việc</h4>
-            <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" style="padding: 10px 50px">
-                <div class="carousel-inner">
-                    <div  th:each="img, iterStat : ${company.imageWorkplaceCollection}" 
-                         th:class="${iterStat.first} ? 'carousel-item active' : 'carousel-item'">
-                        <img th:src="${img}" class="d-block w-100 rounded img-fluid" alt="Hình ảnh nơi làm việc"/>
+                    <!-- Thông tin công ty -->
+                    <div class="col-md-8 company-info">
+                        <p><strong>Mã số thuế:</strong> <span th:text="${company.taxCode}">MST</span></p>
+                        <p><strong>Địa chỉ:</strong> <span th:text="${company.fullAddress}">Địa chỉ</span></p>
+                        <p><strong>Email:</strong> <a th:href="'mailto:' + ${company.email}" th:text="${company.email}">Email</a></p>
+                        <p><strong>Thành phố:</strong> <span th:text="${company.city}">Thành phố</span></p>
+                        <p><strong>Quận/Huyện:</strong> <span th:text="${company.district}">Quận</span></p>
+                        <p><strong>Trạng thái:</strong> 
+                            <span class="badge" th:switch="${company.status}"
+                                  th:classappend="
+                                  ${company.status == 'approved'} ? 'bg-success' :
+                                  (${company.status == 'refused'} ? 'bg-danger' : 'bg-warning')">
+                                <span th:case="'approved'" th:text="${company.status}"></span>
+                                <span th:case="'refused'" th:text="${company.status}"></span>
+                                <span th:case="*" th:text="${company.status}"></span>
+                            </span>
+                        </p>
                     </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            </div>
 
-            <!-- Chức năng duyệt hồ sơ (chỉ hiển thị cho admin) -->
-            <hr/>
-            <div class="px-4">
-                <h4>Duyệt hồ sơ công ty</h4>
-                <div th:if="${company.status == 'pending'}">
-                    <form th:object="${company}" th:action="@{'/company/' + ${company.id} + '/update-status'}" method="post">
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Chọn trạng thái:</label>
-                            <select class="form-select" id="status" th:field="*{status}">
-                                <option value="approved">Duyệt (Approved)</option>
-                                <option value="refused">Từ chối (Refused)</option>
-                            </select>
+                <!-- Mô tả -->
+                <hr/>
+                <h4>Mô tả công ty</h4>
+                <p th:utext="${company.selfDescription}">Mô tả công ty</p>
+
+                <!-- Hình ảnh nơi làm việc -->
+                <hr/>
+                <h4>Hình ảnh nơi làm việc</h4>
+                <div th:if="${#lists.isEmpty(company.imageWorkplaceCollection) == false}">
+                    <div id="carouselWorkplace" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div th:each="img, iterStat : ${company.imageWorkplaceCollection}"
+                                 th:class="'carousel-item' + (${iterStat.first} ? ' active' : '')">
+                                <img th:src="${img}" class="d-block w-100 rounded" alt="Hình ảnh nơi làm việc"/>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Cập nhật trạng thái</button>
-                    </form>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselWorkplace" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Trước</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselWorkplace" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Sau</span>
+                        </button>
+                    </div>
                 </div>
-                <div th:unless="${company.status == 'pending'}">
-                    <p>Trạng thái hiện tại: <strong th:text="${company.status}"></strong>. Không thể thay đổi.</p>
+                <div th:if="${#lists.isEmpty(company.imageWorkplaceCollection)}">
+                    <p class="text-muted">Không có hình ảnh nơi làm việc.</p>
+                </div>
+
+                <!-- Duyệt hồ sơ -->
+                <hr/>
+                <div>
+                    <h4>Duyệt hồ sơ công ty</h4>
+                    <div th:if="${company.status == 'pending'}">
+                        <form th:action="@{'/companies/' + ${company.id} + '/update-status'}" method="post">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-auto">
+                                    <label for="status" class="col-form-label">Trạng thái:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <select id="status" name="status" class="form-select">
+                                        <option value="approved">Duyệt</option>
+                                        <option value="refused">Từ chối</option>
+                                    </select>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div th:unless="${company.status == 'pending'}">
+                        <p>Trạng thái hiện tại: <strong th:text="${company.status}">Trạng thái</strong>. Không thể cập nhật.</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="card-footer text-end mt-3">
-            <a th:href="@{'/company/edit/' + ${company.id}}" class="btn btn-warning">Chỉnh sửa</a>
-            <a th:href="@{'/company/delete/' + ${company.id}}" class="btn btn-danger" 
-               onclick="return confirm('Bạn có chắc muốn xóa công ty này?')">Xóa</a>
-            <a href="/company" class="btn btn-secondary">Quay lại danh sách</a>
-        </div>
-    </div>
-</main>
 
-<div th:replace="base :: footer"></div>
+            <!-- Footer nút thao tác -->
+            <div class="card-footer d-flex justify-content-end gap-2">
+                <a th:href="@{'/company/edit/' + ${company.id}}" class="btn btn-warning">Chỉnh sửa</a>
+                <a th:href="@{'/company/delete/' + ${company.id}}" class="btn btn-danger"
+                   onclick="return confirm('Bạn có chắc muốn xóa công ty này?')">Xóa</a>
+                <a href="/company" class="btn btn-secondary">Quay lại danh sách</a>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="base :: footer"></div>
 </body>
 </html>

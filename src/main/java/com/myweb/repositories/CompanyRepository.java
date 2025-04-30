@@ -5,6 +5,8 @@
 package com.myweb.repositories;
 
 import com.myweb.pojo.Company;
+import com.myweb.pojo.ImageWorkplace;
+import com.myweb.pojo.User;
 import java.util.List;
 import java.util.Map;
 
@@ -20,12 +22,10 @@ public interface CompanyRepository {
 
     Company getCompanyById(int companyId);
     
-//    List<Object[]> getListCompanyByCity(String city);
-//    List<Object[]> getListCompanyBycityAndCompany(String company, String city);
-//    List<Object[]> getListCompanyByCompany(String company);
-//    long countCompany();
-//    List<Company> getListCompany();
-//    List<Company> getListCompanyByCheckAdmin();
-//    void checkCompany(int companyID);
-//    List<Company> getListCompanyForManage();
+    void deleteCompany(int id);
+    
+    
+    Company createCompanyDTO(User u, Company c);
+    
+
 }

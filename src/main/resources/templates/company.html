@@ -31,8 +31,8 @@
                                     Hành động
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="actionDropdown">
-                                    <li><a class="dropdown-item" href="#" id="deleteSelected">Xóa</a></li>
-
+                                    <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/users} + '\',  \'.company-checkbox:checked\')'">Xóa</a></li>
+                                    <li><a class="dropdown-item" th:href="@{/companies/create-company}">Tạo mới</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -49,19 +49,22 @@
                             </thead>
                             <tbody>
                                 <tr th:each="c,stat : ${companies}">
-                                    <td><input type="checkbox" class="company-checkbox" th:value="${c.id}"></td>
+                                    <td><input type="checkbox" class="company-checkbox" th:value="${c.userId.id}"></td>
                                     <td th:text="${stat.index+1}"></td>
-                                    <td><a th:href="@{/company/{id}(id=${c.id})}" th:text="${c.name}"></a></td>
+                                    <td><a th:href="@{/companies/{id}(id=${c.id})}" th:text="${c.name}"></a></td>
                                     <td th:text="${c.email}"></td>
                                     <td th:text="${c.fullAddress}"></td>
                                     <td th:text="${c.taxCode}"></td>
                                     <td th:text="${c.userId.registerDate}"></td>
-                                    <td th:switch="${c.status}">
-                                        <span th:case="'approved'" class="text-success" th:text="${c.status}"></span>
-                                        <span th:case="'pending'" class="text-warning" th:text="${c.status}"></span>
-                                        <span th:case="'refused'" class="text-danger" th:text="${c.status}"></span>
-                                        <span th:case="*"
-                                              th:text="${c.status}"></span> 
+                                    <td class="d-flex justify-content-center">
+                                        <span class="badge" th:switch="${c.status}"
+                                              th:classappend="
+                                              ${c.status == 'approved'} ? 'bg-success' :
+                                              (${c.status == 'refused'} ? 'bg-danger' : 'bg-warning')">
+                                            <span th:case="'approved'" th:text="${c.status}"></span>
+                                            <span th:case="'refused'" th:text="${c.status}"></span>
+                                            <span th:case="*" th:text="${c.status}"></span>
+                                        </span>
                                     </td>
 
 
@@ -136,7 +139,7 @@
     </main>
     <div th:replace="base :: footer"></div>
 
-    <script>
+    <script th:src="@{/js/main.js}">
         // Chọn tất cả checkbox
         document.getElementById('selectAll').addEventListener('change', function () {
             document.querySelectorAll('.company-checkbox').forEach(checkbox => {
@@ -145,36 +148,36 @@
         });
 
         // Xóa các công ty đã chọn
-        document.getElementById('deleteSelected').addEventListener('click', function (e) {
-            e.preventDefault();
-            const selectedIds = Array.from(document.querySelectorAll('.company-checkbox:checked'))
-                    .map(checkbox => checkbox.value);
-
-            if (selectedIds.length === 0) {
-                alert('Vui lòng chọn ít nhất một công ty để xóa!');
-                return;
-            }
-
-            if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.length} công ty đã chọn?`)) {
-                Promise.all(selectedIds.map(id =>
-                    fetch(`/api/company/${id}`, {method: 'DELETE'})
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(`Lỗi khi xóa công ty ID ${id}`);
-                                }
-                                return id;
-                            })
-                ))
-                        .then(() => {
-                            alert('Xóa công ty thành công!');
-                            location.reload();
-                        })
-                        .catch(error => {
-                            console.error('Lỗi:', error);
-                            alert('Đã xảy ra lỗi khi xóa công ty!');
-                        });
-            }
-        });
+//        document.getElementById('deleteSelected').addEventListener('click', function (e) {
+//            e.preventDefault();
+//            const selectedIds = Array.from(document.querySelectorAll('.company-checkbox:checked'))
+//                    .map(checkbox => checkbox.value);
+//
+//            if (selectedIds.length === 0) {
+//                alert('Vui lòng chọn ít nhất một công ty để xóa!');
+//                return;
+//            }
+//
+//            if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.length} công ty đã chọn?`)) {
+//                Promise.all(selectedIds.map(id =>
+//                    fetch(`/api/company/${id}`, {method: 'DELETE'})
+//                            .then(response => {
+//                                if (!response.ok) {
+//                                    throw new Error(`Lỗi khi xóa công ty ID ${id}`);
+//                                }
+//                                return id;
+//                            })
+//                ))
+//                        .then(() => {
+//                            alert('Xóa công ty thành công!');
+//                            location.reload();
+//                        })
+//                        .catch(error => {
+//                            console.error('Lỗi:', error);
+//                            alert('Đã xảy ra lỗi khi xóa công ty!');
+//                        });
+//            }
+//        });
 
 
         // Tải danh sách thành phố và quận/huyện

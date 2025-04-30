@@ -4,6 +4,11 @@
  */
 package com.myweb.utils;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -67,4 +72,14 @@ public class GeneralUtils {
         return sdf.format(date);
     }
 
+
+    public static String uploadFileToCloud(Cloudinary cloudinary, MultipartFile file) {
+        try {
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                    ObjectUtils.asMap("resource_type", "auto"));
+            return uploadResult.get("secure_url").toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Lỗi khi upload lên Cloudinary", e);
+        }
+    }
 }

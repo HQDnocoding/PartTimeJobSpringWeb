@@ -63,6 +63,13 @@ public class UserServiceImplement implements UserService {
     }
 
     @Override
+    public void deleteUser(int id) {
+        this.userRepo.deleteUser(id);
+    }
+    
+    
+
+    @Override
     public User addUser(Map<String, String> params, MultipartFile avatar) {
 
 //        switch (params.get("role")) {

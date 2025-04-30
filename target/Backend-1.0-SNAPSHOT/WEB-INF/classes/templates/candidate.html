@@ -31,7 +31,7 @@
                                 Hành động
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="actionDropdown">
-                                <li><a class="dropdown-item" href="#" id="deleteSelected">Xóa</a></li>
+                                <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/candidates} + '\',  \'candidate-checkbox\')'" id="deleteSelected">Xóa</a></li>
                             </ul>
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                             <tr th:each="c,stat : ${candidates}" th:if="${c != null}">
                                 <td><input type="checkbox" class="candidate-checkbox" th:value="${c.id}"></td>
                                 <td th:text="${stat.index+1}"></td>
-                                <td><a th:href="@{/candidate/{id}(id=${c.id})}" th:text="${c.fullName}"></a></td>
+                                <td><a th:href="@{/candidates/{id}(id=${c.id})}" th:text="${c.fullName}"></a></td>
                                 <td th:text="${c.email}"></td>
                                 <td th:text="${c.dateOfBirth}"></td>
                                 <td th:text="${c.city}"></td>
@@ -113,7 +113,7 @@
     </main>
     <div th:replace="base :: footer"></div>
 
-    <script>
+    <script th:src="@{/js/main.js}">
         // Chọn tất cả checkbox
         document.getElementById('selectAll').addEventListener('change', function () {
             document.querySelectorAll('.candidate-checkbox').forEach(checkbox => {
@@ -122,36 +122,36 @@
         });
 
         // Xóa các ứng viên đã chọn
-        document.getElementById('deleteSelected').addEventListener('click', function (e) {
-            e.preventDefault();
-            const selectedIds = Array.from(document.querySelectorAll('.candidate-checkbox:checked'))
-                    .map(checkbox => checkbox.value);
-
-            if (selectedIds.length === 0) {
-                alert('Vui lòng chọn ít nhất một ứng viên để xóa!');
-                return;
-            }
-
-            if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.length} ứng viên đã chọn?`)) {
-                Promise.all(selectedIds.map(id =>
-                    fetch(`/api/candidate/${id}`, {method: 'DELETE'})
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(`Lỗi khi xóa ứng viên ID ${id}`);
-                                }
-                                return id;
-                            })
-                ))
-                        .then(() => {
-                            alert('Xóa ứng viên thành công!');
-                            location.reload();
-                        })
-                        .catch(error => {
-                            console.error('Lỗi:', error);
-                            alert('Đã xảy ra lỗi khi xóa ứng viên!');
-                        });
-            }
-        });
+//        document.getElementById('deleteSelected').addEventListener('click', function (e) {
+//            e.preventDefault();
+//            const selectedIds = Array.from(document.querySelectorAll('.candidate-checkbox:checked'))
+//                    .map(checkbox => checkbox.value);
+//
+//            if (selectedIds.length === 0) {
+//                alert('Vui lòng chọn ít nhất một ứng viên để xóa!');
+//                return;
+//            }
+//
+//            if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.length} ứng viên đã chọn?`)) {
+//                Promise.all(selectedIds.map(id =>
+//                    fetch(`/api/candidate/${id}`, {method: 'DELETE'})
+//                            .then(response => {
+//                                if (!response.ok) {
+//                                    throw new Error(`Lỗi khi xóa ứng viên ID ${id}`);
+//                                }
+//                                return id;
+//                            })
+//                ))
+//                        .then(() => {
+//                            alert('Xóa ứng viên thành công!');
+//                            location.reload();
+//                        })
+//                        .catch(error => {
+//                            console.error('Lỗi:', error);
+//                            alert('Đã xảy ra lỗi khi xóa ứng viên!');
+//                        });
+//            }
+//        });
 
         // Tải danh sách thành phố
         document.addEventListener('DOMContentLoaded', function () {

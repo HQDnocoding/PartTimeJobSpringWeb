@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Chi tiết đơn ứng tuyển</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <th:block th:replace="base :: bootstrap"></th:block>
+  <style>
+    .status-approved {
+        color: #198754; /* Bootstrap's success color */
+        font-weight: 600;
+    }
+    .status-pending {
+        color: #fd7e14; /* Bootstrap's warning/orange */
+        font-weight: 600;
+    }
+    .status-refused {
+        color: #dc3545; /* Bootstrap's danger color */
+        font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div th:replace="base :: header"></div>
+<main class="container py-5">
+  <div class="card shadow mx-auto" style="max-width: 800px;">
+    <div class="card-body">
+      <!-- Thông báo lỗi -->
+      <div th:if="${error != null}" class="text-center">
+        <h5 class="text-danger mb-3" th:text="${error}"></h5>
+        <a th:href="@{/applications}" class="btn btn-outline-primary">Quay lại danh sách</a>
+      </div>
+
+      <!-- Hiển thị đơn ứng tuyển -->
+      <div th:if="${appli != null}">
+        <h3 class="card-title mb-4">Chi tiết đơn ứng tuyển: <span th:text="${appli.id}"></span></h3>
+        <ul class="list-group list-group-flush mb-4">
+          <li class="list-group-item">
+            <div class="mb-3">
+              <span class="label">CV:</span>
+              <div th:if="${appli.curriculumVitae != null}">
+                <iframe th:src="@{${appli.curriculumVitae}}" width="100%" height="600px" style="border: 1px solid #ccc;"></iframe>
+              </div>
+              <span th:if="${appli.curriculumVitae == null}">Không có</span>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <strong>Ngày ứng tuyển:</strong> <span th:text="${appli.appliedDate}"></span>
+          </li>
+          <li class="list-group-item">
+            <strong>Lời nhắn:</strong>
+            <span th:text="${appli.message != null} ? ${appli.message} : 'Không có'"></span>
+          </li>
+          <li class="list-group-item">
+            <strong>Trạng thái:</strong>
+            <span th:switch="${appli.status}">
+              <span th:case="'approved'" class="status-approved" th:text="${appli.status}"></span>
+              <span th:case="'pending'" class="status-pending" th:text="${appli.status}"></span>
+              <span th:case="'refused'" class="status-refused" th:text="${appli.status}"></span>
+              <span th:case="*" th:text="${appli.status}"></span>
+            </span>
+          </li>
+          <li class="list-group-item">
+            <strong>Ứng viên:</strong>
+            <a th:if="${appli.candidateId != null}"
+               th:href="@{/candidate/{id}(id=${appli.candidateId.id})}"
+               th:text="${appli.candidateId.fullName}"></a>
+            <span th:if="${appli.candidateId == null}">Không có thông tin</span>
+          </li>
+          <li class="list-group-item">
+            <strong>Công việc:</strong>
+            <a th:if="${appli.jobId != null}"
+               th:href="@{/job/{id}(id=${appli.jobId.id})}"
+               th:text="${appli.jobId.jobName}"></a>
+            <span th:if="${appli.jobId == null}">Không có thông tin</span>
+          </li>
+        </ul>
+        <div class="text-end">
+          <a th:href="@{/applications}" class="btn btn-primary">Quay lại danh sách</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<div th:replace="base :: footer"></div>
+</body>
+</html>

@@ -50,7 +50,7 @@
                                 <td><input type="checkbox" class="application-checkbox" th:value="${a.id}"></td>
 
                                 <td th:text="${stat.index+1}"></td>
-                                <td><a th:href="@{/candidate/{id}(id=${a.candidateId.id})}" th:text="${a.candidateId.fullName}"></a></td>
+                                <td><a th:href="@{/applications/{id}(id=${a.id})}" th:text="${a.candidateId.fullName}"></a></td>
                                 <!--                                <td th:text="${a.curriculumVitae}"></td>-->
                                 <td th:text="${a.appliedDate}"></td>
                                 <td th:text="${a.message}"></td>

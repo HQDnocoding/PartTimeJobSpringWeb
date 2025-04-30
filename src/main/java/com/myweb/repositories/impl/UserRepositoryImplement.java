@@ -19,20 +19,19 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
-public class UserRepositoryImplement implements UserRepository{
-
+public class UserRepositoryImplement implements UserRepository {
+    
     @Autowired
     private LocalSessionFactoryBean factory;
-
+    
     @Override
     public User addUser(User user) {
         Session s = this.factory.getObject().getCurrentSession();
         s.persist(user);
         s.refresh(user);
-        
         return user;
     }
-
+    
     @Override
     public User getUserByUsername(String username) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -40,6 +39,20 @@ public class UserRepositoryImplement implements UserRepository{
         query.setParameter("username", username);
         
         return (User) query.getSingleResult();
+    }
+    
+    @Override
+    public void deleteUser(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        
+        User u = this.getUserById(id);
+        s.remove(u);
+    }
+    
+    @Override
+    public User getUserById(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        return s.get(User.class, id);
     }
     
 }

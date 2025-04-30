@@ -35,6 +35,8 @@ public class UserController {
         return "register";
     }
     
+    
+    
 //    @PostMapping
 //    public String regist(@ModelAttribute(value="candidate") Company company){
 //        this.userService.addUser(params, avatar)

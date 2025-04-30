@@ -4,12 +4,11 @@
  */
 package com.myweb.controllers;
 
+import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
 import com.myweb.services.CompanyService;
-import jakarta.data.page.Page;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,7 @@ public class CompanyController {
     @Autowired
     private CompanyService cpnyService;
 
-    @GetMapping("/company")
+    @GetMapping("/companies")
     public String companyView(Model model, @RequestParam Map<String, String> params) {
         Collection<String> headCols = new ArrayList<>(List.of("Id", "Tên công ty", "Email", "Địa chỉ", "Mã số thuế", "Ngày đăng ký", "Trạng thái"));
 
@@ -49,17 +48,31 @@ public class CompanyController {
         return "company";
     }
 
-    @GetMapping("/company/{companyId}")
+    @GetMapping("/companies/{companyId}")
     public String companyDetailView(Model model, @PathVariable(value = "companyId") int id) {
         model.addAttribute("company", this.cpnyService.getCompany(id));
         return "company-detail";
     }
 
-    @PostMapping("/company/{companyId}/update-status")
+    @PostMapping("/companies/{companyId}/update-status")
     public String updateCompanyStatus(@PathVariable("companyId") int id, @RequestParam("status") String status) {
         Company c = this.cpnyService.getCompany(id);
         c.setStatus(status);
         this.cpnyService.addOrUpdate(c);
-        return "redirect:/company/" + id;
+        return "redirect:/companies/" + id;
     }
+
+    @GetMapping("/companies/create-company")
+    public String createCompanyView(Model model) {
+        model.addAttribute("companyDTO", new CreateCompanyDTO());
+        return "create-company";
+    }
+
+    @PostMapping("/companies")
+    public String createCompany(@ModelAttribute(value = "companyDTO") CreateCompanyDTO companyDTO) {
+        Company company = this.cpnyService.createCompanyDTO(companyDTO);
+        System.out.println(company.getId());
+        return "redirect:/companies/" + company.getId();
+    }
+
 }

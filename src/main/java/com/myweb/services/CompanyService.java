@@ -4,6 +4,7 @@
  */
 package com.myweb.services;
 
+import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
 import jakarta.data.page.Page;
 import java.util.List;
@@ -23,4 +24,8 @@ public interface CompanyService {
     
     Company addOrUpdate(Company p);
 
+    
+    void deleteCompany(int id);
+    
+    Company createCompanyDTO(CreateCompanyDTO c);
 }

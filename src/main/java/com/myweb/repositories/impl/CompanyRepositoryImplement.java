@@ -4,8 +4,9 @@
  */
 package com.myweb.repositories.impl;
 
-import com.myweb.dto.CompanyDTO;
+import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
+import com.myweb.pojo.ImageWorkplace;
 import com.myweb.pojo.Job;
 import com.myweb.pojo.User;
 import com.myweb.repositories.CompanyRepository;
@@ -44,6 +45,7 @@ public class CompanyRepositoryImplement implements CompanyRepository {
     public Company addOrUpdateCompany(Company c) {
         Session session = this.factory.getObject().getCurrentSession();
         System.out.println(c.getId());
+
         try {
             if (c.getId() == null) {
                 session.persist(c);
@@ -135,7 +137,31 @@ public class CompanyRepositoryImplement implements CompanyRepository {
     @Override
     public Company getCompanyById(int companyId) {
         Session s = this.factory.getObject().getCurrentSession();
-        System.out.println(s.get(Company.class, companyId).getImageWorkplaceCollection());
         return s.get(Company.class, companyId);
     }
+
+    @Override
+    public void deleteCompany(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Company c = this.getCompanyById(id);
+
+        s.remove(c);
+    }
+
+    @Override
+    public Company createCompanyDTO(User u, Company c) {
+        Session s = this.factory.getObject().getCurrentSession();
+        try {
+            s.persist(u);
+
+            s.persist(c);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Lỗi: " + e.getMessage());
+        }
+
+        return c;
+
+    }
+
 }
