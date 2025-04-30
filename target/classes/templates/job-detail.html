@@ -1,31 +1,67 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Chi tiết công việc</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <th:block th:replace="base :: bootstrap"></th:block>
+    <th:block th:replace="~{base :: bootstrap}"></th:block>
+    <style>
+        .job-detail-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .job-detail-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .job-detail-card .card-body {
+            padding: 2rem;
+        }
+        .job-detail-card h5 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        .job-detail-card p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .job-detail-card strong {
+            display: inline-block;
+            width: 150px;
+            font-weight: 600;
+            color: #555;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 1.5rem;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-    <div th:replace="base :: header"></div>
-    <main class="container my-4">
+    <div th:replace="~{base :: header}"></div>
+    <main class="container my-4 job-detail-container">
         <h1 class="text-center mb-4">Chi tiết công việc</h1>
-        <div class="card">
+        <div class="card job-detail-card">
             <div class="card-body">
                 <h5 class="card-title" th:text="${job.jobName}"></h5>
-                <p><strong>Công ty:</strong> <span th:text="${job.companyName}"></span></p>
-                <p><strong>Mô tả:</strong> <span th:text="${job.description}"></span></p>
-                <p><strong>Yêu cầu:</strong> <span th:text="${job.jobRequired}"></span></p>
+                <p><strong>Công ty:</strong> <span th:text="${job.companyId.name}"></span></p>
                 <p><strong>Lương:</strong> <span th:text="${job.salaryMin} + ' - ' + ${job.salaryMax} + ' VNĐ'"></span></p>
                 <p><strong>Địa chỉ:</strong> <span th:text="${job.fullAddress} + ', ' + ${job.district} + ', ' + ${job.city}"></span></p>
-                <p><strong>Ngành nghề:</strong> <span th:text="${job.majorName}"></span></p>
-                <p><strong>Thời gian làm việc:</strong> <span th:text="${job.dayName}"></span></p>
-                <p><strong>Ngày đăng:</strong> <span th:text="${job.postedDate}"></span></p>
+                <p><strong>Ngành nghề:</strong> <span th:text="${job.marjorJobCollection != null and !#lists.isEmpty(job.marjorJobCollection)} ? ${#strings.listJoin(job.marjorJobCollection.![majorId.name], ', ')} : '-'"></span></p>
+                <p><strong>Thời gian làm việc:</strong> <span th:text="${job.dayJobCollection != null and !#lists.isEmpty(job.dayJobCollection)} ? ${#strings.listJoin(job.dayJobCollection.![dayId.name], ', ')} : '-'"></span></p>
+                <p><strong>Mô tả:</strong> <span th:text="${job.description}"></span></p>
+                <p><strong>Yêu cầu:</strong> <span th:text="${job.jobRequired}"></span></p>
+                <p><strong>Ngày đăng:</strong> <span th:text="${#dates.format(job.postedDate, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
                 <p><strong>Trạng thái:</strong> <span th:text="${job.status}"></span></p>
+                <p><strong>Trạng thái hoạt động:</strong> <span th:text="${job.isActive} ? 'Hoạt động' : 'Không hoạt động'"></span></p>
             </div>
         </div>
-        <a th:href="@{/jobs}" class="btn btn-primary mt-3">Quay lại danh sách</a>
+        <a th:href="@{/job}" class="btn btn-primary back-button">Quay lại danh sách</a>
     </main>
-    <div th:replace="base :: footer"></div>
+    <div th:replace="~{base :: footer}"></div>
 </body>
 </html>
