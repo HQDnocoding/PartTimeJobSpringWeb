@@ -27,8 +27,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Implementation of JobRepository for managing Job entities.
- * Handles database operations for searching and filtering jobs.
+ * Implementation of JobRepository for managing Job entities. Handles database operations for searching and filtering jobs.
  *
  * @author Hau
  */
@@ -49,19 +48,21 @@ public class JobRepositoryImplement implements JobRepository {
         // Đếm tổng số bản ghi
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<Job> countRoot = countQuery.from(Job.class);
+        countRoot.join("companyId", JoinType.LEFT);
         List<Predicate> countPredicates = buildPredicates(params, cb, countRoot);
+        // Bỏ điều kiện status của job và company
         countQuery.select(cb.count(countRoot)).where(countPredicates.toArray(new Predicate[0]));
         Long totalRecords = session.createQuery(countQuery).getSingleResult();
 
         // Truy vấn danh sách công việc với phân trang
         CriteriaQuery<Job> cq = cb.createQuery(Job.class);
         Root<Job> jobRoot = cq.from(Job.class);
-
-        // Chỉ fetch companyId, không fetch các collection
         jobRoot.fetch("companyId", JoinType.LEFT);
 
         List<Predicate> predicates = buildPredicates(params, cb, jobRoot);
+        // Bỏ điều kiện status của job và company
         cq.where(predicates.toArray(new Predicate[0]));
+        cq.orderBy(cb.asc(jobRoot.get("id")));
 
         // Phân trang
         int page = 1;
@@ -74,15 +75,21 @@ public class JobRepositoryImplement implements JobRepository {
         }
         int start = (page - 1) * GeneralUtils.PAGE_SIZE;
         List<Job> jobs = session.createQuery(cq)
-            .setFirstResult(start)
-            .setMaxResults(GeneralUtils.PAGE_SIZE)
-            .getResultList();
+                .setFirstResult(start)
+                .setMaxResults(GeneralUtils.PAGE_SIZE)
+                .getResultList();
 
-        // Initialize collections within the transaction
+        // Initialize collections
         for (Job job : jobs) {
             Hibernate.initialize(job.getMarjorJobCollection());
             Hibernate.initialize(job.getDayJobCollection());
         }
+
+        // Ghi log để kiểm tra
+        logger.info("Total records: " + totalRecords);
+        logger.info("Page: " + page + ", Start: " + start + ", Page size: " + GeneralUtils.PAGE_SIZE);
+        logger.info("Jobs retrieved: " + jobs.size());
+        jobs.forEach(job -> logger.info("Job ID: " + job.getId()));
 
         // Tính tổng số trang
         int totalPages = (int) Math.ceil((double) totalRecords / GeneralUtils.PAGE_SIZE);
@@ -101,14 +108,14 @@ public class JobRepositoryImplement implements JobRepository {
     private List<Predicate> buildPredicates(Map<String, String> params, CriteriaBuilder cb, Root<Job> jobRoot) {
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.equal(jobRoot.get("isActive"), true));
-        predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
+        // Bỏ điều kiện status của job và company
 
         if (params != null) {
             String keyword = params.get("keyword");
             if (keyword != null && !keyword.isEmpty()) {
                 predicates.add(cb.or(
-                    cb.like(cb.lower(jobRoot.get("jobName")), "%" + keyword.toLowerCase() + "%"),
-                    cb.like(cb.lower(jobRoot.get("description")), "%" + keyword.toLowerCase() + "%")
+                        cb.like(cb.lower(jobRoot.get("jobName")), "%" + keyword.toLowerCase() + "%"),
+                        cb.like(cb.lower(jobRoot.get("description")), "%" + keyword.toLowerCase() + "%")
                 ));
             }
 
@@ -172,12 +179,14 @@ public class JobRepositoryImplement implements JobRepository {
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.equal(jobRoot.get("isActive"), true));
         predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
+        predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
         predicates.add(cb.equal(jobRoot.join("marjorJobCollection").join("majorId").get("id"), majorId));
 
         cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        cq.orderBy(cb.asc(jobRoot.get("id")));
+
         List<Job> jobs = session.createQuery(cq).getResultList();
 
-        // Initialize collections within the transaction
         for (Job job : jobs) {
             Hibernate.initialize(job.getMarjorJobCollection());
             Hibernate.initialize(job.getDayJobCollection());
@@ -199,11 +208,11 @@ public class JobRepositoryImplement implements JobRepository {
         predicates.add(cb.equal(jobRoot.get("id"), jobId));
         predicates.add(cb.equal(jobRoot.get("isActive"), true));
         predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
+        predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
 
         cq.where(cb.and(predicates.toArray(new Predicate[0])));
         Job job = session.createQuery(cq).uniqueResult();
 
-        // Initialize collections within the transaction
         if (job != null) {
             Hibernate.initialize(job.getMarjorJobCollection());
             Hibernate.initialize(job.getDayJobCollection());
@@ -224,13 +233,15 @@ public class JobRepositoryImplement implements JobRepository {
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.equal(jobRoot.get("isActive"), true));
         predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
+        predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
         predicates.add(cb.equal(jobRoot.join("marjorJobCollection").join("majorId").get("id"), majorId));
         predicates.add(cb.equal(jobRoot.get("city"), String.valueOf(cityId)));
 
         cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        cq.orderBy(cb.asc(jobRoot.get("id")));
+
         List<Job> jobs = session.createQuery(cq).getResultList();
 
-        // Initialize collections within the transaction
         for (Job job : jobs) {
             Hibernate.initialize(job.getMarjorJobCollection());
             Hibernate.initialize(job.getDayJobCollection());
@@ -252,11 +263,13 @@ public class JobRepositoryImplement implements JobRepository {
         predicates.add(cb.equal(jobRoot.get("companyId").get("id"), companyId));
         predicates.add(cb.equal(jobRoot.get("isActive"), true));
         predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
+        predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
 
         cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        cq.orderBy(cb.asc(jobRoot.get("id")));
+
         List<Job> jobs = session.createQuery(cq).getResultList();
 
-        // Initialize collections within the transaction
         for (Job job : jobs) {
             Hibernate.initialize(job.getMarjorJobCollection());
             Hibernate.initialize(job.getDayJobCollection());
@@ -278,11 +291,13 @@ public class JobRepositoryImplement implements JobRepository {
         predicates.add(cb.equal(jobRoot.get("companyId").get("id"), companyId));
         predicates.add(cb.equal(jobRoot.get("isActive"), true));
         predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
+        predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
 
         cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        cq.orderBy(cb.asc(jobRoot.get("id")));
+
         List<Job> jobs = session.createQuery(cq).getResultList();
 
-        // Initialize collections within the transaction
         for (Job job : jobs) {
             Hibernate.initialize(job.getMarjorJobCollection());
             Hibernate.initialize(job.getDayJobCollection());

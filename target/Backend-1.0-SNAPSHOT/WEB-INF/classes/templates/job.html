@@ -13,17 +13,29 @@
             background: #fff;
         }
         .pagination {
-            justify-content: center;
+            justify-content: flex-start; /* Căn trái phần phân trang */
+            margin-top: 10px; /* Khoảng cách nhỏ giữa tiêu đề và phân trang */
+            margin-bottom: 20px; /* Khoảng cách giữa phân trang và bảng */
+        }
+        .table-section {
+            overflow-y: auto;
+            max-height: 70vh; /* Đảm bảo bảng có thể cuộn */
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between; /* Giữ tiêu đề bên trái, nút "Hành động" bên phải */
+            align-items: center;
+            width: 100%; /* Đảm bảo header-section chiếm toàn bộ chiều rộng */
         }
     </style>
 </head>
 <body>
     <div th:replace="~{base :: header}"></div>
     <main class="container column-gap-3 min-vh-90" style="display: flex; flex-direction: row">
-        <div style="flex-grow: 3; max-height: 90vh; overflow-y: auto" class="table-responsive">
+        <div style="flex-grow: 3; max-height: 90vh;" class="table-responsive">
             <div class="d-flex flex-column h-100">
-                <div class="header-section" style="flex: 1;">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="header-section" style="flex: 0;">
+                    <div class="d-flex justify-content-between align-items-center mb-3 w-100">
                         <h5>Danh sách công việc</h5>
                         <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -35,7 +47,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="table-section" style="flex: 8; overflow-y: auto;">
+                <div class="pagination-section" style="flex: 0;">
+                    <nav aria-label="Page navigation" th:if="${totalPages > 1}">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                                <a class="page-link" th:href="@{/job(page=${currentPage - 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, dayId=${selectedDayId})}">Previous</a>
+                            </li>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link" th:href="@{/job(page=${i}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, dayId=${selectedDayId})}" th:text="${i}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                                <a class="page-link" th:href="@{/job(page=${currentPage + 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, dayId=${selectedDayId})}">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="table-section">
                     <table class="table caption-top">
                         <thead class="position-sticky top-0 z-3">
                             <tr>
@@ -67,21 +94,6 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
-                <div class="pagination-section position-fixed" style="flex: 1;">
-                    <nav aria-label="Page navigation" th:if="${totalPages > 1}">
-                        <ul class="pagination">
-                            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                                <a class="page-link" th:href="@{/job(page=${currentPage - 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, dayId=${selectedDayId})}">Previous</a>
-                            </li>
-                            <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
-                                <a class="page-link" th:href="@{/job(page=${i}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, dayId=${selectedDayId})}" th:text="${i}"></a>
-                            </li>
-                            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                                <a class="page-link" th:href="@{/job(page=${currentPage + 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, dayId=${selectedDayId})}">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
                 </div>
             </div>
         </div>
