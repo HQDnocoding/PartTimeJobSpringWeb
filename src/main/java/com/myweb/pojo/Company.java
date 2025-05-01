@@ -61,7 +61,7 @@ public class Company implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "email")
+    @Column(name = "email", unique =true)
     private String email;
     @Basic(optional = false)
     @NotNull

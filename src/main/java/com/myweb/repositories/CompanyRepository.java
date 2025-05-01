@@ -27,5 +27,8 @@ public interface CompanyRepository {
     
     Company createCompanyDTO(User u, Company c);
     
-
+    Company getCompanyByEmail(String email);
+    
+    Company getCompanyByTaxCode(String taxCode);
+    
 }

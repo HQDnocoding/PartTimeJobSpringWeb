@@ -7,6 +7,7 @@ package com.myweb.repositories.impl;
 import com.myweb.pojo.User;
 import com.myweb.repositories.UserRepository;
 import jakarta.persistence.Query;
+import java.util.List;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -38,7 +39,9 @@ public class UserRepositoryImplement implements UserRepository {
         Query query = s.createNamedQuery("User.findByUsername", User.class);
         query.setParameter("username", username);
         
-        return (User) query.getSingleResult();
+        List<User> rs=query.getResultList();
+        
+        return rs.isEmpty()?null:rs.get(0);
     }
     
     @Override

@@ -155,12 +155,33 @@ public class CompanyRepositoryImplement implements CompanyRepository {
             s.persist(u);
 
             s.persist(c);
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Lỗi: " + e.getMessage());
         }
 
         return c;
+
+    }
+
+    @Override
+    public Company getCompanyByEmail(String email) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("Company.findByEmail", Company.class);
+        q.setParameter("email", email);
+        List<Company> rs = q.getResultList();
+        return rs.isEmpty() ? null : rs.get(0);
+
+    }
+
+    @Override
+    public Company getCompanyByTaxCode(String taxCode) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("Company.findByTaxCode", Company.class);
+        q.setParameter("taxCode", taxCode);
+        List<Company> rs = q.getResultList();
+        return rs.isEmpty() ? null : rs.get(0);
 
     }
 

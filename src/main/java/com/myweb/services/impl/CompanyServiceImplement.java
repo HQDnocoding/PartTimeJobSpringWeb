@@ -11,6 +11,7 @@ import com.myweb.pojo.Company;
 import com.myweb.pojo.ImageWorkplace;
 import com.myweb.pojo.User;
 import com.myweb.repositories.CompanyRepository;
+import com.myweb.repositories.UserRepository;
 import com.myweb.services.CompanyService;
 import com.myweb.utils.GeneralUtils;
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +36,13 @@ public class CompanyServiceImplement implements CompanyService {
 
     @Autowired
     private CompanyRepository companyRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @Autowired
     private Cloudinary cloudinary;
-     @Autowired
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     @Override
@@ -70,6 +76,24 @@ public class CompanyServiceImplement implements CompanyService {
 
     @Override
     public Company createCompanyDTO(CreateCompanyDTO c) {
+
+        if (userRepository.getUserByUsername(c.getUsername()) != null) {
+            throw new IllegalArgumentException("Tên đăng nhập đã được sử dụng.");
+        }
+        if (companyRepository.getCompanyByEmail(c.getEmail()) != null) {
+            throw new IllegalArgumentException("Email đã được sử dụng.");
+        }
+        if (companyRepository.getCompanyByTaxCode(c.getTaxCode()) != null) {
+            throw new IllegalArgumentException("Mã số thuế đã được sử dụng.");
+        }
+        if (c.getFiles().size() < 3) {
+            throw new IllegalArgumentException("Vui lòng cung cấp tối thiểu 3 hình của nơi làm việc.");
+
+        }
+        if (c.getAvatarFile() == null) {
+            throw new IllegalArgumentException("Vui lòng cung cấp avatar");
+
+        }
         User u = new User();
         u.setUsername(c.getUsername());
         u.setPassword(this.passwordEncoder.encode(c.getPassword()));
@@ -89,10 +113,18 @@ public class CompanyServiceImplement implements CompanyService {
         company.setStatus(GeneralUtils.Status.pending.toString());
         company.setUserId(u);
 
-        List<ImageWorkplace> immageList = c.getFiles().stream().map(file
+        List<ImageWorkplace> imageList = c.getFiles().stream().map(file
                 -> new ImageWorkplace(GeneralUtils.uploadFileToCloud(cloudinary, file), company)).collect(Collectors.toList());
 
-        return this.companyRepository.createCompanyDTO(u, company);
+        company.setImageWorkplaceCollection(imageList);
+        System.out.println(imageList);
+        company.setImageWorkplaceCollection(imageList);
+
+        try {
+            return companyRepository.createCompanyDTO(u, company);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin.");
+        }
 
     }
 

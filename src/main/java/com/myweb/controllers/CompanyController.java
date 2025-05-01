@@ -69,10 +69,18 @@ public class CompanyController {
     }
 
     @PostMapping("/companies")
-    public String createCompany(@ModelAttribute(value = "companyDTO") CreateCompanyDTO companyDTO) {
-        Company company = this.cpnyService.createCompanyDTO(companyDTO);
-        System.out.println(company.getId());
-        return "redirect:/companies/" + company.getId();
+    public String createCompany(Model model, @ModelAttribute(value = "companyDTO") CreateCompanyDTO companyDTO) {
+        try {
+            Company company = this.cpnyService.createCompanyDTO(companyDTO);
+            return "redirect:/companies/"+company.getId();
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "create-company";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Đã có lỗi xảy ra, vui lòng thử lại.");
+            return "create-company";
+        }
+//        return "redirect:/companies/" + company.getId();
     }
 
 }

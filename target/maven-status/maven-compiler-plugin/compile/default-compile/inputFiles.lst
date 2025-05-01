@@ -15,7 +15,6 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\IndexContr
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\JobController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\UserController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\CreateCompanyDTO.java
-P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\JobDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Application.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Candidate.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\CandidateReview.java
