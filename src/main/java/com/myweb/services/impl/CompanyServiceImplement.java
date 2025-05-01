@@ -98,7 +98,7 @@ public class CompanyServiceImplement implements CompanyService {
         u.setUsername(c.getUsername());
         u.setPassword(this.passwordEncoder.encode(c.getPassword()));
         u.setRegisterDate(new Date());
-        u.setRole(GeneralUtils.Role.COMPANY.toString());
+        u.setRole(GeneralUtils.Role.ROLE_COMPANY.toString());
         u.setIsActive(true);
 
         Company company = new Company();
