@@ -41,9 +41,9 @@ public class GeneralUtils {
     };
 
     public static enum Role {
-        ADMIN("Quản trị viên"),
-        COMPANY("Công ty"),
-        CANDIDATE("Ứng viên");
+        ROLE_ADMIN("Quản trị viên"),
+        ROLE_COMPANY("Công ty"),
+        ROLE_CANDIDATE("Ứng viên");
         private final String label;
 
         Role(String label) {
