@@ -85,7 +85,7 @@ public class test {
 //        c.setCity("HCM");
 //        c.setDistrict("Q1");
 //        c.setEmail("10yBd@gmail.com");
-//        c.setFullAddress("HCM,Q1");
+//        c.setFullAddress("HCM,Q1");   
 //        c.setTaxCode("123d1A45");
         c.setRegisterDate(new Date());
         c.setRole(GeneralUtils.Role.ROLE_ADMIN.toString());
