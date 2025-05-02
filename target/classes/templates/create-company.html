@@ -184,7 +184,6 @@
                 reader.readAsDataURL(file);
             });
 
-            // Reset input để chọn lại cùng file nếu cần
             this.value = '';
         });
 
@@ -202,12 +201,12 @@
         }
 
 
-        document.getElementById('createCompanyForm').addEventListener('submit', function (e) {
-            const dt = new DataTransfer();
-            storedFiles.forEach(file => dt.items.add(file));
-            imageInput.files = dt.files;
-            console.log(dt);
-        });
+//        document.getElementById('createCompanyForm').addEventListener('submit', function (e) {
+//            const dt = new DataTransfer();
+//            storedFiles.forEach(file => dt.items.add(file));
+//            imageInput.files = dt.files;
+//            console.log(dt);
+//        });
 
     </script>
 

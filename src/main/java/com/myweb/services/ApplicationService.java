@@ -15,4 +15,5 @@ public interface ApplicationService {
     Application addOrUpdateApplication(Application a);
     Map<String, Object> getListApplication(Map<String, String> params);
     Application getApplicationById(int applicationId);
+    void deleteApplication(int id);
 }

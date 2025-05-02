@@ -90,7 +90,6 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
         // Tạo truy vấn chính
         Query query = s.createQuery(cq);
         // Đếm tổng số bản ghi
-
         int totalRecords = query.getResultList().size();
 
         // Phân trang
@@ -102,7 +101,6 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
         }
         int start = (page - 1) * GeneralUtils.PAGE_SIZE;
 
-       
         query.setFirstResult(start);
         query.setMaxResults(GeneralUtils.PAGE_SIZE);
 
@@ -132,4 +130,12 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
         System.out.println(application);
         return application;
     }
+
+    @Override
+    public void deleteApplication(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Application a = getApplicationById(id);
+        s.remove(a);
+    }
+
 }

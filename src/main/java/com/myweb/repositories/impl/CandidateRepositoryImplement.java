@@ -5,6 +5,7 @@
 package com.myweb.repositories.impl;
 
 import com.myweb.pojo.Candidate;
+import com.myweb.pojo.User;
 import com.myweb.repositories.CandidateRepository;
 import com.myweb.utils.GeneralUtils;
 import jakarta.persistence.Query;
@@ -138,4 +139,56 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         }
         return candidate;
     }
+
+    @Override
+    public Candidate createCandidate(User u, Candidate c) {
+        Session s = this.factory.getObject().getCurrentSession();
+        try {
+            s.persist(u);
+
+            s.persist(c);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Lỗi: " + e.getMessage());
+        }
+        return c;
+    }
+
+    @Override
+    public Candidate getCandidateByEmail(String email) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("Candidate.findByEmail", Candidate.class);
+        q.setParameter("email", email);
+        List<Candidate> rs = q.getResultList();
+        return rs.isEmpty() ? null : rs.get(0);
+    }
+
+    @Override
+    public Candidate getCandidateByPhone(String phone) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("Candidate.findByPhone", Candidate.class);
+        q.setParameter("phone", phone);
+        List<Candidate> rs = q.getResultList();
+        return rs.isEmpty() ? null : rs.get(0);
+    }
+
+    @Override
+    public List<Candidate> getCandidateList() {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<Candidate> cq = cb.createQuery(Candidate.class);
+        Root<Candidate> root = cq.from(Candidate.class);
+
+        return s.createQuery(cq).getResultList();
+    }
+
+    @Override
+    public void deleteCandidate(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Candidate c = this.getCandidateById(id);
+        
+        s.remove(c.getUserId());
+    }
+
 }

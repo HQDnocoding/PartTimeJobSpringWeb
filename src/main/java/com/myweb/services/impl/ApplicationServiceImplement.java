@@ -32,4 +32,10 @@ public class ApplicationServiceImplement implements ApplicationService{
     public Application getApplicationById(int applicationId) {
         return applicationRepository.getApplicationById(applicationId);
     }
+
+    @Override
+    public void deleteApplication(int id) {
+        this.applicationRepository.deleteApplication(id);
+    }
+    
 }

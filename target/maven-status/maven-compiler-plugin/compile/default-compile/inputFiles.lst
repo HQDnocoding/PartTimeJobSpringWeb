@@ -6,6 +6,8 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\SecurityWebApp
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\SpringSecurityConfigs.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\ThymeleafConfig.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\WebApplicationContextConfig.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApiApplicationController.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApiCandidateController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApiCompanyController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApiUserController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApplicationController.java
@@ -14,7 +16,9 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\CompanyCon
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\IndexController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\JobController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\UserController.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\CreateCandidateDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\CreateCompanyDTO.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\GetCandidateDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Application.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Candidate.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\CandidateReview.java
@@ -38,7 +42,6 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\impl\Comp
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\impl\DayRepositoryImplement.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\impl\JobRepositoryImplement.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\impl\MajorRepositoryImplement.java
-P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\impl\SessionFactoryBean.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\impl\UserRepositoryImplement.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\JobRepository.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\MajorRepository.java

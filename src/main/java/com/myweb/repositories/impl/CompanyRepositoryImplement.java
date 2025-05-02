@@ -145,7 +145,7 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         Session s = this.factory.getObject().getCurrentSession();
         Company c = this.getCompanyById(id);
 
-        s.remove(c);
+        s.remove(c.getUserId());
     }
 
     @Override

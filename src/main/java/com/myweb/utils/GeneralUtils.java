@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class GeneralUtils {
 
-    public static final int PAGE_SIZE = 15;
+    public static final int PAGE_SIZE = 6;
     public static final String PAGE = "1";
 
     public static enum Status {

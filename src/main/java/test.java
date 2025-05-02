@@ -88,7 +88,7 @@ public class test {
 //        c.setFullAddress("HCM,Q1");
 //        c.setTaxCode("123d1A45");
         c.setRegisterDate(new Date());
-        c.setRole(GeneralUtils.Role.ADMIN.toString());
+        c.setRole(GeneralUtils.Role.ROLE_ADMIN.toString());
 //        c.setStatus("pending");
 
 //        session.persist(c);

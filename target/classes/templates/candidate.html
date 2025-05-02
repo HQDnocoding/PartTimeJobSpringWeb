@@ -10,22 +10,22 @@
             position: sticky;
             top: 0;
             z-index: 3;
-            background: #fff; /* Thêm màu nền để dễ đọc */
+            background: #fff; 
         }
         .pagination {
-            justify-content: flex-start; /* Căn trái phần phân trang */
-            margin-top: 10px; /* Khoảng cách nhỏ giữa tiêu đề và phân trang */
-            margin-bottom: 20px; /* Khoảng cách giữa phân trang và bảng */
+            justify-content: flex-start;
+            margin-top: 10px;
+            margin-bottom: 20px; 
         }
         .table-section {
             overflow-y: auto;
-            max-height: 70vh; /* Đảm bảo bảng có thể cuộn */
+            max-height: 70vh; 
         }
         .header-section {
             display: flex;
-            justify-content: space-between; /* Giữ tiêu đề bên trái, nút "Hành động" bên phải */
+            justify-content: space-between; 
             align-items: center;
-            width: 100%; /* Đảm bảo header-section chiếm toàn bộ chiều rộng */
+            width: 100%;
         }
     </style>
 </head>
@@ -42,7 +42,9 @@
                                 Hành động
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="actionDropdown">
-                                <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/candidates} + '\',  \'candidate-checkbox\')'" id="deleteSelected">Xóa</a></li>
+                                <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/candidates} + '\',  \'.candidate-checkbox:checked\')'" id="deleteSelected">Xóa</a></li>
+                                <li><a class="dropdown-item" th:href="@{/candidates/create-candidate}">Tạo mới</a></li>
+
                             </ul>
                         </div>
                     </div>
@@ -129,38 +131,6 @@
                 checkbox.checked = this.checked;
             });
         });
-
-        // Xóa các ứng viên đã chọn
-//        document.getElementById('deleteSelected').addEventListener('click', function (e) {
-//            e.preventDefault();
-//            const selectedIds = Array.from(document.querySelectorAll('.candidate-checkbox:checked'))
-//                    .map(checkbox => checkbox.value);
-//
-//            if (selectedIds.length === 0) {
-//                alert('Vui lòng chọn ít nhất một ứng viên để xóa!');
-//                return;
-//            }
-//
-//            if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.length} ứng viên đã chọn?`)) {
-//                Promise.all(selectedIds.map(id =>
-//                    fetch(`/api/candidate/${id}`, {method: 'DELETE'})
-//                            .then(response => {
-//                                if (!response.ok) {
-//                                    throw new Error(`Lỗi khi xóa ứng viên ID ${id}`);
-//                                }
-//                                return id;
-//                            })
-//                ))
-//                        .then(() => {
-//                            alert('Xóa ứng viên thành công!');
-//                            location.reload();
-//                        })
-//                        .catch(error => {
-//                            console.error('Lỗi:', error);
-//                            alert('Đã xảy ra lỗi khi xóa ứng viên!');
-//                        });
-//            }
-//        });
 
         // Tải danh sách thành phố
         document.addEventListener('DOMContentLoaded', function () {

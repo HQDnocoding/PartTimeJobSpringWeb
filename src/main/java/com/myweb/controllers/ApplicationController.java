@@ -63,4 +63,9 @@ public class ApplicationController {
         model.addAttribute("appli", application);
         return "application-detail";
     }
+    
+    @GetMapping("/applications/create-application")
+    public String createApplicationView(Model model){
+        return "create-application";
+    }
 }
