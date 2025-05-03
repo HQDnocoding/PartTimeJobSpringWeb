@@ -205,4 +205,12 @@ public class JobServiceImplement implements JobService {
         }
         return jobs;
     }
+
+    //Dat codes
+    @Override
+    public List<Job> getJobList() {
+        return this.jobRepository.getListJobForManage();
+    }
+    
+    
 }

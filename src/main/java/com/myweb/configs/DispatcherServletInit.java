@@ -14,13 +14,12 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
  */
 public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherServletInitializer {
 
-    
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return new Class[]{
             ThymeleafConfig.class,
             HibernateConfigs.class,
-            SpringSecurityConfigs.class        };
+            SpringSecurityConfigs.class};
     }
 
     @Override
@@ -36,8 +35,8 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
             "/"
         };
     }
-    
-     @Override
+
+    @Override
     protected void customizeRegistration(ServletRegistration.Dynamic registration) {
         String location = "/";
         long maxFileSize = 5242880; // 5MB

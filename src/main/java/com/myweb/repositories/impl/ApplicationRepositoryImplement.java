@@ -46,7 +46,7 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
             return a;
         } catch (Exception e) {
             e.printStackTrace();
-            return null; // Hoặc ném ngoại lệ tùy yêu cầu
+            return null; 
         }
     }
 

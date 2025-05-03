@@ -33,8 +33,7 @@ public class ApiCandidateController {
     public List<GetCandidateDTO> getCandidateList() {
         List<Candidate> candidates = candidateService.getCandidateList();
         return candidates.stream().map(c -> {
-            GetCandidateDTO dto = new GetCandidateDTO(c.getId(), c.getFullName(), c.getEmail(), c.getDateOfBirth(),
-                    c.getCity(), c.getAvatar(), c.getSelfDescription(), c.getPhone(), c.getCurriculumVitae());
+            GetCandidateDTO dto = new GetCandidateDTO(c);
             return dto;
         }).collect(Collectors.toList());
     }

@@ -4,6 +4,7 @@
  */
 package com.myweb.dto;
 
+import com.myweb.pojo.Candidate;
 import com.myweb.pojo.User;
 import java.util.Date;
 
@@ -23,17 +24,16 @@ public class GetCandidateDTO {
     private String phone;
     private String curriculumVitae;
 
-    public GetCandidateDTO(Integer id, String fullName, String email, Date dateOfBirth,
-            String city, String avatar, String selfDescription, String phone, String curriculumVitae) {
-        this.avatar = avatar;
-        this.city = city;
-        this.curriculumVitae = curriculumVitae;
-        this.dateOfBirth = dateOfBirth;
-        this.email = email;
-        this.fullName = fullName;
-        this.phone = phone;
-        this.selfDescription = selfDescription;
-        this.id = id;
+    public GetCandidateDTO(Candidate candidate) {
+        this.avatar = candidate.getAvatar();
+        this.city = candidate.getCity();
+        this.curriculumVitae = candidate.getCurriculumVitae();
+        this.dateOfBirth = candidate.getDateOfBirth();
+        this.email = candidate.getEmail();
+        this.fullName = candidate.getFullName();
+        this.phone = candidate.getPhone();
+        this.selfDescription = candidate.getSelfDescription();
+        this.id = candidate.getId();
     }
 
     /**

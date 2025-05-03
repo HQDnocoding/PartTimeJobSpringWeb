@@ -16,6 +16,7 @@ function deleteRecord(e, endpoint, checkBoxClass) {
                         if (!response.ok) {
                             throw new Error(`Lỗi khi xóa ứng viên ID ${id}`);
                         }
+                        
                         return id;
                     })
         ))

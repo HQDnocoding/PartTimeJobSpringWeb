@@ -26,9 +26,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                         <label for="candidateId" class="form-label">Ứng Viên *</label>
                         <select class="form-select" id="candidateId" th:field="*{candidateId}" required>
                             <option value="">Chọn ứng viên</option>
-                            <th:block th:each="candidate : ${candidates}">
-                                <option th:value="${candidate.id}" th:text="${candidate.fullName}"></option>
-                            </th:block>
+                            <option th:each="c : ${candidates}" th:text="${c.fullName}"  th:value="${c.id}" ></option>
                         </select>
                         <div class="invalid-feedback">Vui lòng chọn ứng viên.</div>
                     </div>
@@ -36,31 +34,19 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                         <label for="jobId" class="form-label">Công Việc *</label>
                         <select class="form-select" id="jobId" th:field="*{jobId}" required>
                             <option value="">Chọn công việc</option>
-                            <th:block th:each="job : ${jobs}">
-                                <option th:value="${job.id}" th:text="${job.jobName}"></option>
-                            </th:block>
+                            <option  th:each="j : ${jobs}" th:text="${j.jobName}"  th:value="${j.id}"></option>
                         </select>
                         <div class="invalid-feedback">Vui lòng chọn công việc.</div>
                     </div>
                     <div class="col-md-6">
                         <label for="curriculumVitae" class="form-label">CV (PDF) *</label>
-                        <input type="file" class="form-control" id="curriculumVitae" th:field="*{curriculumVitaeFile}"
+                        <input type="file" class="form-control" id="curriculumVitae" th:field="*{curriculumVitae}"
                                accept="application/pdf" required/>
                         <small class="form-text text-muted">Tải lên CV định dạng PDF.</small>
                         <div class="invalid-feedback">Vui lòng chọn file CV.</div>
                     </div>
-                    <div class="col-md-6">
-                        <label for="status" class="form-label">Trạng Thái *</label>
-                        <select class="form-select" id="status" th:field="*{status}" required>
-                            <option value="">Chọn trạng thái</option>
-                            <option value="PENDING">Đang chờ</option>
-                            <option value="APPROVED">Đã chấp nhận</option>
-                            <option value="REJECTED">Bị từ chối</option>
-                        </select>
-                        <div class="invalid-feedback">Vui lòng chọn trạng thái.</div>
-                    </div>
                     <div class="col-12">
-                        <label for="message" class="form-label">Tin Nhắn</label>
+                        <label for="message" class="form-label">Lời Nhắn</label>
                         <textarea class="form-control" id="message" th:field="*{message}" rows="4"
                                   placeholder="Nhập tin nhắn (tùy chọn)"></textarea>
                     </div>
@@ -68,13 +54,14 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                         <button type="submit" class="btn btn-primary w-100">Tạo</button>
                     </div>
                 </form>
-                <div id="message" class="mt-3 text-center">
+                <div id="errorMessage" class="mt-3 text-center">
                     <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
                 </div>
             </div>
         </div>
     </main>  
     <div th:replace="base :: footer"></div>
-
 </body>
+
+
 </html>

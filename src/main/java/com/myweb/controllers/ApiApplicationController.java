@@ -29,4 +29,7 @@ public class ApiApplicationController {
     public void deleteCompany(@PathVariable(value = "applicationId") int applicationId) {
         this.applicationService.deleteApplication(applicationId);
     }
+    
+    
+    
 }

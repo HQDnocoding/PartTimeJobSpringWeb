@@ -16,4 +16,5 @@ public interface ApplicationRepository {
     Map<String, Object> getListApplication(Map<String, String> params);
     Application getApplicationById(int applicationId);
     void deleteApplication(int id);
+    
 }

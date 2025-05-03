@@ -31,4 +31,8 @@ public interface JobService {
 
     // Thêm phương thức để khớp với JobController
     List<Job> getAllJobs();
+    
+    
+    //Dat codes
+    List<Job> getJobList();
 }

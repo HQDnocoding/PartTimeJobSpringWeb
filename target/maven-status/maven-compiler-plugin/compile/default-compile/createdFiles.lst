@@ -1,3 +1,4 @@
+com\myweb\controllers\ApiJobController.class
 com\myweb\pojo\CompanyReview.class
 com\myweb\configs\DispatcherServletInit.class
 com\myweb\repositories\impl\ApplicationRepositoryImplement.class
@@ -17,6 +18,7 @@ com\myweb\configs\HibernateConfigs.class
 com\myweb\pojo\Job.class
 com\myweb\pojo\Company.class
 com\myweb\pojo\User.class
+com\myweb\dto\GetJobDTO.class
 com\myweb\utils\GeneralUtils$Status.class
 com\myweb\services\CandidateService.class
 com\myweb\controllers\CompanyController.class
@@ -37,6 +39,7 @@ com\myweb\pojo\Major.class
 com\myweb\repositories\UserRepository.class
 com\myweb\backend\resources\JakartaEE11Resource.class
 com\myweb\controllers\ApiApplicationController.class
+com\myweb\dto\CreateApplicationDTO.class
 com\myweb\services\impl\MajorServiceImplement.class
 com\myweb\repositories\impl\CandidateRepositoryImplement.class
 com\myweb\repositories\MajorRepository.class

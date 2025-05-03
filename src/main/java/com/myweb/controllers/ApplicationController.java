@@ -4,17 +4,26 @@
  */
 package com.myweb.controllers;
 
+import com.myweb.dto.CreateApplicationDTO;
+import com.myweb.dto.CreateCandidateDTO;
 import com.myweb.pojo.Application;
+import com.myweb.pojo.Candidate;
+import com.myweb.pojo.Job;
 import com.myweb.services.ApplicationService;
+import com.myweb.services.CandidateService;
+import com.myweb.services.JobService;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -26,6 +35,12 @@ public class ApplicationController {
 
     @Autowired
     private ApplicationService applicationService;
+
+    @Autowired
+    private CandidateService candidateService;
+
+    @Autowired
+    private JobService jobService;
 
     @GetMapping("/applications")
     public String applicationView(Model model, @RequestParam Map<String, String> params) {
@@ -63,9 +78,37 @@ public class ApplicationController {
         model.addAttribute("appli", application);
         return "application-detail";
     }
-    
+
     @GetMapping("/applications/create-application")
-    public String createApplicationView(Model model){
+    public String createApplicationView(Model model) {
+        List<Candidate> candidateList = this.candidateService.getCandidateList();
+        List<Job> jobList = this.jobService.getJobList();
+        Map<String, Object> data = new HashMap<>();
+        data.put("applicationDTO", new CreateApplicationDTO());
+        data.put("candidates", candidateList);
+        data.put("jobs", jobList);
+        model.addAllAttributes(data);
         return "create-application";
+    }
+
+    @PostMapping("/applications")
+    public String createApplication(Model model, @ModelAttribute(value = "applicationDTO") CreateApplicationDTO applicationDTO) {
+        List<Candidate> candidateList = this.candidateService.getCandidateList();
+        List<Job> jobList = this.jobService.getJobList();
+        Map<String, Object> data = new HashMap<>();
+        data.put("applicationDTO", new CreateApplicationDTO());
+        data.put("candidates", candidateList);
+        data.put("jobs", jobList);
+        model.addAllAttributes(data);
+        try {
+            Application app = this.applicationService.addApplicationDTO(applicationDTO);
+            return "redirect:/applications/" + app.getId();
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "create-application";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Đã có lỗi xảy ra, vui lòng thử lại.");
+            return "create-application";
+        }
     }
 }

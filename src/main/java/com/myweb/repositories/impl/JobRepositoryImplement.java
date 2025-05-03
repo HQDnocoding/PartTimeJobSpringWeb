@@ -12,6 +12,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Order;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -27,7 +28,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Implementation of JobRepository for managing Job entities. Handles database operations for searching and filtering jobs.
+ * Implementation of JobRepository for managing Job entities. Handles database
+ * operations for searching and filtering jobs.
  *
  * @author Hau
  */
@@ -298,10 +300,7 @@ public class JobRepositoryImplement implements JobRepository {
 
         List<Job> jobs = session.createQuery(cq).getResultList();
 
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+                
 
         return jobs;
     }
@@ -361,9 +360,21 @@ public class JobRepositoryImplement implements JobRepository {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    //Dat codes
     @Override
     public List<Job> getListJobForManage() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Session s = this.sessionFactory.getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<Job> q = cb.createQuery(Job.class);
+        Root<Job> root = q.from(Job.class);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(root.get("isActive"), true));
+        predicates.add(cb.equal(root.get("status"), GeneralUtils.Status.approved.toString()));
+        predicates.add(cb.equal(root.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
+
+        q.where(cb.and(predicates.toArray(new Predicate[0])));
+        q.orderBy( cb.asc(root.get("id")));
+        return s.createQuery(q).getResultList();
     }
 
     @Override

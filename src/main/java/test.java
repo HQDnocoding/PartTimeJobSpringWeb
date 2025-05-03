@@ -41,54 +41,56 @@ public class test {
 
     public static void main(String[] args) {
 
-        Configuration conf = new Configuration();
-        Properties props = new Properties();
-        props.put(Environment.DIALECT, "org.hibernate.dialect.MySQLDialect");
-        props.put(Environment.JAKARTA_JDBC_DRIVER, "com.mysql.cj.jdbc.Driver");
-        props.put(Environment.JAKARTA_JDBC_URL, "jdbc:mysql://localhost:3306/jobdb?zeroDateTimeBehavior=CONVERT_TO_NULL");
-        props.put(Environment.JAKARTA_JDBC_USER, "root");
-        props.put(Environment.JAKARTA_JDBC_PASSWORD, "Admin@12");
-        props.put(Environment.SHOW_SQL, "true");
 
-        conf.setProperties(props);
 
-        conf.addAnnotatedClass(Candidate.class);
-        conf.addAnnotatedClass(Company.class);
-        conf.addAnnotatedClass(User.class);
-        conf.addAnnotatedClass(Application.class);
-        conf.addAnnotatedClass(Day.class);
-        conf.addAnnotatedClass(DayJob.class);
-        conf.addAnnotatedClass(Job.class);
-        conf.addAnnotatedClass(Follow.class);
-        conf.addAnnotatedClass(Major.class);
-        conf.addAnnotatedClass(MarjorJob.class);
-        conf.addAnnotatedClass(CompanyReview.class);
-        conf.addAnnotatedClass(CandidateReview.class);
-        conf.addAnnotatedClass(ImageWorkplace.class);
-
-        User c = new User();
-
-        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(conf.getProperties()).build();
-
-        SessionFactory FACTORY = conf.buildSessionFactory(serviceRegistry);
-
-        Session session = FACTORY.openSession();
-
-        Transaction tran = session.beginTransaction();
-
-        BCryptPasswordEncoder passEncoder = new BCryptPasswordEncoder();
-
-        c.setUsername("admin3");
-        c.setPassword(passEncoder.encode("123456"));
+//        Configuration conf = new Configuration();
+//        Properties props = new Properties();
+//        props.put(Environment.DIALECT, "org.hibernate.dialect.MySQLDialect");
+//        props.put(Environment.JAKARTA_JDBC_DRIVER, "com.mysql.cj.jdbc.Driver");
+//        props.put(Environment.JAKARTA_JDBC_URL, "jdbc:mysql://localhost:3306/jobdb?zeroDateTimeBehavior=CONVERT_TO_NULL");
+//        props.put(Environment.JAKARTA_JDBC_USER, "root");
+//        props.put(Environment.JAKARTA_JDBC_PASSWORD, "Admin@12");
+//        props.put(Environment.SHOW_SQL, "true");
+//
+//        conf.setProperties(props);
+//
+//        conf.addAnnotatedClass(Candidate.class);
+//        conf.addAnnotatedClass(Company.class);
+//        conf.addAnnotatedClass(User.class);
+//        conf.addAnnotatedClass(Application.class);
+//        conf.addAnnotatedClass(Day.class);
+//        conf.addAnnotatedClass(DayJob.class);
+//        conf.addAnnotatedClass(Job.class);
+//        conf.addAnnotatedClass(Follow.class);
+//        conf.addAnnotatedClass(Major.class);
+//        conf.addAnnotatedClass(MarjorJob.class);
+//        conf.addAnnotatedClass(CompanyReview.class);
+//        conf.addAnnotatedClass(CandidateReview.class);
+//        conf.addAnnotatedClass(ImageWorkplace.class);
+//
+//        User c = new User();
+//
+//        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(conf.getProperties()).build();
+//
+//        SessionFactory FACTORY = conf.buildSessionFactory(serviceRegistry);
+//
+//        Session session = FACTORY.openSession();
+//
+//        Transaction tran = session.beginTransaction();
+//
+//        BCryptPasswordEncoder passEncoder = new BCryptPasswordEncoder();
+//
+//        c.setUsername("admin3");
+//        c.setPassword(passEncoder.encode("123456"));
 //        c.setAvatar("");
 //        c.setName("ABC");
 //        c.setCity("HCM");
 //        c.setDistrict("Q1");
 //        c.setEmail("10yBd@gmail.com");
-//        c.setFullAddress("HCM,Q1");   
+//        c.setFullAddress("HCM,Q1");
 //        c.setTaxCode("123d1A45");
-        c.setRegisterDate(new Date());
-        c.setRole(GeneralUtils.Role.ROLE_ADMIN.toString());
+//        c.setRegisterDate(new Date());
+//        c.setRole(GeneralUtils.Role.ROLE_ADMIN.toString());
 //        c.setStatus("pending");
 
 //        session.persist(c);
@@ -96,15 +98,15 @@ public class test {
 //
 //        for (User u : users) {
 //            System.out.println("ID: " + u.getId() + ", Username: " + u.getUsername() + ", Role: " + u.getRole());
-//        }   
+//        }
 
-        Query query = session.createNamedQuery("User.findByUsername", User.class);
-        query.setParameter("username", "admin3");
-        
-        System.out.println((User)query.getSingleResult());
-
-        tran.commit();
-        session.close();
-        FACTORY.close();
+//        Query query = session.createNamedQuery("User.findByUsername", User.class);
+//        query.setParameter("username", "admin3");
+//
+//        System.out.println((User)query.getSingleResult());
+//
+//        tran.commit();
+//        session.close();
+//        FACTORY.close();
     }
 }

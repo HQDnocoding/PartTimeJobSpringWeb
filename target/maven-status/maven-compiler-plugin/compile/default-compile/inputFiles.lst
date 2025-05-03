@@ -9,6 +9,7 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\WebApplication
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApiApplicationController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApiCandidateController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApiCompanyController.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApiJobController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApiUserController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApplicationController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\CandidateController.java
@@ -16,9 +17,11 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\CompanyCon
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\IndexController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\JobController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\UserController.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\CreateApplicationDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\CreateCandidateDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\CreateCompanyDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\GetCandidateDTO.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\GetJobDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Application.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Candidate.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\CandidateReview.java

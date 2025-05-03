@@ -7,6 +7,7 @@ package com.myweb.controllers;
 import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
 import com.myweb.services.CompanyService;
+import com.myweb.utils.GeneralUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +32,8 @@ public class CompanyController {
 
     @Autowired
     private CompanyService cpnyService;
+
+
 
     @GetMapping("/companies")
     public String companyView(Model model, @RequestParam Map<String, String> params) {
@@ -72,7 +75,7 @@ public class CompanyController {
     public String createCompany(Model model, @ModelAttribute(value = "companyDTO") CreateCompanyDTO companyDTO) {
         try {
             Company company = this.cpnyService.createCompanyDTO(companyDTO);
-            return "redirect:/companies/"+company.getId();
+            return "redirect:/companies/" + company.getId();
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "create-company";
@@ -80,7 +83,6 @@ public class CompanyController {
             model.addAttribute("errorMessage", "Đã có lỗi xảy ra, vui lòng thử lại.");
             return "create-company";
         }
-//        return "redirect:/companies/" + company.getId();
     }
 
 }

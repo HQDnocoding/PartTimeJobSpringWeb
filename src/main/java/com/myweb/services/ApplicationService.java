@@ -4,6 +4,7 @@
  */
 package com.myweb.services;
 
+import com.myweb.dto.CreateApplicationDTO;
 import com.myweb.pojo.Application;
 import java.util.Map;
 
@@ -16,4 +17,6 @@ public interface ApplicationService {
     Map<String, Object> getListApplication(Map<String, String> params);
     Application getApplicationById(int applicationId);
     void deleteApplication(int id);
+    
+    Application addApplicationDTO(CreateApplicationDTO dto);
 }

@@ -179,6 +179,8 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         CriteriaBuilder cb = s.getCriteriaBuilder();
         CriteriaQuery<Candidate> cq = cb.createQuery(Candidate.class);
         Root<Candidate> root = cq.from(Candidate.class);
+        Predicate isActivePredicate = cb.equal(root.get("userId").get("isActive"), true);
+        cq.where(isActivePredicate);
 
         return s.createQuery(cq).getResultList();
     }

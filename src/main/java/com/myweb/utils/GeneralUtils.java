@@ -9,12 +9,19 @@ import com.cloudinary.utils.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.codec.Charsets;
 
 /**
  *
@@ -72,7 +79,6 @@ public class GeneralUtils {
         return sdf.format(date);
     }
 
-
     public static String uploadFileToCloud(Cloudinary cloudinary, MultipartFile file) {
         try {
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
@@ -82,4 +88,40 @@ public class GeneralUtils {
             throw new RuntimeException("Lỗi khi upload lên Cloudinary", e);
         }
     }
+
+    private static final HttpClient client = HttpClient.newHttpClient();
+    public static String getProvince() {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://provinces.open-api.vn/api/p/"))
+                .header("Accept", "application/json; charset=utf-8")
+                .GET()
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.body();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String getDistrict(Integer cityId) {
+        String url   = String.format("https://provinces.open-api.vn/api/p/%d/", cityId);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Accept", "application/json; charset=utf-8")
+                .GET()
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.body(); 
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }
