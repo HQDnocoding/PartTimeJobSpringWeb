@@ -16,7 +16,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         <div class="card shadow">
             <div class="card-body p-4">
                 <h2 class="card-title text-center mb-4">Tạo Đơn Ứng Tuyển</h2>
-                <form id="createApplicationForm" th:object="${applicationDTO}" th:action="@{'/applications'}" method="post"
+                <form id="createApplicationForm" th:object="${application}" th:action="@{'/applications'}" method="post"
                       class="row g-3" enctype="multipart/form-data">
                     <!-- Thông tin đơn ứng tuyển -->
                     <div class="col-12">
@@ -40,7 +40,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                     </div>
                     <div class="col-md-6">
                         <label for="curriculumVitae" class="form-label">CV (PDF) *</label>
-                        <input type="file" class="form-control" id="curriculumVitae" th:field="*{curriculumVitae}"
+                        <input type="file" class="form-control" id="curriculumVitae" th:field="*{curriculumVitaeFile}"
                                accept="application/pdf" required/>
                         <small class="form-text text-muted">Tải lên CV định dạng PDF.</small>
                         <div class="invalid-feedback">Vui lòng chọn file CV.</div>

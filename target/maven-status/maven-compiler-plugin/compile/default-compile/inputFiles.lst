@@ -22,6 +22,8 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\CreateCandidateDTO
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\CreateCompanyDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\GetCandidateDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\GetJobDTO.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\formatters\CandidateFormatter.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\formatters\JobFormatter.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Application.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Candidate.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\CandidateReview.java

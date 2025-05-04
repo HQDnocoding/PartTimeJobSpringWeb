@@ -84,7 +84,7 @@ public class ApplicationController {
         List<Candidate> candidateList = this.candidateService.getCandidateList();
         List<Job> jobList = this.jobService.getJobList();
         Map<String, Object> data = new HashMap<>();
-        data.put("applicationDTO", new CreateApplicationDTO());
+        data.put("application", new Application());
         data.put("candidates", candidateList);
         data.put("jobs", jobList);
         model.addAllAttributes(data);
@@ -92,23 +92,23 @@ public class ApplicationController {
     }
 
     @PostMapping("/applications")
-    public String createApplication(Model model, @ModelAttribute(value = "applicationDTO") CreateApplicationDTO applicationDTO) {
-        List<Candidate> candidateList = this.candidateService.getCandidateList();
-        List<Job> jobList = this.jobService.getJobList();
-        Map<String, Object> data = new HashMap<>();
-        data.put("applicationDTO", new CreateApplicationDTO());
-        data.put("candidates", candidateList);
-        data.put("jobs", jobList);
-        model.addAllAttributes(data);
+    public String createApplication(Model model, @ModelAttribute(value = "application") Application application) {
+//        List<Candidate> candidateList = this.candidateService.getCandidateList();
+//        List<Job> jobList = this.jobService.getJobList();
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("application", new Application());
+//        data.put("candidates", candidateList);
+//        data.put("jobs", jobList);
+//        model.addAllAttributes(data);
         try {
-            Application app = this.applicationService.addApplicationDTO(applicationDTO);
+            Application app = this.applicationService.addApplication(application);
             return "redirect:/applications/" + app.getId();
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "create-application";
+            return "forward:/applications/create-application";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Đã có lỗi xảy ra, vui lòng thử lại.");
-            return "create-application";
+            return "forward:/applications/create-application";
         }
     }
 }

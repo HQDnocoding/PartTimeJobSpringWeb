@@ -17,10 +17,12 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -67,6 +69,9 @@ public class Application implements Serializable {
     @JoinColumn(name = "job_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Job jobId;
+
+    @Transient
+    private MultipartFile curriculumVitaeFile;
 
     public Application() {
     }
@@ -162,5 +167,19 @@ public class Application implements Serializable {
     public String toString() {
         return "com.myweb.pojo.Application[ id=" + id + " ]";
     }
-    
+
+    /**
+     * @return the curriculumVitaeFile
+     */
+    public MultipartFile getCurriculumVitaeFile() {
+        return curriculumVitaeFile;
+    }
+
+    /**
+     * @param curriculumVitaeFile the curriculumVitaeFile to set
+     */
+    public void setCurriculumVitaeFile(MultipartFile curriculumVitaeFile) {
+        this.curriculumVitaeFile = curriculumVitaeFile;
+    }
+
 }

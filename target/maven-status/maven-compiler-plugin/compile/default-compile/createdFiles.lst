@@ -37,6 +37,7 @@ com\myweb\configs\ThymeleafConfig.class
 com\myweb\services\impl\DayServiceImplement.class
 com\myweb\pojo\Major.class
 com\myweb\repositories\UserRepository.class
+com\myweb\formatters\CandidateFormatter.class
 com\myweb\backend\resources\JakartaEE11Resource.class
 com\myweb\controllers\ApiApplicationController.class
 com\myweb\dto\CreateApplicationDTO.class
@@ -62,6 +63,7 @@ com\myweb\dto\GetCandidateDTO.class
 com\myweb\pojo\CandidateReview.class
 com\myweb\services\impl\CompanyServiceImplement.class
 com\myweb\repositories\JobRepository.class
+com\myweb\formatters\JobFormatter.class
 com\myweb\dto\CreateCandidateDTO.class
 com\myweb\services\impl\ApplicationServiceImplement.class
 test.class

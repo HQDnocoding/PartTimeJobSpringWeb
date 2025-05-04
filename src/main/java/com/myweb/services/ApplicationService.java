@@ -18,5 +18,5 @@ public interface ApplicationService {
     Application getApplicationById(int applicationId);
     void deleteApplication(int id);
     
-    Application addApplicationDTO(CreateApplicationDTO dto);
+    Application addApplication(Application application);
 }

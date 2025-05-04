@@ -54,22 +54,15 @@ public class ApplicationServiceImplement implements ApplicationService {
     }
 
     @Override
-    public Application addApplicationDTO(CreateApplicationDTO dto) {
-        
-        Application a = new Application();
-        Candidate c = this.candidateRepository.getCandidateById(dto.getCandidateId());
-        Job j = this.jobRepository.getJobById(dto.getJobId());
-        System.out.println(j);
-        a.setJobId(j);
-        a.setCandidateId(c);
-        if (dto.getCurriculumVitae() != null && !dto.getCurriculumVitae().isEmpty()) {
-            a.setCurriculumVitae(GeneralUtils.uploadFileToCloud(cloudinary, dto.getCurriculumVitae()));
+    public Application addApplication(Application application) {
+
+        if (application.getCurriculumVitaeFile()!= null && !application.getCurriculumVitaeFile().isEmpty()) {
+            application.setCurriculumVitae(GeneralUtils.uploadFileToCloud(cloudinary, application.getCurriculumVitaeFile()));
         }
-        a.setMessage(dto.getMessage());
-        a.setStatus(GeneralUtils.Status.pending.toString());
-        a.setAppliedDate(new Date());
+        application.setStatus(GeneralUtils.Status.pending.toString());
+        application.setAppliedDate(new Date());
         try {
-            return this.applicationRepository.addOrUpdateApplication(a);
+            return this.applicationRepository.addOrUpdateApplication(application);
         } catch (Exception e) {
             throw new IllegalArgumentException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin.");
 
