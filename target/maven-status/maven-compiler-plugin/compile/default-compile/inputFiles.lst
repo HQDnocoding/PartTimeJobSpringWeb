@@ -1,6 +1,7 @@
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\backend\JakartaRestConfiguration.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\backend\resources\JakartaEE11Resource.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\DispatcherServletInit.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\EnvConfig.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\HibernateConfigs.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\SecurityWebApplicationInitializer.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\configs\SpringSecurityConfigs.java
@@ -22,6 +23,7 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\CreateCandidateDTO
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\CreateCompanyDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\GetCandidateDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\GetJobDTO.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\filters\JwtFilters.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\formatters\CandidateFormatter.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\formatters\JobFormatter.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Application.java
@@ -66,4 +68,5 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\services\JobService.ja
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\services\MajorService.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\services\UserService.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\utils\GeneralUtils.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\utils\JwtUtils.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\test.java

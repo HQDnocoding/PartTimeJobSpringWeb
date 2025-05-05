@@ -42,8 +42,6 @@ public class test {
 
     public static void main(String[] args) {
 
-        Dotenv.configure().load();
-        private Dotenv dotenv=Dotenv.load();
 
     }
 }
