@@ -21,9 +21,15 @@ public class DayRepositoryImplement implements DayRepository {
     @Autowired
     private SessionFactory sessionFactory;
 
+    // Lấy tất cả các ngày
     @Override
     public List<Day> getDays() {
         Session session = sessionFactory.getCurrentSession();
         return session.createQuery("FROM Day", Day.class).getResultList();
+    }
+
+    @Override
+    public Day getDayById(Integer dayId) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

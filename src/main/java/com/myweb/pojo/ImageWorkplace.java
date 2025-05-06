@@ -29,14 +29,17 @@ public class ImageWorkplace implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
     @Column(name = "image_url")
     private String imageUrl;
+    
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Company companyId;
+    
     @Transient
     private MultipartFile file;
 

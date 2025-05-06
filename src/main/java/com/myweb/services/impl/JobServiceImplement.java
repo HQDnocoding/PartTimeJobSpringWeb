@@ -1,147 +1,156 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbformat/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.myweb.services.impl;
 
+import com.myweb.dto.CreateJobDTO;
+import com.myweb.dto.GetJobDTO;
+import com.myweb.pojo.Company;
+import com.myweb.pojo.Day;
+import com.myweb.pojo.DayJob;
 import com.myweb.pojo.Job;
+import com.myweb.pojo.Major;
+import com.myweb.pojo.MajorJob;
+import com.myweb.repositories.CompanyRepository;
+import com.myweb.repositories.DayRepository;
 import com.myweb.repositories.JobRepository;
+import com.myweb.repositories.MajorRepository;
 import com.myweb.services.JobService;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 
 @Service
 public class JobServiceImplement implements JobService {
 
+    private static final Logger logger = Logger.getLogger(JobServiceImplement.class.getName());
+
     @Autowired
     private JobRepository jobRepository;
 
+    @Autowired
+    private CompanyRepository companyRepository;
+
+    @Autowired
+    private MajorRepository majorRepository;
+
+    @Autowired
+    private DayRepository dayRepository;
+
+    private void initializeJobCollections(Job job) {
+        if (job != null && Hibernate.isInitialized(job)) {
+            Hibernate.initialize(job.getMajorJobCollection());
+            Hibernate.initialize(job.getDayJobCollection());
+        }
+    }
+
+    private void initializeJobCollections(List<Job> jobs) {
+        if (jobs != null) {
+            for (Job job : jobs) {
+                initializeJobCollections(job);
+            }
+        }
+    }
+
     @Override
+    @Transactional(readOnly = true)
     public Map<String, Object> searchJobs(Map<String, String> params) {
         Map<String, Object> result = jobRepository.searchJobs(params);
         List<Job> jobs = (List<Job>) result.get("jobs");
-        // Initialize collections for each job
-        if (jobs != null) {
-            for (Job job : jobs) {
-                Hibernate.initialize(job.getMarjorJobCollection());
-                Hibernate.initialize(job.getDayJobCollection());
-            }
-        }
+        initializeJobCollections(jobs);
         return result;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Job> getListJobByMajor(int majorId) {
         List<Job> jobs = jobRepository.getListJobByMajor(majorId);
-        // Initialize collections for each job
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(jobs);
         return jobs;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Job getJobById(int jobId) {
         Job job = jobRepository.getJobById(jobId);
-        if (job != null) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(job);
         return job;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Job> getListJobByRecommend(int majorId, int cityId) {
         List<Job> jobs = jobRepository.getListJobByRecommend(majorId, cityId);
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(jobs);
         return jobs;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Job> getListJobByCompanyId(int companyId) {
         List<Job> jobs = jobRepository.getListJobByCompanyId(companyId);
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(jobs);
         return jobs;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Job> getListJobByCompanyId1(int companyId) {
         List<Job> jobs = jobRepository.getListJobByCompanyId1(companyId);
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(jobs);
         return jobs;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Job> getListJobByCompanyExceptCurrentJob(int companyId, int jobId) {
         List<Job> jobs = jobRepository.getListJobByCompanyExceptCurrentJob(companyId, jobId);
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(jobs);
         return jobs;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Job getNameJob(int jobId) {
         Job job = jobRepository.getNameJob(jobId);
-        if (job != null) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(job);
         return job;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Job> getListJobByCandidate(int candidateId) {
         List<Job> jobs = jobRepository.getListJobByCandidate(candidateId);
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(jobs);
         return jobs;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Job> getListJobByCheckAdmin() {
         List<Job> jobs = jobRepository.getListJobByCheckAdmin();
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(jobs);
         return jobs;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Job> getListJobByMajorAndCity(int majorId, String city, String kw) {
         List<Job> jobs = jobRepository.getListJobByMajorAndCity(majorId, city, kw);
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(jobs);
         return jobs;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Job> getListJobForManageCompany(int companyId) {
         List<Job> jobs = jobRepository.getListJobForManageCompany(companyId);
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(jobs);
         return jobs;
     }
 
@@ -151,22 +160,18 @@ public class JobServiceImplement implements JobService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Job> getListJobByCityKw(String city, String kw) {
         List<Job> jobs = jobRepository.getListJobByCityKw(city, kw);
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(jobs);
         return jobs;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Job> getListJobByCityKwPage(String city, String kw, int page) {
         List<Job> jobs = jobRepository.getListJobByCityKwPage(city, kw, page);
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(jobs);
         return jobs;
     }
 
@@ -176,17 +181,10 @@ public class JobServiceImplement implements JobService {
     }
 
     @Override
-    public void deleteJob(int jobId) {
-        jobRepository.deleteJob(jobId);
-    }
-
-    @Override
+    @Transactional(readOnly = true)
     public List<Job> getListJobForManage() {
         List<Job> jobs = jobRepository.getListJobForManage();
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        initializeJobCollections(jobs);
         return jobs;
     }
 
@@ -196,21 +194,145 @@ public class JobServiceImplement implements JobService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Job> getAllJobs() {
-        List<Job> jobs = jobRepository.searchJobs(null).get("jobs") != null ?
-                (List<Job>) jobRepository.searchJobs(null).get("jobs") : List.of();
-        for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        List<Job> jobs = jobRepository.searchJobs(null).get("jobs") != null
+                ? (List<Job>) jobRepository.searchJobs(null).get("jobs") : List.of();
+        initializeJobCollections(jobs);
         return jobs;
     }
 
-    //Dat codes
     @Override
+    @Transactional(readOnly = true)
     public List<Job> getJobList() {
-        return this.jobRepository.getListJobForManage();
+        List<Job> jobs = jobRepository.getListJobForManage();
+        initializeJobCollections(jobs);
+        return jobs;
     }
-    
-    
+
+    @Override
+    @Transactional
+    public GetJobDTO createJobDTO(CreateJobDTO jobDTO) {
+        logger.info("Starting job creation for: " + jobDTO.getJobName());
+
+        // Validate Company
+        logger.info("Validating company ID: " + jobDTO.getCompanyId());
+        Company company = companyRepository.getCompanyById(jobDTO.getCompanyId());
+        if (company == null) {
+            logger.warning("Invalid company ID: " + jobDTO.getCompanyId());
+            throw new IllegalArgumentException("Công ty không tồn tại.");
+        }
+        if (!"approved".equals(company.getStatus())) {
+            logger.warning("Company not approved: " + company.getId());
+            throw new IllegalArgumentException("Công ty chưa được phê duyệt.");
+        }
+
+        // Validate Major
+        logger.info("Validating major ID: " + jobDTO.getMajorId());
+        Major major = majorRepository.getMajorById(jobDTO.getMajorId());
+        if (major == null) {
+            logger.warning("Invalid major ID: " + jobDTO.getMajorId());
+            throw new IllegalArgumentException("Ngành nghề không tồn tại.");
+        }
+
+        // Validate Day IDs
+        logger.info("Validating day IDs: " + jobDTO.getDayIds());
+        List<Day> days = dayRepository.getDays();
+        List<Integer> validDayIds = days.stream().map(Day::getId).toList();
+        if (jobDTO.getDayIds() == null || jobDTO.getDayIds().stream().anyMatch(id -> !validDayIds.contains(id))) {
+            logger.warning("Invalid day IDs: " + jobDTO.getDayIds());
+            throw new IllegalArgumentException("Thời gian làm việc không hợp lệ.");
+        }
+
+        // Create Job entity
+        logger.info("Creating Job entity");
+        Job job = new Job();
+        job.setJobName(jobDTO.getJobName());
+        job.setCompanyId(company);
+        job.setSalaryMin(jobDTO.getSalaryMin());
+        job.setSalaryMax(jobDTO.getSalaryMax());
+
+        // Lấy fullAddress và city từ company (không dùng dữ liệu từ jobDTO vì form đã disable)
+        String fullAddress = company.getFullAddress();
+        String city = company.getCity();
+        String district = company.getDistrict();
+
+        // Kiểm tra dữ liệu từ company
+        if (fullAddress == null || fullAddress.trim().isEmpty()) {
+            logger.warning("Company fullAddress is null or empty for company ID: " + company.getId());
+            throw new IllegalArgumentException("Địa chỉ công ty không được để trống.");
+        }
+        if (city == null || city.trim().isEmpty()) {
+            logger.warning("Company city is null or empty for company ID: " + company.getId());
+            throw new IllegalArgumentException("Thành phố công ty không được để trống.");
+        }
+        if (district == null || district.trim().isEmpty()) {
+            logger.info("Company district is null or empty, setting to default: Không xác định");
+            district = "Không xác định";
+        }
+
+        logger.info("Setting address: fullAddress=" + fullAddress + ", city=" + city + ", district=" + district);
+        job.setFullAddress(fullAddress);
+        job.setCity(city);
+        job.setDistrict(district);
+
+        job.setDescription(jobDTO.getDescription());
+        job.setJobRequired(jobDTO.getJobRequired());
+        job.setStatus("pending");
+        job.setIsActive(true);
+        job.setPostedDate(new Date());
+
+        // Create MajorJob
+        logger.info("Creating MajorJob");
+        MajorJob majorJob = new MajorJob();
+        majorJob.setJobId(job);
+        majorJob.setMajorId(major);
+        Set<MajorJob> majorJobs = new HashSet<>();
+        majorJobs.add(majorJob);
+        job.setMajorJobCollection(majorJobs);
+
+        // Create DayJob
+        logger.info("Creating DayJob for day IDs: " + jobDTO.getDayIds());
+        Set<DayJob> dayJobs = new HashSet<>();
+        for (Integer dayId : jobDTO.getDayIds()) {
+            DayJob dayJob = new DayJob();
+            Day day = days.stream().filter(d -> d.getId().equals(dayId)).findFirst()
+                    .orElseThrow(() -> {
+                        logger.warning("Day not found for ID: " + dayId);
+                        return new IllegalArgumentException("Ngày làm việc không hợp lệ: " + dayId);
+                    });
+            dayJob.setDayId(day);
+            dayJob.setJobId(job);
+            dayJobs.add(dayJob);
+        }
+        job.setDayJobCollection(dayJobs);
+
+        // Save Job
+        try {
+            logger.info("Saving job to database");
+            boolean success = jobRepository.addJobDTO(job);
+            if (!success) {
+                logger.severe("Failed to save job");
+                throw new IllegalArgumentException("Không thể tạo công việc do lỗi lưu trữ.");
+            }
+            logger.info("Job created successfully with ID: " + job.getId());
+            return new GetJobDTO(job);
+        } catch (Exception e) {
+            logger.severe("Error saving job: " + e.getMessage() + ", StackTrace: " + getStackTrace(e));
+            throw new RuntimeException("Lỗi lưu công việc: " + e.getMessage(), e);
+        }
+    }
+
+    private String getStackTrace(Exception e) {
+        StringBuilder sb = new StringBuilder();
+        for (StackTraceElement element : e.getStackTrace()) {
+            sb.append(element.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public void deleteJob(int jobId) {
+        jobRepository.deleteJob(jobId);
+    }
 }

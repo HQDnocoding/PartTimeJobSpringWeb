@@ -21,7 +21,7 @@ import java.util.Collection;
 
 /**
  *
- * @author dat
+ * @author Admin
  */
 @Entity
 @Table(name = "day")

@@ -51,7 +51,7 @@
                 <p><strong>Công ty:</strong> <span th:text="${job.companyId.name}"></span></p>
                 <p><strong>Lương:</strong> <span th:text="${job.salaryMin} + ' - ' + ${job.salaryMax} + ' VNĐ'"></span></p>
                 <p><strong>Địa chỉ:</strong> <span th:text="${job.fullAddress} + ', ' + ${job.district} + ', ' + ${job.city}"></span></p>
-                <p><strong>Ngành nghề:</strong> <span th:text="${job.marjorJobCollection != null and !#lists.isEmpty(job.marjorJobCollection)} ? ${#strings.listJoin(job.marjorJobCollection.![majorId.name], ', ')} : '-'"></span></p>
+                <p><strong>Ngành nghề:</strong> <span th:text="${job.MajorJobCollection != null and !#lists.isEmpty(job.MajorJobCollection)} ? ${#strings.listJoin(job.MajorJobCollection.![majorId.name], ', ')} : '-'"></span></p>
                 <p><strong>Thời gian làm việc:</strong> <span th:text="${job.dayJobCollection != null and !#lists.isEmpty(job.dayJobCollection)} ? ${#strings.listJoin(job.dayJobCollection.![dayId.name], ', ')} : '-'"></span></p>
                 <p><strong>Mô tả:</strong> <span th:text="${job.description}"></span></p>
                 <p><strong>Yêu cầu:</strong> <span th:text="${job.jobRequired}"></span></p>

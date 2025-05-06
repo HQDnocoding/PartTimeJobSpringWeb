@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tạo mới công việc</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="~{base :: bootstrap}"></th:block>
+    <style>
+        .invalid-feedback {
+            color: #dc3545;
+            font-size: 0.9rem;
+            display: block;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{base :: header}"></div>
+    <main class="container my-5">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h2 class="card-title text-center mb-4">Tạo mới công việc</h2>
+                <form th:action="@{/job}" method="post" th:object="${jobDTO}" class="row g-3" id="jobForm">
+                    <div class="col-12">
+                        <h4 class="border-bottom pb-2 mb-4">Thông Tin Công Việc</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="jobName" class="form-label">Tên công việc *</label>
+                        <input type="text" id="jobName" th:field="*{jobName}" class="form-control" placeholder="Nhập tên công việc" required>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('jobName')}" th:errors="*{jobName}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="companyId" class="form-label">Công ty *</label>
+                        <select id="companyId" th:field="*{companyId}" class="form-select" required onchange="updateCompanyAddress()">
+                            <option value="" disabled selected>Chọn công ty</option>
+                            <option th:each="company : ${companies}" 
+                                    th:value="${company.id}" 
+                                    th:text="${company.name}" 
+                                    th:attr="data-full-address=${company.fullAddress},data-city=${company.city}"></option>
+                        </select>
+                        <div class="invalid-feedback" id="companyIdError" th:if="${#fields.hasErrors('companyId')}" th:errors="*{companyId}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="fullAddress" class="form-label">Địa chỉ (tự động từ công ty)</label>
+                        <input type="text" id="fullAddress" th:field="*{fullAddress}" class="form-control" readonly disabled>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('fullAddress')}" th:errors="*{fullAddress}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="city" class="form-label">Thành phố (tự động từ công ty)</label>
+                        <input type="text" id="city" th:field="*{city}" class="form-control" readonly disabled>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="salaryMin" class="form-label">Lương tối thiểu (VNĐ) *</label>
+                        <input type="number" id="salaryMin" th:field="*{salaryMin}" class="form-control" placeholder="Nhập lương tối thiểu" required min="0">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('salaryMin')}" th:errors="*{salaryMin}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="salaryMax" class="form-label">Lương tối đa (VNĐ) *</label>
+                        <input type="number" id="salaryMax" th:field="*{salaryMax}" class="form-control" placeholder="Nhập lương tối đa" required min="0">
+                        <div class="invalid-feedback" id="salaryMaxError" th:if="${#fields.hasErrors('salaryMax')}" th:errors="*{salaryMax}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="majorId" class="form-label">Ngành nghề *</label>
+                        <select id="majorId" th:field="*{majorId}" class="form-select" required>
+                            <option value="" disabled selected>Chọn ngành nghề</option>
+                            <option th:each="major : ${majors}" th:value="${major.id}" th:text="${major.name}"></option>
+                        </select>
+                        <div class="invalid-feedback" id="majorIdError" th:if="${#fields.hasErrors('majorId')}" th:errors="*{majorId}"></div>
+                    </div>
+                    <div class="col-12">
+                        <label for="description" class="form-label">Mô tả công việc *</label>
+                        <textarea id="description" th:field="*{description}" class="form-control" rows="5" placeholder="Nhập mô tả công việc" required></textarea>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                    </div>
+                    <div class="col-12">
+                        <label for="jobRequired" class="form-label">Yêu cầu công việc *</label>
+                        <textarea id="jobRequired" th:field="*{jobRequired}" class="form-control" rows="5" placeholder="Nhập yêu cầu công việc" required></textarea>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('jobRequired')}" th:errors="*{jobRequired}"></div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Thời gian làm việc *</label>
+                        <div class="checkbox-group">
+                            <div th:each="day : ${days}">
+                                <input type="checkbox" th:field="*{dayIds}" th:value="${day.id}" th:id="'dayId-' + ${day.id}">
+                                <label th:for="'dayId-' + ${day.id}" th:text="${day.name}"></label>
+                            </div>
+                        </div>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('dayIds')}" th:errors="*{dayIds}"></div>
+                        <div id="dayIdsError" class="invalid-feedback" style="display: none;">Vui lòng chọn ít nhất một ngày làm việc.</div>
+                    </div>
+                    <div class="col-12 mt-4">
+                        <button type="submit" class="btn btn-primary w-100">Tạo công việc</button>
+                    </div>
+                    <div class="col-12 text-center">
+                        <a th:href="@{/job}" class="btn btn-secondary">Quay lại danh sách</a>
+                    </div>
+                    <div class="col-12 text-center">
+                        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+                        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    <div th:replace="~{base :: footer}"></div>
+
+    <div th:if="${successMessage}" class="toast align-items-center text-white bg-success border-0 position-fixed top-0 end-0 m-3" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+        <div class="d-flex">
+            <div class="toast-body" th:text="${successMessage}"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+    <div th:if="${errorMessage}" class="toast align-items-center text-white bg-danger border-0 position-fixed top-0 end-0 m-3" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+        <div class="d-flex">
+            <div class="toast-body" th:text="${errorMessage}"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function updateCompanyAddress() {
+            const companySelect = document.getElementById('companyId');
+            const fullAddressInput = document.getElementById('fullAddress');
+            const cityInput = document.getElementById('city');
+            const selectedOption = companySelect.options[companySelect.selectedIndex];
+
+            if (selectedOption && selectedOption.value) {
+                fullAddressInput.value = selectedOption.getAttribute('data-full-address') || '';
+                cityInput.value = selectedOption.getAttribute('data-city') || 'Không xác định';
+            } else {
+                fullAddressInput.value = '';
+                cityInput.value = '';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize address and city fields
+            updateCompanyAddress();
+
+            // Update address and city when company changes
+            document.getElementById('companyId').addEventListener('change', updateCompanyAddress);
+
+            // Show toasts
+            document.querySelectorAll('.toast').forEach(toast => {
+                new bootstrap.Toast(toast).show();
+            });
+
+            // Form validation
+            document.getElementById('jobForm').addEventListener('submit', function(e) {
+                let isValid = true;
+
+                // Validate jobName
+                const jobName = document.getElementById('jobName').value.trim();
+                if (!jobName) {
+                    isValid = false;
+                    document.getElementById('jobName').classList.add('is-invalid');
+                } else {
+                    document.getElementById('jobName').classList.remove('is-invalid');
+                }
+
+                // Validate companyId
+                const companyId = document.getElementById('companyId').value;
+                if (!companyId) {
+                    isValid = false;
+                    document.getElementById('companyId').classList.add('is-invalid');
+                    document.getElementById('companyIdError').textContent = 'Vui lòng chọn một công ty';
+                } else {
+                    document.getElementById('companyId').classList.remove('is-invalid');
+                }
+
+                // Validate salary
+                const salaryMin = parseInt(document.getElementById('salaryMin').value) || 0;
+                const salaryMax = parseInt(document.getElementById('salaryMax').value) || 0;
+                if (salaryMin > salaryMax) {
+                    isValid = false;
+                    document.getElementById('salaryMax').classList.add('is-invalid');
+                    document.getElementById('salaryMaxError').textContent = 'Lương tối đa phải lớn hơn lương tối thiểu';
+                } else {
+                    document.getElementById('salaryMax').classList.remove('is-invalid');
+                }
+
+                // Validate majorId
+                const majorId = document.getElementById('majorId').value;
+                if (!majorId) {
+                    isValid = false;
+                    document.getElementById('majorId').classList.add('is-invalid');
+                    document.getElementById('majorIdError').textContent = 'Vui lòng chọn một ngành nghề';
+                } else {
+                    document.getElementById('majorId').classList.remove('is-invalid');
+                }
+
+                // Validate description
+                const description = document.getElementById('description').value.trim();
+                if (!description) {
+                    isValid = false;
+                    document.getElementById('description').classList.add('is-invalid');
+                } else {
+                    document.getElementById('description').classList.remove('is-invalid');
+                }
+
+                // Validate jobRequired
+                const jobRequired = document.getElementById('jobRequired').value.trim();
+                if (!jobRequired) {
+                    isValid = false;
+                    document.getElementById('jobRequired').classList.add('is-invalid');
+                } else {
+                    document.getElementById('jobRequired').classList.remove('is-invalid');
+                }
+
+                // Validate dayIds
+                const dayIds = document.querySelectorAll('input[name="dayIds"]:checked');
+                if (dayIds.length === 0) {
+                    isValid = false;
+                    document.getElementById('dayIdsError').style.display = 'block';
+                } else {
+                    document.getElementById('dayIdsError').style.display = 'none';
+                }
+
+                // Prevent submission if invalid
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

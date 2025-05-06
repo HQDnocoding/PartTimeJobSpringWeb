@@ -35,6 +35,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
 
+    // Thêm hoặc cập nhật ứng viên
     @Override
     public Candidate addOrUpdateCandidate(Candidate c) {
         Session session = this.factory.getObject().getCurrentSession();
@@ -51,6 +52,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         }
     }
 
+    // Lấy danh sách ứng viên với lọc/phân trang (theo tên, email, thành phố, điện thoại)
     @Override
     public Map<String, Object> getListCandidate(Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -130,6 +132,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         return result;
     }
 
+    // Lấy chi tiết ứng viên theo ID
     @Override
     public Candidate getCandidateById(int candidateId) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -140,6 +143,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         return candidate;
     }
 
+    // Tạo ứng viên và tài khoản người dùng
     @Override
     public Candidate createCandidate(User u, Candidate c) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -155,6 +159,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         return c;
     }
 
+    // Kiểm tra ứng viên theo email 
     @Override
     public Candidate getCandidateByEmail(String email) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -164,6 +169,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         return rs.isEmpty() ? null : rs.get(0);
     }
 
+    // Kiểm tra ứng viên theo số điện thoại
     @Override
     public Candidate getCandidateByPhone(String phone) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -173,6 +179,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         return rs.isEmpty() ? null : rs.get(0);
     }
 
+    // Lấy tất cả ứng viên active
     @Override
     public List<Candidate> getCandidateList() {
         Session s = this.factory.getObject().getCurrentSession();
@@ -185,6 +192,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         return s.createQuery(cq).getResultList();
     }
 
+    // Xóa ứng viên và tài khoản người dùng liên quan
     @Override
     public void deleteCandidate(int id) {
         Session s = this.factory.getObject().getCurrentSession();

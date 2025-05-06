@@ -10,4 +10,6 @@ import java.util.List;
 
 public interface DayRepository {
     List<Day> getDays();
+
+    public Day getDayById(Integer dayId);
 }

@@ -42,11 +42,13 @@ public class UserServiceImplement implements UserService {
     @Autowired
     private Cloudinary cloudinary;
 
+    // Lấy User theo username
     @Override
     public User getUserByUsername(String username) {
         return this.userRepo.getUserByUsername(username);
     }
 
+    // Lấy vai trò người dùng
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User u = this.userRepo.getUserByUsername(username);
@@ -62,6 +64,7 @@ public class UserServiceImplement implements UserService {
                 u.getUsername(), u.getPassword(), authorities);
     }
 
+    // Xóa người dùng theo ID
     @Override
     public void deleteUser(int id) {
         this.userRepo.deleteUser(id);

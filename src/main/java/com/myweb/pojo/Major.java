@@ -37,13 +37,15 @@ public class Major implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "name")
     private String name;
+    
     @OneToMany(mappedBy = "majorId")
-    private Collection<MarjorJob> marjorJobCollection;
+    private Collection<MajorJob> marjorJobCollection;
 
     public Major() {
     }
@@ -73,11 +75,11 @@ public class Major implements Serializable {
         this.name = name;
     }
 
-    public Collection<MarjorJob> getMarjorJobCollection() {
+    public Collection<MajorJob> getMarjorJobCollection() {
         return marjorJobCollection;
     }
 
-    public void setMarjorJobCollection(Collection<MarjorJob> marjorJobCollection) {
+    public void setMarjorJobCollection(Collection<MajorJob> marjorJobCollection) {
         this.marjorJobCollection = marjorJobCollection;
     }
 

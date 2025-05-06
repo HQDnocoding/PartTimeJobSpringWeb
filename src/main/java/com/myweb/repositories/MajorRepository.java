@@ -12,4 +12,6 @@ import java.util.List;
 public interface MajorRepository {
     List<Major> getMajors();
     // Thêm các phương thức khác nếu cần
+
+    public Major getMajorById(Integer majorId);
 }

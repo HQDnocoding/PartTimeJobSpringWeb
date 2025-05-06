@@ -206,7 +206,7 @@ CREATE TABLE `day` (
 
 LOCK TABLES `day` WRITE;
 /*!40000 ALTER TABLE `day` DISABLE KEYS */;
-INSERT INTO `day` VALUES (9,'Bất kỳ thời gian nào'),(7,'Chủ Nhật'),(2,'Thứ Ba'),(6,'Thứ Bảy'),(1,'Thứ Hai'),(4,'Thứ Năm'),(5,'Thứ Sáu'),(3,'Thứ Tư'),(8,'Toàn thời gian');
+INSERT INTO `day` VALUES (1,'Thứ Hai'),(2,'Thứ Ba'),(3,'Thứ Tư'),(4,'Thứ Năm'),(5,'Thứ Sáu'),(6,'Thứ Bảy'),(7,'Chủ Nhật'),(8,'Toàn thời gian');
 /*!40000 ALTER TABLE `day` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -235,7 +235,7 @@ CREATE TABLE `day_job` (
 
 LOCK TABLES `day_job` WRITE;
 /*!40000 ALTER TABLE `day_job` DISABLE KEYS */;
-INSERT INTO `day_job` VALUES (1,8,1),(2,1,2),(3,2,2),(4,9,3),(5,9,4),(6,8,5),(7,9,6),(8,8,7),(9,8,8),(10,8,9),(11,8,10),(12,9,11),(13,8,12),(14,8,13),(15,8,14),(16,8,15),(17,8,16),(18,8,17),(19,9,18),(20,8,19),(21,8,20);
+INSERT INTO `day_job` VALUES (1,8,1),(2,1,2),(3,2,2),(4,2,3),(5,4,4),(6,5,5),(7,7,6),(8,8,7),(9,8,8),(10,6,9),(11,7,10),(12,5,11),(13,8,12),(14,3,13),(15,2,14),(16,8,15),(17,6,16),(18,8,17),(19,3,18),(20,8,19),(21,8,20);
 /*!40000 ALTER TABLE `day_job` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -365,32 +365,32 @@ INSERT INTO `major` VALUES (1,'Bán lẻ & Kinh doanh'),(2,'Ẩm thực & Đồ 
 UNLOCK TABLES;
 
 --
--- Table structure for table `marjor_job`
+-- Table structure for table `major_job`
 --
 
-DROP TABLE IF EXISTS `marjor_job`;
+DROP TABLE IF EXISTS `major_job`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `marjor_job` (
+CREATE TABLE `major_job` (
   `id` int NOT NULL AUTO_INCREMENT,
   `major_id` int DEFAULT NULL,
   `job_id` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `job_id` (`job_id`,`major_id`),
   KEY `major_id` (`major_id`),
-  CONSTRAINT `marjor_job_ibfk_1` FOREIGN KEY (`major_id`) REFERENCES `major` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `marjor_job_ibfk_2` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`) ON DELETE CASCADE
+  CONSTRAINT `major_job_ibfk_1` FOREIGN KEY (`major_id`) REFERENCES `major` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `major_job_ibfk_2` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `marjor_job`
+-- Dumping data for table `major_job`
 --
 
-LOCK TABLES `marjor_job` WRITE;
-/*!40000 ALTER TABLE `marjor_job` DISABLE KEYS */;
-INSERT INTO `marjor_job` VALUES (1,11,1),(2,3,2),(3,5,3),(4,4,4),(5,8,5),(6,9,6),(7,13,7),(8,14,8),(9,15,9),(10,17,10),(11,18,11),(12,19,12),(13,20,13),(14,11,14),(15,12,15),(16,16,16),(17,17,17),(18,18,18),(19,19,19),(20,20,20);
-/*!40000 ALTER TABLE `marjor_job` ENABLE KEYS */;
+LOCK TABLES `major_job` WRITE;
+/*!40000 ALTER TABLE `major_job` DISABLE KEYS */;
+INSERT INTO `major_job` VALUES (1,11,1),(2,3,2),(3,5,3),(4,4,4),(5,8,5),(6,9,6),(7,13,7),(8,14,8),(9,15,9),(10,17,10),(11,18,11),(12,19,12),(13,20,13),(14,11,14),(15,12,15),(16,16,16),(17,17,17),(18,18,18),(19,19,19),(20,20,20);
+/*!40000 ALTER TABLE `major_job` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

@@ -1,3 +1,5 @@
+//tệp tin DispatcherServlet chịu trách nhiệm sẽ xử lý tất cả các request từ client và điều hướng tới Controller phù hợp
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -10,10 +12,11 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 /**
  *
- * @author huaquangdat
+ * @author Admin
  */
 public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherServletInitializer {
-
+    
+    // Xác định các lớp cấu hình cho ứng dụng
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return new Class[]{
@@ -28,7 +31,8 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
             WebApplicationContextConfig.class
         };
     }
-
+    
+    // Xử lý các yêu cầu tới các URL ("/")
     @Override
     protected String[] getServletMappings() {
         return new String[]{
@@ -36,6 +40,7 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
         };
     }
 
+    // Xử lý các tệp tin tải lên
     @Override
     protected void customizeRegistration(ServletRegistration.Dynamic registration) {
         String location = "/";

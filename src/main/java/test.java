@@ -14,7 +14,7 @@ import com.myweb.pojo.Follow;
 import com.myweb.pojo.ImageWorkplace;
 import com.myweb.pojo.Job;
 import com.myweb.pojo.Major;
-import com.myweb.pojo.MarjorJob;
+import com.myweb.pojo.MajorJob;
 import com.myweb.pojo.User;
 import com.myweb.utils.GeneralUtils;
 import org.hibernate.Session;
@@ -63,7 +63,7 @@ public class test {
 //        conf.addAnnotatedClass(Job.class);
 //        conf.addAnnotatedClass(Follow.class);
 //        conf.addAnnotatedClass(Major.class);
-//        conf.addAnnotatedClass(MarjorJob.class);
+//        conf.addAnnotatedClass(MajorJob.class);
 //        conf.addAnnotatedClass(CompanyReview.class);
 //        conf.addAnnotatedClass(CandidateReview.class);
 //        conf.addAnnotatedClass(ImageWorkplace.class);

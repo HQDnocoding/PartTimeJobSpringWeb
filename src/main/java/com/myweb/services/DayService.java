@@ -9,5 +9,7 @@ import com.myweb.pojo.Day;
 import java.util.List;
 
 public interface DayService {
+    
+    // Lấy danh sách tất cả các ngày trong tuần
     List<Day> getDays();
 }

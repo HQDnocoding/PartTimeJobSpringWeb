@@ -1,9 +1,7 @@
-/*
- * Click nbfs://.netbeans/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://.netbeans/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.myweb.services;
 
+import com.myweb.dto.CreateJobDTO;
+import com.myweb.dto.GetJobDTO;
 import com.myweb.pojo.Job;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +26,7 @@ public interface JobService {
     void deleteJob(int jobId);
     List<Job> getListJobForManage();
     boolean addJob(Job j);
-
-    // Thêm phương thức để khớp với JobController
     List<Job> getAllJobs();
-    
-    
-    //Dat codes
     List<Job> getJobList();
+    GetJobDTO createJobDTO(CreateJobDTO jobDTO);
 }

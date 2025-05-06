@@ -1,3 +1,5 @@
+// Tệp tin thiết lập các cấu hình kết nối xuống database
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -19,15 +21,17 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 /**
  *
- * @author huaquangdat
+ * @author Admin
  */
 @Configuration
 @PropertySource("classpath:database.properties")
 public class HibernateConfigs {
 
+    // Đọc các thuộc tính từ database.properties
     @Autowired
     private Environment env;
-
+    
+    // Ánh xạ persistent class với các table trong csdl
     @Bean
     public LocalSessionFactoryBean getSessionFactory() {
         LocalSessionFactoryBean sessionFactory
@@ -41,6 +45,7 @@ public class HibernateConfigs {
         return sessionFactory;
     }
 
+    // Cung cấp thông tin kết nối với csdl
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource
@@ -55,6 +60,7 @@ public class HibernateConfigs {
         return dataSource;
     }
 
+    // Chỉ định loại csdl sẽ dùng
     private Properties hibernateProperties() {
         Properties props = new Properties();
         props.put(DIALECT, env.getProperty("hibernate.dialect"));
@@ -62,6 +68,7 @@ public class HibernateConfigs {
         return props;
     }
 
+    // Quản lý các giao tác
     @Bean
     public HibernateTransactionManager transactionManager() {
         HibernateTransactionManager transactionManager

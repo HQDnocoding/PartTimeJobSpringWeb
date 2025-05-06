@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.myweb.pojo;
 
 import jakarta.persistence.Basic;
@@ -18,33 +14,36 @@ import jakarta.persistence.Table;
 import java.io.Serializable;
 
 /**
- *
- * @author dat
+ * Entity đại diện cho mối quan hệ giữa Job và Major trong bảng major_job.
  */
 @Entity
-@Table(name = "marjor_job")
+@Table(name = "major_job")
 @NamedQueries({
-    @NamedQuery(name = "MarjorJob.findAll", query = "SELECT m FROM MarjorJob m"),
-    @NamedQuery(name = "MarjorJob.findById", query = "SELECT m FROM MarjorJob m WHERE m.id = :id")})
-public class MarjorJob implements Serializable {
+    @NamedQuery(name = "MajorJob.findAll", query = "SELECT m FROM MajorJob m"),
+    @NamedQuery(name = "MajorJob.findById", query = "SELECT m FROM MajorJob m WHERE m.id = :id")
+})
+public class MajorJob implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+
     @JoinColumn(name = "job_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Job jobId;
+
     @JoinColumn(name = "major_id", referencedColumnName = "id")
     @ManyToOne
     private Major majorId;
 
-    public MarjorJob() {
+    public MajorJob() {
     }
 
-    public MarjorJob(Integer id) {
+    public MajorJob(Integer id) {
         this.id = id;
     }
 
@@ -81,11 +80,10 @@ public class MarjorJob implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof MarjorJob)) {
+        if (!(object instanceof MajorJob)) {
             return false;
         }
-        MarjorJob other = (MarjorJob) object;
+        MajorJob other = (MajorJob) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -94,7 +92,6 @@ public class MarjorJob implements Serializable {
 
     @Override
     public String toString() {
-        return "com.myweb.pojo.MarjorJob[ id=" + id + " ]";
+        return "com.myweb.pojo.MajorJob[ id=" + id + " ]";
     }
-    
 }

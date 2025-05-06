@@ -128,4 +128,9 @@ public class CompanyServiceImplement implements CompanyService {
 
     }
 
+    @Override
+    public Object getAllCompany() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }

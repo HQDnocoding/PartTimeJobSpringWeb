@@ -34,6 +34,7 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
 
+    // Thêm mới hoặc cập nhật một đơn ứng tuyển 
     @Override
     public Application addOrUpdateApplication(Application a) {
         Session session = this.factory.getObject().getCurrentSession();
@@ -50,6 +51,7 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
         }
     }
 
+    // Lấy danh sách đơn ứng tuyển với các tiêu chí lọc và phân trang
     @Override
     public Map<String, Object> getListApplication(Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -122,6 +124,7 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
         return result;
     }
 
+    // Lấy chi tiết một đơn ứng tuyển theo ID
     @Override
     public Application getApplicationById(int applicationId) {
         System.out.println(applicationId);
@@ -131,6 +134,7 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
         return application;
     }
 
+    // Xóa một đơn ứng tuyển theo ID
     @Override
     public void deleteApplication(int id) {
         Session s = this.factory.getObject().getCurrentSession();

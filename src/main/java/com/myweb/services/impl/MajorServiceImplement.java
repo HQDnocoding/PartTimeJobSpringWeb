@@ -22,4 +22,6 @@ public class MajorServiceImplement implements MajorService {
     public List<Major> getMajors() {
         return majorRepository.getMajors();
     }
+    
+    
 }
