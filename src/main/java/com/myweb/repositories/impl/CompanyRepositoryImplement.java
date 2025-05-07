@@ -192,4 +192,18 @@ public class CompanyRepositoryImplement implements CompanyRepository {
 
     }
 
+    // Lấy danh sách tất cả các công ty cho dropdown mà không bị lỗi phân trang
+    @Override
+    public List<Company> getAllCompaniesForDropdown() {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<Company> cq = cb.createQuery(Company.class);
+        Root<Company> companyRoot = cq.from(Company.class);
+
+        cq.orderBy(cb.asc(companyRoot.get("id")));
+
+        List<Company> companies = s.createQuery(cq).getResultList();
+        System.out.println("Total companies retrieved for dropdown: " + companies.size());
+        return companies;
+    }
 }

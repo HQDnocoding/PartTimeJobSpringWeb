@@ -1,5 +1,7 @@
 package com.myweb.repositories.impl;
 
+import com.myweb.pojo.Day;
+import com.myweb.pojo.DayJob;
 import com.myweb.pojo.Job;
 import com.myweb.repositories.JobRepository;
 import com.myweb.utils.GeneralUtils;
@@ -22,11 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-/**
- * Implementation of JobRepository for managing Job entities. Handles database operations for searching and filtering jobs.
- *
- * @author Hau
- */
 @Repository
 @Transactional
 public class JobRepositoryImplement implements JobRepository {
@@ -391,20 +388,63 @@ public class JobRepositoryImplement implements JobRepository {
     }
 
     @Override
-    public boolean addJobDTO(Job j) {
+    public Job addJobDTO(Job j) { // Thay đổi để trả về Job thay vì boolean
         Session s = this.sessionFactory.getCurrentSession();
         try {
             if (j != null) {
-                s.merge(j); // Thay saveOrUpdate bằng merge
-                logger.info("Successfully saved job with ID: " + (j.getId() != null ? j.getId() : "new"));
-                return true;
+                Job mergedJob = (Job) s.merge(j); // Gán đối tượng đã merge
+                s.flush(); // Đảm bảo job được lưu và có ID
+                logger.info("Successfully saved job with ID: " + (mergedJob.getId() != null ? mergedJob.getId() : "new"));
+                return mergedJob;
             } else {
                 logger.warning("Job object is null");
-                return false;
+                throw new IllegalArgumentException("Công việc không hợp lệ.");
             }
         } catch (Exception e) {
             logger.severe("Error adding job: " + e.getMessage() + ", Stack trace: " + getStackTrace(e));
             throw new RuntimeException("Lỗi khi lưu công việc: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void addDaysToJob(Job job, List<Integer> dayIds) {
+        Session session = sessionFactory.getCurrentSession();
+        try {
+            if (job == null || job.getId() == null) {
+                logger.severe("Job or Job ID is null");
+                throw new IllegalArgumentException("Công việc không hợp lệ hoặc chưa được lưu.");
+            }
+
+            // Xóa các bản ghi cũ trong day_job để tránh trùng lặp
+            session.createQuery("DELETE FROM DayJob dj WHERE dj.jobId.id = :jobId")
+                    .setParameter("jobId", job.getId())
+                    .executeUpdate();
+
+            // Lấy danh sách ngày từ repository
+            List<Day> days = session.createQuery("FROM Day", Day.class).getResultList();
+            List<Integer> validDayIds = days.stream().map(Day::getId).toList();
+
+            if (dayIds != null && !dayIds.isEmpty()) {
+                for (Integer dayId : dayIds) {
+                    if (dayId == null || !validDayIds.contains(dayId)) {
+                        logger.warning("Invalid or null dayId: " + dayId);
+                        continue;
+                    }
+                    Day day = days.stream().filter(d -> d.getId().equals(dayId)).findFirst()
+                            .orElseThrow(() -> new IllegalArgumentException("Ngày làm việc không tồn tại: " + dayId));
+                    DayJob dayJob = new DayJob();
+                    dayJob.setJobId(job);
+                    dayJob.setDayId(day);
+                    session.save(dayJob);
+                    logger.info("Added DayJob: jobId=" + job.getId() + ", dayId=" + dayId);
+                }
+                session.flush(); // Đảm bảo tất cả DayJob được lưu
+            } else {
+                logger.info("No dayIds provided for jobId: " + job.getId());
+            }
+        } catch (Exception e) {
+            logger.severe("Error adding days to job: " + e.getMessage() + ", Stack trace: " + getStackTrace(e));
+            throw new RuntimeException("Lỗi khi thêm ngày làm việc: " + e.getMessage(), e);
         }
     }
 

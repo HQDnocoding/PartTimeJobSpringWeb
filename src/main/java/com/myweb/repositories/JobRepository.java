@@ -20,7 +20,7 @@ public interface JobRepository {
 
     // Lấy danh sách công việc của một công ty, bao gồm thông tin ngành nghề và ngày làm việc.
     List<Job> getListJobByCompanyId(int companyId);
-    
+
     List<Job> getListJobByCompanyId1(int companyId);
 
     // Lấy danh sách công việc của một công ty, ngoại trừ một công việc cụ thể.
@@ -61,9 +61,9 @@ public interface JobRepository {
 
     // Thêm một công việc mới.
     boolean addJob(Job j);
-    boolean addJobDTO(Job j);
-    
-    
+
+    Job addJobDTO(Job j); 
+
+    void addDaysToJob(Job job, List<Integer> dayIds);
+
 }
-
-

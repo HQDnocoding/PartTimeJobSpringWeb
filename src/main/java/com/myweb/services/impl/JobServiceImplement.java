@@ -4,7 +4,6 @@ import com.myweb.dto.CreateJobDTO;
 import com.myweb.dto.GetJobDTO;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.Day;
-import com.myweb.pojo.DayJob;
 import com.myweb.pojo.Job;
 import com.myweb.pojo.Major;
 import com.myweb.pojo.MajorJob;
@@ -291,31 +290,20 @@ public class JobServiceImplement implements JobService {
         majorJobs.add(majorJob);
         job.setMajorJobCollection(majorJobs);
 
-        // Create DayJob
-        logger.info("Creating DayJob for day IDs: " + jobDTO.getDayIds());
-        Set<DayJob> dayJobs = new HashSet<>();
-        for (Integer dayId : jobDTO.getDayIds()) {
-            DayJob dayJob = new DayJob();
-            Day day = days.stream().filter(d -> d.getId().equals(dayId)).findFirst()
-                    .orElseThrow(() -> {
-                        logger.warning("Day not found for ID: " + dayId);
-                        return new IllegalArgumentException("Ngày làm việc không hợp lệ: " + dayId);
-                    });
-            dayJob.setDayId(day);
-            dayJob.setJobId(job);
-            dayJobs.add(dayJob);
-        }
-        job.setDayJobCollection(dayJobs);
-
         // Save Job
         try {
             logger.info("Saving job to database");
-            boolean success = jobRepository.addJobDTO(job);
-            if (!success) {
-                logger.severe("Failed to save job");
-                throw new IllegalArgumentException("Không thể tạo công việc do lỗi lưu trữ.");
+            job = jobRepository.addJobDTO(job); // Gán lại job từ kết quả trả về
+            if (job == null || job.getId() == null) {
+                logger.severe("Failed to save job or retrieve job ID");
+                throw new IllegalStateException("Không thể tạo công việc do lỗi lưu trữ.");
             }
+
             logger.info("Job created successfully with ID: " + job.getId());
+
+            // Save DayJob using repository method
+            jobRepository.addDaysToJob(job, jobDTO.getDayIds());
+
             return new GetJobDTO(job);
         } catch (Exception e) {
             logger.severe("Error saving job: " + e.getMessage() + ", StackTrace: " + getStackTrace(e));

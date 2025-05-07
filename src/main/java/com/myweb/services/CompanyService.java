@@ -34,4 +34,6 @@ public interface CompanyService {
     Company createCompanyDTO(CreateCompanyDTO c);
 
     public Object getAllCompany();
+    
+    List<Company> getAllCompaniesForDropdown();
 }

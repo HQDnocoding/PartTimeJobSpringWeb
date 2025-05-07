@@ -21,14 +21,14 @@ public interface CompanyRepository {
     Company addOrUpdateCompany(Company c);
 
     Company getCompanyById(int companyId);
-    
+
     void deleteCompany(int id);
-    
-    
+
     Company createCompanyDTO(User u, Company c);
-    
+
     Company getCompanyByEmail(String email);
-    
+
     Company getCompanyByTaxCode(String taxCode);
-    
+
+    List<Company> getAllCompaniesForDropdown();
 }

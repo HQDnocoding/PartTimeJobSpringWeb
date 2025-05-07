@@ -16,6 +16,10 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
+        .form-select {
+            max-height: none !important;
+            overflow: visible !important;
+        }
     </style>
 </head>
 <body>
@@ -150,6 +154,10 @@
             document.querySelectorAll('.toast').forEach(toast => {
                 new bootstrap.Toast(toast).show();
             });
+
+            // Debug số lượng công ty trong dropdown
+            const companySelect = document.getElementById('companyId');
+            console.log("Number of companies in dropdown: " + (companySelect.options.length - 1));
 
             // Form validation
             document.getElementById('jobForm').addEventListener('submit', function(e) {

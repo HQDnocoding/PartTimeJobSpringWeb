@@ -2,6 +2,7 @@ package com.myweb.controllers;
 
 import com.myweb.dto.CreateJobDTO;
 import com.myweb.dto.GetJobDTO;
+import com.myweb.pojo.Company;
 import com.myweb.pojo.Job;
 import com.myweb.services.CompanyService;
 import com.myweb.services.DayService;
@@ -108,7 +109,10 @@ public class JobController {
         model.addAttribute("jobDTO", new CreateJobDTO());
         model.addAttribute("majors", majorService.getMajors());
         model.addAttribute("days", dayService.getDays());
-        model.addAttribute("companies", companyService.getListCompany(new HashMap<>()).get("companies"));
+        // Sử dụng getAllCompaniesForDropdown thay vì getListCompany
+        List<Company> companies = companyService.getAllCompaniesForDropdown();
+        System.out.println("Number of companies passed to create-job: " + companies.size());
+        model.addAttribute("companies", companies);
         return "create-job";
     }
 
@@ -118,7 +122,10 @@ public class JobController {
             logger.warn("Validation errors: {}", result.getAllErrors());
             model.addAttribute("majors", majorService.getMajors());
             model.addAttribute("days", dayService.getDays());
-            model.addAttribute("companies", companyService.getListCompany(new HashMap<>()).get("companies"));
+            // Sử dụng getAllCompaniesForDropdown thay vì getListCompany
+            List<Company> companies = companyService.getAllCompaniesForDropdown();
+            System.out.println("Number of companies passed to create-job (on error): " + companies.size());
+            model.addAttribute("companies", companies);
             model.addAttribute("errorMessage", result.getAllErrors().stream()
                     .map(error -> error.getDefaultMessage())
                     .collect(Collectors.joining("; ")));
@@ -134,14 +141,20 @@ public class JobController {
             logger.warn("Error creating job: {}", e.getMessage());
             model.addAttribute("majors", majorService.getMajors());
             model.addAttribute("days", dayService.getDays());
-            model.addAttribute("companies", companyService.getListCompany(new HashMap<>()).get("companies"));
+            // Sử dụng getAllCompaniesForDropdown thay vì getListCompany
+            List<Company> companies = companyService.getAllCompaniesForDropdown();
+            System.out.println("Number of companies passed to create-job (on IllegalArgumentException): " + companies.size());
+            model.addAttribute("companies", companies);
             model.addAttribute("errorMessage", e.getMessage());
             return "create-job";
         } catch (Throwable t) {
             logger.error("Unexpected error creating job: {}", t.getMessage(), t);
             model.addAttribute("majors", majorService.getMajors());
             model.addAttribute("days", dayService.getDays());
-            model.addAttribute("companies", companyService.getListCompany(new HashMap<>()).get("companies"));
+            // Sử dụng getAllCompaniesForDropdown thay vì getListCompany
+            List<Company> companies = companyService.getAllCompaniesForDropdown();
+            System.out.println("Number of companies passed to create-job (on Throwable): " + companies.size());
+            model.addAttribute("companies", companies);
             model.addAttribute("errorMessage", "Lỗi hệ thống: " + t.getMessage());
             return "create-job";
         }
