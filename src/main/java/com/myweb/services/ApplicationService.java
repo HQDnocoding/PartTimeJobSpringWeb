@@ -13,10 +13,19 @@ import java.util.Map;
  * @author huaquangdat
  */
 public interface ApplicationService {
-    Application addOrUpdateApplication(Application a);
-    Map<String, Object> getListApplication(Map<String, String> params);
-    Application getApplicationById(int applicationId);
-    void deleteApplication(int id);
     
+    // Thêm mới hoặc cập nhật 1 đơn ứng tuyển
+    Application addOrUpdateApplication(Application a);
+    
+    // Lấy danh sách đơn ứng tuyển
+    Map<String, Object> getListApplication(Map<String, String> params);
+    
+    // Lấy chi tiết 1 đơn ứng tuyển theo Id
+    Application getApplicationById(int applicationId);
+    
+    // Xóa 1 đơn ứng tuyển theo Id
+    void deleteApplication(int id);
+   
+    // Thêm mới 1 đơn ứng tuyển
     Application addApplication(Application application);
 }

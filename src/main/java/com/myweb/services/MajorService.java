@@ -9,5 +9,7 @@ import com.myweb.pojo.Major;
 import java.util.List;
 
 public interface MajorService {
+    
+    // Lấy danh sách tất cả các ngành nghề
     List<Major> getMajors();
 }

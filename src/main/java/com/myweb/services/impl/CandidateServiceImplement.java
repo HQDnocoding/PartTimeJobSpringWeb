@@ -39,18 +39,22 @@ public class CandidateServiceImplement implements CandidateService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    // Thêm hoặc cập nhật ứng viên
     public Candidate addOrUpdateCandidate(Candidate c) {
         return candidateRepository.addOrUpdateCandidate(c);
     }
 
+    // Lấy danh sách ứng viên với lọc/phân trang
     public Map<String, Object> getListCandidate(Map<String, String> params) {
         return candidateRepository.getListCandidate(params);
     }
 
+    // Lấy chi tiết ứng viên theo ID
     public Candidate getCandidateById(int candidateId) {
         return candidateRepository.getCandidateById(candidateId);
     }
 
+    // Tạo 1 ứng viên mới
     @Override
     public Candidate createCandidateDTO(CreateCandidateDTO c) {
 
@@ -103,11 +107,13 @@ public class CandidateServiceImplement implements CandidateService {
 
     }
 
+    // Lấy tất cả ứng viên
     @Override
     public List<Candidate> getCandidateList() {
         return candidateRepository.getCandidateList();
     }
-
+    
+    // Xóa ứng viên theo ID, xử lý ngoại lệ
     @Override
     public void deleteCandidate(int id) {
         try{

@@ -15,16 +15,21 @@ import java.util.Map;
  */
 public interface CandidateService {
 
+    // Thêm mới hoặc cập nhật ứng viên
     Candidate addOrUpdateCandidate(Candidate c);
 
+    // Lấy danh sách ứng viên với tiêu chí lọc và phân trang
     Map<String, Object> getListCandidate(Map<String, String> params);
 
+    // Lấy chi tiết ứng viên theo ID
     Candidate getCandidateById(int candidateId);
 
+    // Tạo ứng viên từ DTO
     Candidate createCandidateDTO(CreateCandidateDTO c);
 
-    
+    // Lấy danh sách tất cả ứng viên
     List<Candidate> getCandidateList();
     
+    // Xóa ứng viên theo ID
     void deleteCandidate(int id);
 }

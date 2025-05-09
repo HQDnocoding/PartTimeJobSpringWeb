@@ -5,7 +5,6 @@
     <class>com.myweb.pojo.Job</class>
     <class>com.myweb.pojo.CandidateReview</class>
     <class>com.myweb.pojo.Follow</class>
-    <class>com.myweb.pojo.MarjorJob</class>
     <class>com.myweb.pojo.Candidate</class>
     <class>com.myweb.pojo.CompanyReview</class>
     <class>com.myweb.pojo.Company</class>
@@ -15,5 +14,6 @@
     <class>com.myweb.pojo.Major</class>
     <class>com.myweb.pojo.Application</class>
     <class>com.myweb.pojo.DayJob</class>
+    <class>com.myweb.pojo.MajorJob</class>
   </persistence-unit>
 </persistence>

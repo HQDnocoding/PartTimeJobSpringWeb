@@ -18,6 +18,7 @@ public class DayServiceImplement implements DayService {
     @Autowired
     private DayRepository dayRepository;
 
+    // Lấy danh sách tất cả các ngày
     @Override
     public List<Day> getDays() {
         return dayRepository.getDays();

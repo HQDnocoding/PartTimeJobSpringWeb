@@ -41,22 +41,27 @@ public class Follow implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "follow_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date followDate;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "is_active")
     private boolean isActive;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "is_candidate_followed")
     private boolean isCandidateFollowed;
+    
     @JoinColumn(name = "candidate_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Candidate candidateId;
+    
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Company companyId;

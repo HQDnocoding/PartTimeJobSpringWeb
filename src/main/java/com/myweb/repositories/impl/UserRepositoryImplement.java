@@ -25,6 +25,7 @@ public class UserRepositoryImplement implements UserRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
     
+    // Thêm tài khoản người dùng
     @Override
     public User addUser(User user) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -33,6 +34,7 @@ public class UserRepositoryImplement implements UserRepository {
         return user;
     }
     
+    // Lấy thông tin người dùng theo username 
     @Override
     public User getUserByUsername(String username) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -44,6 +46,7 @@ public class UserRepositoryImplement implements UserRepository {
         return rs.isEmpty()?null:rs.get(0);
     }
     
+    // Xóa tài khoản người dùng
     @Override
     public void deleteUser(int id) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -52,6 +55,7 @@ public class UserRepositoryImplement implements UserRepository {
         s.remove(u);
     }
     
+    // Lấy thông tin người dùng theo ID
     @Override
     public User getUserById(int id) {
         Session s = this.factory.getObject().getCurrentSession();

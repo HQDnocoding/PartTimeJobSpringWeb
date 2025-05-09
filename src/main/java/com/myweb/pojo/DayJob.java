@@ -34,9 +34,11 @@ public class DayJob implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    
     @JoinColumn(name = "day_id", referencedColumnName = "id")
     @ManyToOne
     private Day dayId;
+    
     @JoinColumn(name = "job_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Job jobId;

@@ -42,21 +42,26 @@ public class CompanyReview implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "review")
     private String review;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "review_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date reviewDate;
+    
     @Column(name = "rating")
     private Integer rating;
+    
     @JoinColumn(name = "candidate_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Candidate candidateId;
+    
     @JoinColumn(name = "job_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Job jobId;

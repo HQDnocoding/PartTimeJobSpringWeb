@@ -36,23 +36,28 @@ public class ApplicationServiceImplement implements ApplicationService {
     @Autowired
     private Cloudinary cloudinary;
 
+    // Thêm mới hoặc cập nhật một đơn ứng tuyển
     public Application addOrUpdateApplication(Application a) {
         return applicationRepository.addOrUpdateApplication(a);
     }
 
+    // Lấy danh sách đơn ứng tuyển với các tiêu chí lọc và phân trang
     public Map<String, Object> getListApplication(Map<String, String> params) {
         return applicationRepository.getListApplication(params);
     }
 
+    // Lấy chi tiết một đơn ứng tuyển theo ID
     public Application getApplicationById(int applicationId) {
         return applicationRepository.getApplicationById(applicationId);
     }
 
+    // Xóa một đơn ứng tuyển theo ID
     @Override
     public void deleteApplication(int id) {
         this.applicationRepository.deleteApplication(id);
     }
 
+    // Thêm mới một đơn ứng tuyển, xử lý tải CV lên Cloudinary và thiết lập trạng thái/ngày nộp
     @Override
     public Application addApplication(Application application) {
 

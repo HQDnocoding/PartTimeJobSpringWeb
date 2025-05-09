@@ -110,7 +110,7 @@ public class Job implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date postedDate;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
-    private Collection<MarjorJob> marjorJobCollection;
+    private Collection<MajorJob> majorJobCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
     private Collection<CandidateReview> candidateReviewCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
@@ -262,12 +262,12 @@ public class Job implements Serializable {
         this.postedDate = postedDate;
     }
 
-    public Collection<MarjorJob> getMarjorJobCollection() {
-        return marjorJobCollection;
+    public Collection<MajorJob> getMajorJobCollection() {
+        return majorJobCollection;
     }
 
-    public void setMarjorJobCollection(Collection<MarjorJob> marjorJobCollection) {
-        this.marjorJobCollection = marjorJobCollection;
+    public void setMajorJobCollection(Collection<MajorJob> majorJobCollection) {
+        this.majorJobCollection = majorJobCollection;
     }
 
     public Collection<CandidateReview> getCandidateReviewCollection() {
@@ -333,6 +333,14 @@ public class Job implements Serializable {
     @Override
     public String toString() {
         return "com.myweb.pojo.Job[ id=" + id + " ]";
+    }
+
+    public void setCreatedDate(Date date) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setRequirements(String requirements) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
 }

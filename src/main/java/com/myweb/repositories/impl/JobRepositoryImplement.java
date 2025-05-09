@@ -1,9 +1,7 @@
-/*
- * Click nbfs://.netbeans/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://.netbeans/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.myweb.repositories.impl;
 
+import com.myweb.pojo.Day;
+import com.myweb.pojo.DayJob;
 import com.myweb.pojo.Job;
 import com.myweb.repositories.JobRepository;
 import com.myweb.utils.GeneralUtils;
@@ -12,7 +10,6 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Order;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -27,12 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-/**
- * Implementation of JobRepository for managing Job entities. Handles database
- * operations for searching and filtering jobs.
- *
- * @author Hau
- */
 @Repository
 @Transactional
 public class JobRepositoryImplement implements JobRepository {
@@ -47,26 +38,21 @@ public class JobRepositoryImplement implements JobRepository {
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder cb = session.getCriteriaBuilder();
 
-        // Đếm tổng số bản ghi
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<Job> countRoot = countQuery.from(Job.class);
         countRoot.join("companyId", JoinType.LEFT);
         List<Predicate> countPredicates = buildPredicates(params, cb, countRoot);
-        // Bỏ điều kiện status của job và company
         countQuery.select(cb.count(countRoot)).where(countPredicates.toArray(new Predicate[0]));
         Long totalRecords = session.createQuery(countQuery).getSingleResult();
 
-        // Truy vấn danh sách công việc với phân trang
         CriteriaQuery<Job> cq = cb.createQuery(Job.class);
         Root<Job> jobRoot = cq.from(Job.class);
         jobRoot.fetch("companyId", JoinType.LEFT);
 
         List<Predicate> predicates = buildPredicates(params, cb, jobRoot);
-        // Bỏ điều kiện status của job và company
         cq.where(predicates.toArray(new Predicate[0]));
         cq.orderBy(cb.asc(jobRoot.get("id")));
 
-        // Phân trang
         int page = 1;
         if (params != null) {
             try {
@@ -81,22 +67,18 @@ public class JobRepositoryImplement implements JobRepository {
                 .setMaxResults(GeneralUtils.PAGE_SIZE)
                 .getResultList();
 
-        // Initialize collections
         for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
+            Hibernate.initialize(job.getMajorJobCollection());
             Hibernate.initialize(job.getDayJobCollection());
         }
 
-        // Ghi log để kiểm tra
         logger.info("Total records: " + totalRecords);
         logger.info("Page: " + page + ", Start: " + start + ", Page size: " + GeneralUtils.PAGE_SIZE);
         logger.info("Jobs retrieved: " + jobs.size());
         jobs.forEach(job -> logger.info("Job ID: " + job.getId()));
 
-        // Tính tổng số trang
         int totalPages = (int) Math.ceil((double) totalRecords / GeneralUtils.PAGE_SIZE);
 
-        // Trả về kết quả
         Map<String, Object> result = new HashMap<>();
         result.put("jobs", jobs);
         result.put("currentPage", page);
@@ -110,7 +92,6 @@ public class JobRepositoryImplement implements JobRepository {
     private List<Predicate> buildPredicates(Map<String, String> params, CriteriaBuilder cb, Root<Job> jobRoot) {
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.equal(jobRoot.get("isActive"), true));
-        // Bỏ điều kiện status của job và company
 
         if (params != null) {
             String keyword = params.get("keyword");
@@ -124,7 +105,7 @@ public class JobRepositoryImplement implements JobRepository {
             String majorId = params.get("majorId");
             if (majorId != null && !majorId.isEmpty()) {
                 try {
-                    predicates.add(cb.equal(jobRoot.join("marjorJobCollection").join("majorId").get("id"), Integer.parseInt(majorId)));
+                    predicates.add(cb.equal(jobRoot.join("majorJobCollection").join("majorId").get("id"), Integer.parseInt(majorId)));
                 } catch (NumberFormatException e) {
                     logger.warning("Invalid majorId format: " + majorId);
                 }
@@ -182,7 +163,7 @@ public class JobRepositoryImplement implements JobRepository {
         predicates.add(cb.equal(jobRoot.get("isActive"), true));
         predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
         predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
-        predicates.add(cb.equal(jobRoot.join("marjorJobCollection").join("majorId").get("id"), majorId));
+        predicates.add(cb.equal(jobRoot.join("majorJobCollection").join("majorId").get("id"), majorId));
 
         cq.where(cb.and(predicates.toArray(new Predicate[0])));
         cq.orderBy(cb.asc(jobRoot.get("id")));
@@ -190,7 +171,7 @@ public class JobRepositoryImplement implements JobRepository {
         List<Job> jobs = session.createQuery(cq).getResultList();
 
         for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
+            Hibernate.initialize(job.getMajorJobCollection());
             Hibernate.initialize(job.getDayJobCollection());
         }
 
@@ -216,7 +197,7 @@ public class JobRepositoryImplement implements JobRepository {
         Job job = session.createQuery(cq).uniqueResult();
 
         if (job != null) {
-            Hibernate.initialize(job.getMarjorJobCollection());
+            Hibernate.initialize(job.getMajorJobCollection());
             Hibernate.initialize(job.getDayJobCollection());
         }
 
@@ -236,7 +217,7 @@ public class JobRepositoryImplement implements JobRepository {
         predicates.add(cb.equal(jobRoot.get("isActive"), true));
         predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
         predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
-        predicates.add(cb.equal(jobRoot.join("marjorJobCollection").join("majorId").get("id"), majorId));
+        predicates.add(cb.equal(jobRoot.join("majorJobCollection").join("majorId").get("id"), majorId));
         predicates.add(cb.equal(jobRoot.get("city"), String.valueOf(cityId)));
 
         cq.where(cb.and(predicates.toArray(new Predicate[0])));
@@ -245,7 +226,7 @@ public class JobRepositoryImplement implements JobRepository {
         List<Job> jobs = session.createQuery(cq).getResultList();
 
         for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
+            Hibernate.initialize(job.getMajorJobCollection());
             Hibernate.initialize(job.getDayJobCollection());
         }
 
@@ -273,7 +254,7 @@ public class JobRepositoryImplement implements JobRepository {
         List<Job> jobs = session.createQuery(cq).getResultList();
 
         for (Job job : jobs) {
-            Hibernate.initialize(job.getMarjorJobCollection());
+            Hibernate.initialize(job.getMajorJobCollection());
             Hibernate.initialize(job.getDayJobCollection());
         }
 
@@ -299,8 +280,6 @@ public class JobRepositoryImplement implements JobRepository {
         cq.orderBy(cb.asc(jobRoot.get("id")));
 
         List<Job> jobs = session.createQuery(cq).getResultList();
-
-                
 
         return jobs;
     }
@@ -357,10 +336,23 @@ public class JobRepositoryImplement implements JobRepository {
 
     @Override
     public void deleteJob(int jobId) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Session session = sessionFactory.getCurrentSession();
+        try {
+            Job job = session.get(Job.class, jobId);
+            if (job != null) {
+                job.setIsActive(false); // Thay vì xóa cứng, đánh dấu là không hoạt động
+                session.update(job);
+                logger.info("Successfully soft-deleted job with ID: " + jobId);
+            } else {
+                logger.warning("Job not found with ID: " + jobId);
+                throw new IllegalArgumentException("Công việc không tồn tại.");
+            }
+        } catch (Exception e) {
+            logger.severe("Error deleting job: " + e.getMessage());
+            throw new RuntimeException("Lỗi khi xóa công việc: " + e.getMessage(), e);
+        }
     }
 
-    //Dat codes
     @Override
     public List<Job> getListJobForManage() {
         Session s = this.sessionFactory.getCurrentSession();
@@ -373,12 +365,94 @@ public class JobRepositoryImplement implements JobRepository {
         predicates.add(cb.equal(root.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
 
         q.where(cb.and(predicates.toArray(new Predicate[0])));
-        q.orderBy( cb.asc(root.get("id")));
+        q.orderBy(cb.asc(root.get("id")));
         return s.createQuery(q).getResultList();
     }
 
     @Override
     public boolean addJob(Job j) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Session s = this.sessionFactory.getCurrentSession();
+        try {
+            if (j != null) {
+                s.merge(j); // Thay saveOrUpdate bằng merge
+                logger.info("Successfully saved job with ID: " + (j.getId() != null ? j.getId() : "new"));
+                return true;
+            } else {
+                logger.warning("Job object is null");
+                return false;
+            }
+        } catch (Exception e) {
+            logger.severe("Error adding job: " + e.getMessage());
+            throw new RuntimeException("Lỗi khi lưu công việc: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Job addJobDTO(Job j) { // Thay đổi để trả về Job thay vì boolean
+        Session s = this.sessionFactory.getCurrentSession();
+        try {
+            if (j != null) {
+                Job mergedJob = (Job) s.merge(j); // Gán đối tượng đã merge
+                s.flush(); // Đảm bảo job được lưu và có ID
+                logger.info("Successfully saved job with ID: " + (mergedJob.getId() != null ? mergedJob.getId() : "new"));
+                return mergedJob;
+            } else {
+                logger.warning("Job object is null");
+                throw new IllegalArgumentException("Công việc không hợp lệ.");
+            }
+        } catch (Exception e) {
+            logger.severe("Error adding job: " + e.getMessage() + ", Stack trace: " + getStackTrace(e));
+            throw new RuntimeException("Lỗi khi lưu công việc: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void addDaysToJob(Job job, List<Integer> dayIds) {
+        Session session = sessionFactory.getCurrentSession();
+        try {
+            if (job == null || job.getId() == null) {
+                logger.severe("Job or Job ID is null");
+                throw new IllegalArgumentException("Công việc không hợp lệ hoặc chưa được lưu.");
+            }
+
+            // Xóa các bản ghi cũ trong day_job để tránh trùng lặp
+            session.createQuery("DELETE FROM DayJob dj WHERE dj.jobId.id = :jobId")
+                    .setParameter("jobId", job.getId())
+                    .executeUpdate();
+
+            // Lấy danh sách ngày từ repository
+            List<Day> days = session.createQuery("FROM Day", Day.class).getResultList();
+            List<Integer> validDayIds = days.stream().map(Day::getId).toList();
+
+            if (dayIds != null && !dayIds.isEmpty()) {
+                for (Integer dayId : dayIds) {
+                    if (dayId == null || !validDayIds.contains(dayId)) {
+                        logger.warning("Invalid or null dayId: " + dayId);
+                        continue;
+                    }
+                    Day day = days.stream().filter(d -> d.getId().equals(dayId)).findFirst()
+                            .orElseThrow(() -> new IllegalArgumentException("Ngày làm việc không tồn tại: " + dayId));
+                    DayJob dayJob = new DayJob();
+                    dayJob.setJobId(job);
+                    dayJob.setDayId(day);
+                    session.save(dayJob);
+                    logger.info("Added DayJob: jobId=" + job.getId() + ", dayId=" + dayId);
+                }
+                session.flush(); // Đảm bảo tất cả DayJob được lưu
+            } else {
+                logger.info("No dayIds provided for jobId: " + job.getId());
+            }
+        } catch (Exception e) {
+            logger.severe("Error adding days to job: " + e.getMessage() + ", Stack trace: " + getStackTrace(e));
+            throw new RuntimeException("Lỗi khi thêm ngày làm việc: " + e.getMessage(), e);
+        }
+    }
+
+    private String getStackTrace(Exception e) {
+        StringBuilder sb = new StringBuilder();
+        for (StackTraceElement element : e.getStackTrace()) {
+            sb.append(element.toString()).append("\n");
+        }
+        return sb.toString();
     }
 }

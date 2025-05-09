@@ -24,6 +24,7 @@ public class ThymeleafConfig {
     public SpringSecurityDialect springSecurityDialect() {
         return new SpringSecurityDialect();
     }
+    
     @Bean
     public ClassLoaderTemplateResolver templateResolver() {
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();

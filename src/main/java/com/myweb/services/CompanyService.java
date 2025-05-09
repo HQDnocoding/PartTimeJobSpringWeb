@@ -18,14 +18,22 @@ import org.springframework.stereotype.Service;
 
 public interface CompanyService {
 
+    // Lấy danh sách công ty với tiêu chí lọc và phân trang
     Map<String, Object> getListCompany(Map<String, String> params);
     
+    // Lấy chi tiết công ty theo ID
     Company getCompany(int companyId);
     
+    // Thêm mới hoặc cập nhật công ty
     Company addOrUpdate(Company p);
-
     
+    // Xóa công ty theo ID
     void deleteCompany(int id);
     
+    // Tạo công ty từ DTO
     Company createCompanyDTO(CreateCompanyDTO c);
+
+    public Object getAllCompany();
+    
+    List<Company> getAllCompaniesForDropdown();
 }

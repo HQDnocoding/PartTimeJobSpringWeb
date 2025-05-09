@@ -41,6 +41,7 @@ public class CompanyRepositoryImplement implements CompanyRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
 
+    // Thêm hoặc cập nhật công ty
     @Override
     public Company addOrUpdateCompany(Company c) {
         Session session = this.factory.getObject().getCurrentSession();
@@ -58,6 +59,7 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         return c;
     }
 
+    // Lấy danh sách công ty với lọc/phân trang
     @Override
     public Map<String, Object> getListCompany(Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -134,12 +136,14 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         return result;
     }
 
+    // Lấy chi tiết công ty
     @Override
     public Company getCompanyById(int companyId) {
         Session s = this.factory.getObject().getCurrentSession();
         return s.get(Company.class, companyId);
     }
 
+    // Xóa công ty và tài khoản người dùng
     @Override
     public void deleteCompany(int id) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -148,6 +152,7 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         s.remove(c.getUserId());
     }
 
+    // Tạo công ty và tài khoản người dùng
     @Override
     public Company createCompanyDTO(User u, Company c) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -165,6 +170,7 @@ public class CompanyRepositoryImplement implements CompanyRepository {
 
     }
 
+    // Kiểm tra công ty theo email
     @Override
     public Company getCompanyByEmail(String email) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -175,6 +181,7 @@ public class CompanyRepositoryImplement implements CompanyRepository {
 
     }
 
+    // Kiểm tra công ty theo mã số thuế
     @Override
     public Company getCompanyByTaxCode(String taxCode) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -185,4 +192,18 @@ public class CompanyRepositoryImplement implements CompanyRepository {
 
     }
 
+    // Lấy danh sách tất cả các công ty cho dropdown mà không bị lỗi phân trang
+    @Override
+    public List<Company> getAllCompaniesForDropdown() {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<Company> cq = cb.createQuery(Company.class);
+        Root<Company> companyRoot = cq.from(Company.class);
+
+        cq.orderBy(cb.asc(companyRoot.get("id")));
+
+        List<Company> companies = s.createQuery(cq).getResultList();
+        System.out.println("Total companies retrieved for dropdown: " + companies.size());
+        return companies;
+    }
 }
