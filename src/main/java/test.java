@@ -14,16 +14,18 @@ import com.myweb.pojo.Follow;
 import com.myweb.pojo.ImageWorkplace;
 import com.myweb.pojo.Job;
 import com.myweb.pojo.Major;
-import com.myweb.pojo.MarjorJob;
+import com.myweb.pojo.MajorJob;
 import com.myweb.pojo.User;
 import com.myweb.utils.GeneralUtils;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.hibernate.Session;
 import jakarta.persistence.Query;
+
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -35,13 +37,12 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
- *
  * @author huaquangdat
  */
 public class test {
 
     public static void main(String[] args) {
-
-
+        final Dotenv dotenv = Dotenv.configure().load();
+        System.out.println(dotenv.get("SECRET_JWT"));
     }
 }

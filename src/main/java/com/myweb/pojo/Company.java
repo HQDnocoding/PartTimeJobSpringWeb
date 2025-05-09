@@ -4,6 +4,9 @@
  */
 package com.myweb.pojo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -24,7 +27,6 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
 import org.springframework.web.multipart.MultipartFile;
-
 
 /**
  *
@@ -52,80 +54,84 @@ public class Company implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
     @Column(name = "name")
     private String name;
-    
+
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "email", unique =true)
+    @Column(name = "email", unique = true)
     private String email;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "avatar")
     private String avatar;
-    
+
     @Size(max = 300)
     @Column(name = "self_description")
     private String selfDescription;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "tax_code")
     private String taxCode;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 300)
     @Column(name = "full_address")
     private String fullAddress;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "city")
     private String city;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "district")
     private String district;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 8)
     @Column(name = "status")
     private String status;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyId",fetch = FetchType.EAGER)
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyId", fetch = FetchType.EAGER)
+//    @JsonIgnore
     private Collection<ImageWorkplace> imageWorkplaceCollection;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyId")
+    @JsonIgnore
     private Collection<Follow> followCollection;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyId")
+    @JsonIgnore
     private Collection<CandidateReview> candidateReviewCollection;
-    
-    @JoinColumn(name = "user_id", referencedColumnName = "id",unique = true)
+
+    @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     @OneToOne(optional = false)
+    @JsonBackReference
     private User userId;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyId")
+    @JsonIgnore
     private Collection<Job> jobCollection;
 
     @Transient
     private MultipartFile file;
-    
-    
+
     public Company() {
     }
 
@@ -303,5 +309,5 @@ public class Company implements Serializable {
     public void setFile(MultipartFile file) {
         this.file = file;
     }
-    
+
 }

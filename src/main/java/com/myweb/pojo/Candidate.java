@@ -4,6 +4,9 @@
  */
 package com.myweb.pojo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -50,67 +53,70 @@ public class Candidate implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "full_name")
     private String fullName;
-    
+
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
     @Column(name = "email")
     private String email;
-    
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "date_of_birth")
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "city")
     private String city;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "avatar")
     private String avatar;
-    
+
     @Size(max = 300)
     @Column(name = "self_description")
     private String selfDescription;
-    
+
     // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 15)
     @Column(name = "phone")
     private String phone;
-    
+
     @Size(max = 200)
     @Column(name = "curriculum_vitae")
     private String curriculumVitae;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "candidateId")
+    @JsonIgnore
     private Collection<Follow> followCollection;
-    
-    @JoinColumn(name = "user_id", referencedColumnName = "id",unique = true)
+
+    @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     @OneToOne(optional = false)
+    @JsonBackReference
     private User userId;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "candidateId")
+    @JsonIgnore
     private Collection<Application> applicationCollection;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "candidateId")
+    @JsonIgnore
     private Collection<CompanyReview> companyReviewCollection;
 
-    
     public Candidate() {
     }
 
@@ -256,5 +262,5 @@ public class Candidate implements Serializable {
     public String toString() {
         return "com.myweb.pojo.Candidate[ id=" + id + " ]";
     }
-    
+
 }

@@ -115,4 +115,10 @@ public class UserServiceImplement implements UserService {
         return null;
     }
 
+
+    @Override
+    public boolean authenticate(String username, String password) {
+        return this.userRepo.authenticate(username, password);
+    }
+
 }

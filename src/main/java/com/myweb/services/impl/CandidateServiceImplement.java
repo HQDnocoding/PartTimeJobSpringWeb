@@ -21,6 +21,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static com.myweb.utils.ValidationUtils.isValidPassword;
+import static com.myweb.utils.ValidationUtils.isValidUsername;
+
 /**
  *
  * @author huaquangdat
@@ -57,26 +60,55 @@ public class CandidateServiceImplement implements CandidateService {
     // Tạo 1 ứng viên mới
     @Override
     public Candidate createCandidateDTO(CreateCandidateDTO c) {
-
+        // Kiểm tra các trường bắt buộc không được null hoặc rỗng
+        if (c.getUsername() == null || c.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập tên đăng nhập.");
+        }
         if (userRepository.getUserByUsername(c.getUsername()) != null) {
             throw new IllegalArgumentException("Tên đăng nhập đã được sử dụng.");
+        }
+        if (!isValidPassword(c.getPassword())) {
+            throw new IllegalArgumentException("Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ thường, chữ hoa và số.");
+        }
+        if (!isValidUsername(c.getUsername())) {
+            throw new IllegalArgumentException("Tên đăng nhập phải trên 8 ký tự, bắt đầu bằng chữ cái và không chứa khoảng trắng.");
+        }
+
+        if (c.getPassword() == null || c.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập mật khẩu.");
+        }
+
+        if (c.getFullName() == null || c.getFullName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập họ và tên.");
+        }
+
+        if (c.getEmail() == null || c.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập email.");
         }
         if (candidateRepository.getCandidateByEmail(c.getEmail()) != null) {
             throw new IllegalArgumentException("Email đã được sử dụng.");
         }
+
+        if (c.getPhone() == null || c.getPhone().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập số điện thoại.");
+        }
         if (candidateRepository.getCandidateByPhone(c.getPhone()) != null) {
             throw new IllegalArgumentException("Số điện thoại này đã được sử dụng.");
         }
-        if (c.getCity() == null || c.getCity().isEmpty()) {
+
+        if (c.getCity() == null || c.getCity().trim().isEmpty()) {
             throw new IllegalArgumentException("Vui lòng chọn thành phố.");
         }
-        if (c.getAvatarFile() == null || c.getAvatarFile().isEmpty()) {
-            throw new IllegalArgumentException("Vui lòng chọn hình đại diện.");
-        }
+
         if (c.getDateOfBirth() == null) {
             throw new IllegalArgumentException("Vui lòng chọn ngày sinh.");
         }
 
+        if (c.getAvatarFile() == null || c.getAvatarFile().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng chọn hình đại diện.");
+        }
+
+        // Tạo tài khoản người dùng
         User u = new User();
         u.setUsername(c.getUsername());
         u.setPassword(this.passwordEncoder.encode(c.getPassword()));
@@ -84,6 +116,7 @@ public class CandidateServiceImplement implements CandidateService {
         u.setRole(GeneralUtils.Role.ROLE_CANDIDATE.toString());
         u.setIsActive(true);
 
+        // Tạo ứng viên
         Candidate can = new Candidate();
         can.setCity(c.getCity());
         can.setFullName(c.getFullName());
@@ -104,8 +137,8 @@ public class CandidateServiceImplement implements CandidateService {
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin.");
         }
-
     }
+
 
     // Lấy tất cả ứng viên
     @Override

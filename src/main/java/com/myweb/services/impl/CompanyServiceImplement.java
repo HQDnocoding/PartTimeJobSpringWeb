@@ -27,6 +27,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static com.myweb.utils.ValidationUtils.isValidPassword;
+import static com.myweb.utils.ValidationUtils.isValidUsername;
+
 /**
  *
  * @author dat
@@ -76,24 +79,68 @@ public class CompanyServiceImplement implements CompanyService {
 
     @Override
     public Company createCompanyDTO(CreateCompanyDTO c) {
-
+        // Kiểm tra các trường bắt buộc
+        if (c.getUsername() == null || c.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập tên đăng nhập.");
+        }
         if (userRepository.getUserByUsername(c.getUsername()) != null) {
             throw new IllegalArgumentException("Tên đăng nhập đã được sử dụng.");
+        }
+        if (!isValidPassword(c.getPassword())) {
+            throw new IllegalArgumentException("Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ thường, chữ hoa và số.");
+        }
+
+        if (!isValidUsername(c.getUsername())) {
+            throw new IllegalArgumentException("Tên đăng nhập phải trên 8 ký tự, bắt đầu bằng chữ cái và không chứa khoảng trắng.");
+        }
+
+        if (c.getPassword() == null || c.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập mật khẩu.");
+        }
+
+        if (c.getName() == null || c.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập tên công ty.");
+        }
+
+        if (c.getEmail() == null || c.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập email.");
         }
         if (companyRepository.getCompanyByEmail(c.getEmail()) != null) {
             throw new IllegalArgumentException("Email đã được sử dụng.");
         }
+
+        if (c.getTaxCode() == null || c.getTaxCode().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập mã số thuế.");
+        }
         if (companyRepository.getCompanyByTaxCode(c.getTaxCode()) != null) {
             throw new IllegalArgumentException("Mã số thuế đã được sử dụng.");
         }
-        if (c.getFiles().size() < 3) {
+
+        if (c.getCity() == null || c.getCity().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng chọn thành phố.");
+        }
+
+        if (c.getDistrict() == null || c.getDistrict().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập quận/huyện.");
+        }
+
+        if (c.getFullAddress() == null || c.getFullAddress().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập địa chỉ đầy đủ.");
+        }
+
+        if (c.getSelfDescription() == null || c.getSelfDescription().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập mô tả về công ty.");
+        }
+
+        if (c.getFiles() == null || c.getFiles().size() < 3) {
             throw new IllegalArgumentException("Vui lòng cung cấp tối thiểu 3 hình của nơi làm việc.");
-
         }
-        if (c.getAvatarFile() == null) {
-            throw new IllegalArgumentException("Vui lòng cung cấp avatar");
 
+        if (c.getAvatarFile() == null || c.getAvatarFile().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng cung cấp ảnh đại diện.");
         }
+
+        // Tạo người dùng
         User u = new User();
         u.setUsername(c.getUsername());
         u.setPassword(this.passwordEncoder.encode(c.getPassword()));
@@ -101,6 +148,7 @@ public class CompanyServiceImplement implements CompanyService {
         u.setRole(GeneralUtils.Role.ROLE_COMPANY.toString());
         u.setIsActive(true);
 
+        // Tạo công ty
         Company company = new Company();
         company.setName(c.getName());
         company.setCity(c.getCity());
@@ -113,11 +161,11 @@ public class CompanyServiceImplement implements CompanyService {
         company.setStatus(GeneralUtils.Status.pending.toString());
         company.setUserId(u);
 
-        List<ImageWorkplace> imageList = c.getFiles().stream().map(file
-                -> new ImageWorkplace(GeneralUtils.uploadFileToCloud(cloudinary, file), company)).collect(Collectors.toList());
+        // Upload hình nơi làm việc
+        List<ImageWorkplace> imageList = c.getFiles().stream()
+                .map(file -> new ImageWorkplace(GeneralUtils.uploadFileToCloud(cloudinary, file), company))
+                .collect(Collectors.toList());
 
-        company.setImageWorkplaceCollection(imageList);
-        System.out.println(imageList);
         company.setImageWorkplaceCollection(imageList);
 
         try {
@@ -125,8 +173,9 @@ public class CompanyServiceImplement implements CompanyService {
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin.");
         }
-
     }
+
+
 
     @Override
     public Object getAllCompany() {

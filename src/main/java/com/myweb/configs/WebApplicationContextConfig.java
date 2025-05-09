@@ -17,6 +17,13 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.filter.CharacterEncodingFilter;
+
 /**
  *
  * @author huaquangdat
@@ -48,6 +55,32 @@ public class WebApplicationContextConfig implements WebMvcConfigurer {
     public void addFormatters(FormatterRegistry registry) {
         registry.addFormatter(new CandidateFormatter());
         registry.addFormatter(new JobFormatter());
+    }
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        // Thêm MappingJackson2HttpMessageConverter để xử lý JSON
+        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+        jsonConverter.setDefaultCharset(StandardCharsets.UTF_8);
+        jsonConverter.setSupportedMediaTypes(List.of(org.springframework.http.MediaType.APPLICATION_JSON));
+        converters.add(jsonConverter);
+
+        // Thêm StringHttpMessageConverter cho text/plain
+        StringHttpMessageConverter stringConverter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
+        stringConverter.setSupportedMediaTypes(List.of(
+                org.springframework.http.MediaType.TEXT_PLAIN,
+                org.springframework.http.MediaType.APPLICATION_JSON
+        ));
+        converters.add(stringConverter);
+    }
+
+    @Bean
+    public CharacterEncodingFilter characterEncodingFilter() {
+        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+        filter.setEncoding("UTF-8");
+        filter.setForceRequestEncoding(true);
+        filter.setForceResponseEncoding(true);
+        return filter;
     }
 
     @Bean

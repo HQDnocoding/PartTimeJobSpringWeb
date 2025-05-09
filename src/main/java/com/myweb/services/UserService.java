@@ -23,5 +23,8 @@ public interface UserService extends UserDetailsService{
     
     // Xóa người dùng theo ID
     void deleteUser(int id);
+
+    boolean authenticate(String username, String password);
     
+
 }

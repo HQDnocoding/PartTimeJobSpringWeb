@@ -4,6 +4,7 @@
  */
 package com.myweb.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -29,17 +30,18 @@ public class ImageWorkplace implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
     @Column(name = "image_url")
     private String imageUrl;
-    
+
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonIgnore
     private Company companyId;
-    
+
     @Transient
     private MultipartFile file;
 
@@ -52,7 +54,7 @@ public class ImageWorkplace implements Serializable {
 
     public ImageWorkplace(String imageUrl, Company company) {
         this.imageUrl = imageUrl;
-        this.companyId=company;
+        this.companyId = company;
     }
 
     public ImageWorkplace(Integer id, String imageUrl) {

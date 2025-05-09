@@ -11,6 +11,7 @@ import java.util.List;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,9 @@ public class UserRepositoryImplement implements UserRepository {
     
     @Autowired
     private LocalSessionFactoryBean factory;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
     
     // Thêm tài khoản người dùng
     @Override
@@ -60,6 +64,14 @@ public class UserRepositoryImplement implements UserRepository {
     public User getUserById(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         return s.get(User.class, id);
+    }
+
+
+    @Override
+    public boolean authenticate(String username, String password) {
+        User u = this.getUserByUsername(username);
+
+        return this.passwordEncoder.matches(password, u.getPassword());
     }
     
 }
