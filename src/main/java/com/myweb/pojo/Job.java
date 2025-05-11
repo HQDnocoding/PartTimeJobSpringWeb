@@ -109,6 +109,18 @@ public class Job implements Serializable {
     @Column(name = "posted_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date postedDate;
+
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 1000)
+    @Column(name = "longitude")
+    private String longitude;
+
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 1000)
+    @Column(name = "latitude")
+    private String latitude;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
     private Collection<MajorJob> majorJobCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
@@ -342,5 +354,33 @@ public class Job implements Serializable {
     public void setRequirements(String requirements) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
+    /**
+     * @return the longitude
+     */
+    public String getLongitude() {
+        return longitude;
+    }
+
+    /**
+     * @param longtitude the longitude to set
+     */
+    public void setLongitude(String longtitude) {
+        this.longitude = longtitude;
+    }
+
+    /**
+     * @return the latitude
+     */
+    public String getLatitude() {
+        return latitude;
+    }
+
+    /**
+     * @param latitude the latitude to set
+     */
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
 }

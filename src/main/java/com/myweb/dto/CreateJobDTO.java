@@ -46,6 +46,13 @@ public class CreateJobDTO {
     @NotBlank(message = "Yêu cầu công việc không được để trống")
     private String jobRequired;
 
+    private String latitude;
+    private String longitude;
+
+    private Integer ageFrom;
+    private Integer ageTo;
+    private Integer experienceRequired;
+
     private String fullAddress;
     private String city;
 
@@ -153,5 +160,75 @@ public class CreateJobDTO {
     public void setCity(String city) {
         this.city = city;
     }
-    
+
+    /**
+     * @return the latitude
+     */
+    public String getLatitude() {
+        return latitude;
+    }
+
+    /**
+     * @param latitude the latitude to set
+     */
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    /**
+     * @return the longitude
+     */
+    public String getLongitude() {
+        return longitude;
+    }
+
+    /**
+     * @param longitude the longitude to set
+     */
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    /**
+     * @return the ageFrom
+     */
+    public Integer getAgeFrom() {
+        return ageFrom;
+    }
+
+    /**
+     * @param ageFrom the ageFrom to set
+     */
+    public void setAgeFrom(Integer ageFrom) {
+        this.ageFrom = ageFrom;
+    }
+
+    /**
+     * @return the ageTo
+     */
+    public Integer getAgeTo() {
+        return ageTo;
+    }
+
+    /**
+     * @param ageTo the ageTo to set
+     */
+    public void setAgeTo(Integer ageTo) {
+        this.ageTo = ageTo;
+    }
+
+    /**
+     * @return the experienceRequired
+     */
+    public Integer getExperienceRequired() {
+        return experienceRequired;
+    }
+
+    /**
+     * @param experienceRequired the experienceRequired to set
+     */
+    public void setExperienceRequired(Integer experienceRequired) {
+        this.experienceRequired = experienceRequired;
+    }
+
 }
