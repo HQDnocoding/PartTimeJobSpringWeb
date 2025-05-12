@@ -11,10 +11,8 @@ com\myweb\services\DayService.class
 com\myweb\controllers\FollowController.class
 com\myweb\configs\HibernateConfigs.class
 com\myweb\dto\CreateJobDTO$SalaryRangeValidator.class
-<<<<<<< HEAD
+com\myweb\dto\GetReportDTO.class
 com\myweb\repositories\impl\ReportRepositoryImplement.class
-=======
->>>>>>> e1f0a0877cfe77b3c88eab75fb15802b92f16157
 com\myweb\dto\GetJobDTO.class
 com\myweb\utils\GeneralUtils$Status.class
 com\myweb\services\CandidateService.class
@@ -27,7 +25,6 @@ com\myweb\repositories\UserRepository.class
 com\myweb\formatters\CandidateFormatter.class
 com\myweb\controllers\ApiApplicationController.class
 com\myweb\dto\CreateApplicationDTO.class
-com\myweb\dto\ReportDTO.class
 com\myweb\repositories\impl\CandidateRepositoryImplement.class
 com\myweb\repositories\MajorRepository.class
 com\myweb\dto\CreateJobDTO.class
@@ -40,10 +37,7 @@ com\myweb\services\impl\CompanyServiceImplement.class
 com\myweb\dto\CreateCandidateDTO.class
 com\myweb\services\impl\ApplicationServiceImplement.class
 com\myweb\pojo\CompanyReview.class
-<<<<<<< HEAD
 statistic\js.class
-=======
->>>>>>> e1f0a0877cfe77b3c88eab75fb15802b92f16157
 com\myweb\controllers\JobController$1.class
 com\myweb\services\impl\CandidateServiceImplement.class
 com\myweb\services\MajorService.class

@@ -2,15 +2,15 @@ package com.myweb.dto;
 
 import java.util.Date;
 
-public class ReportDTO {
+public class GetReportDTO {
     private Date date;
     private Long jobCount;
     private Long candidateCount;
     private Long companyCount;
 
-    public ReportDTO() {}
+    public GetReportDTO() {}
 
-    public ReportDTO(Date date, Long jobCount, Long candidateCount, Long companyCount) {
+    public GetReportDTO(Date date, Long jobCount, Long candidateCount, Long companyCount) {
         this.date = date;
         this.jobCount = jobCount;
         this.candidateCount = candidateCount;

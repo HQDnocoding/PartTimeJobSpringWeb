@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         chart = new Chart(ctx, {
-            type: 'bar', // Thay đổi từ 'line' thành 'bar'
+            type: 'bar',
             data: {
                 labels: labels,
                 datasets: [
@@ -83,4 +83,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
     });
+
+    // Xử lý nút xuất Excel
+    const exportButton = document.querySelector('.btn-success');
+    if (exportButton) {
+        exportButton.addEventListener('click', function (e) {
+            e.preventDefault();
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+
+            // Kiểm tra nếu không nhập ngày
+            if (!fromDate || !toDate) {
+                alert('Vui lòng chọn cả ngày bắt đầu và ngày kết thúc.');
+                return;
+            }
+
+            // Tạo URL cho yêu cầu xuất Excel
+            const contextPath = window.location.pathname.split('/')[1] || '';
+            const url = contextPath ? `/${contextPath}/report/export-excel?fromDate=${fromDate}&toDate=${toDate}` : `/report/export-excel?fromDate=${fromDate}&toDate=${toDate}`;
+
+            // Chuyển hướng để tải file
+            window.location.href = url;
+        });
+    }
 });

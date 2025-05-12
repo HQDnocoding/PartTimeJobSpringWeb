@@ -1,9 +1,9 @@
 package com.myweb.services;
 
-import com.myweb.dto.ReportDTO;
+import com.myweb.dto.GetReportDTO;
 import java.util.Date;
 import java.util.List;
 
 public interface ReportService {
-    List<ReportDTO> generateReport(Date fromDate, Date toDate);
+    List<GetReportDTO> generateReport(Date fromDate, Date toDate);
 }
