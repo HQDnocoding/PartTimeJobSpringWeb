@@ -4,6 +4,7 @@
  */
 package com.myweb.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,6 +46,7 @@ public class Major implements Serializable {
     private String name;
     
     @OneToMany(mappedBy = "majorId")
+    @JsonIgnore
     private Collection<MajorJob> marjorJobCollection;
 
     public Major() {

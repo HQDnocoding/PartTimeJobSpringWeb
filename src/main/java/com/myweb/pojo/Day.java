@@ -4,6 +4,7 @@
  */
 package com.myweb.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,6 +44,7 @@ public class Day implements Serializable {
     @Column(name = "name")
     private String name;
     @OneToMany(mappedBy = "dayId")
+    @JsonIgnore
     private Collection<DayJob> dayJobCollection;
 
     public Day() {
@@ -105,5 +107,5 @@ public class Day implements Serializable {
     public String toString() {
         return "com.myweb.pojo.Day[ id=" + id + " ]";
     }
-    
+
 }
