@@ -4,6 +4,7 @@
  */
 package com.myweb.configs;
 
+import java.text.SimpleDateFormat;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
@@ -52,4 +53,8 @@ public class ThymeleafConfig {
         return viewResolver;
     }
 
+    @Bean
+    public SimpleDateFormat simpleDateFormat() {
+        return new SimpleDateFormat("yyyy-MM-dd");
+    }
 }
