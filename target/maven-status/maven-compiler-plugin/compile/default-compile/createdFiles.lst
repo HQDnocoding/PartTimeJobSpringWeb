@@ -86,6 +86,7 @@ com\myweb\services\CompanyService.class
 com\myweb\controllers\ReportController.class
 com\myweb\services\impl\JobServiceImplement.class
 com\myweb\dto\GetCandidateDTO.class
+com\myweb\controllers\TestController.class
 com\myweb\pojo\CandidateReview.class
 com\myweb\services\impl\ReportServiceImplement.class
 com\myweb\repositories\JobRepository.class

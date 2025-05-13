@@ -19,7 +19,7 @@ import java.util.Properties;
 
 
 @Configuration
-@PropertySource("classpath:mail.properties")
+@PropertySource("classpath:application.properties")
 public class EnvConfig {
 
     @Autowired
