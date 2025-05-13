@@ -11,6 +11,8 @@ com\myweb\services\DayService.class
 com\myweb\controllers\FollowController.class
 com\myweb\configs\HibernateConfigs.class
 com\myweb\dto\CreateJobDTO$SalaryRangeValidator.class
+com\myweb\dto\GetReportDTO.class
+com\myweb\repositories\impl\ReportRepositoryImplement.class
 com\myweb\dto\GetJobDTO.class
 com\myweb\utils\GeneralUtils$Status.class
 com\myweb\services\CandidateService.class
@@ -18,6 +20,7 @@ com\myweb\controllers\ApiMajorController.class
 com\myweb\dto\CreateCompanyDTO.class
 com\myweb\repositories\impl\MajorRepositoryImplement.class
 com\myweb\configs\ThymeleafConfig.class
+com\myweb\services\ReportService.class
 com\myweb\repositories\UserRepository.class
 com\myweb\formatters\CandidateFormatter.class
 com\myweb\controllers\ApiApplicationController.class
@@ -34,12 +37,14 @@ com\myweb\services\impl\CompanyServiceImplement.class
 com\myweb\dto\CreateCandidateDTO.class
 com\myweb\services\impl\ApplicationServiceImplement.class
 com\myweb\pojo\CompanyReview.class
+statistic\js.class
 com\myweb\controllers\JobController$1.class
 com\myweb\services\impl\CandidateServiceImplement.class
 com\myweb\services\MajorService.class
 com\myweb\repositories\impl\FollowRepositoryImplement.class
 com\myweb\controllers\JobController.class
 com\myweb\controllers\ApiCompanyController.class
+com\myweb\repositories\ReportRepository.class
 com\myweb\utils\GeneralUtils$Role.class
 com\myweb\repositories\impl\JobRepositoryImplement.class
 com\myweb\controllers\ApiDayController.class
@@ -75,9 +80,11 @@ com\myweb\controllers\IndexController.class
 com\myweb\controllers\UserController.class
 com\myweb\backend\JakartaRestConfiguration.class
 com\myweb\services\CompanyService.class
+com\myweb\controllers\ReportController.class
 com\myweb\services\impl\JobServiceImplement.class
 com\myweb\dto\GetCandidateDTO.class
 com\myweb\pojo\CandidateReview.class
+com\myweb\services\impl\ReportServiceImplement.class
 com\myweb\repositories\JobRepository.class
 com\myweb\formatters\JobFormatter.class
 test.class

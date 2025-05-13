@@ -82,6 +82,7 @@ public class SpringSecurityConfigs {
                         .requestMatchers("/update-status").permitAll()
                         .requestMatchers("/js/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/report/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")

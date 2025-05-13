@@ -11,6 +11,8 @@ import com.myweb.pojo.Job;
 import com.myweb.pojo.User;
 import com.myweb.repositories.CompanyRepository;
 import com.myweb.utils.GeneralUtils;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -41,6 +43,19 @@ public class CompanyRepositoryImplement implements CompanyRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
 
+     @PersistenceContext
+    private EntityManager entityManager;
+
+    @Override
+    public List<Object[]> countCompaniesByMonth(Date startDate) {
+        String query = "SELECT DATE_FORMAT(c.createdDate, '%Y-%m') as time, COUNT(c) as count " +
+                      "FROM Company c WHERE c.createdDate >= :startDate " +
+                      "GROUP BY DATE_FORMAT(c.createdDate, '%Y-%m')";
+        return entityManager.createQuery(query, Object[].class)
+                .setParameter("startDate", startDate)
+                .getResultList();
+    }
+    
     // Thêm hoặc cập nhật công ty
     @Override
     public Company addOrUpdateCompany(Company c) {
