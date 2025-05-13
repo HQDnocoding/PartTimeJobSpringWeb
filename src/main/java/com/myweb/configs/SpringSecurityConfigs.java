@@ -81,6 +81,8 @@ public class SpringSecurityConfigs {
                         .requestMatchers("/companies/**").permitAll()
                         .requestMatchers("/update-status").permitAll()
                         .requestMatchers("/js/**").permitAll()
+                        .requestMatchers("/css/**").permitAll()
+                        .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/report/**").permitAll()
                         .anyRequest().authenticated())

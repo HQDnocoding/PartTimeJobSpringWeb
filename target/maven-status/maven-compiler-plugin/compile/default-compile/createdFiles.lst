@@ -8,7 +8,6 @@ com\myweb\configs\EnvConfig.class
 com\myweb\repositories\impl\UserRepositoryImplement.class
 com\myweb\services\JobService.class
 com\myweb\services\DayService.class
-com\myweb\controllers\FollowController.class
 com\myweb\configs\HibernateConfigs.class
 com\myweb\dto\CreateJobDTO$SalaryRangeValidator.class
 com\myweb\dto\GetReportDTO.class
@@ -37,7 +36,6 @@ com\myweb\services\impl\CompanyServiceImplement.class
 com\myweb\dto\CreateCandidateDTO.class
 com\myweb\services\impl\ApplicationServiceImplement.class
 com\myweb\pojo\CompanyReview.class
-statistic\js.class
 com\myweb\controllers\JobController$1.class
 com\myweb\services\impl\CandidateServiceImplement.class
 com\myweb\services\MajorService.class
@@ -48,6 +46,7 @@ com\myweb\repositories\ReportRepository.class
 com\myweb\utils\GeneralUtils$Role.class
 com\myweb\repositories\impl\JobRepositoryImplement.class
 com\myweb\controllers\ApiDayController.class
+com\myweb\formatters\DateFormatter.class
 com\myweb\repositories\impl\CompanyRepositoryImplement.class
 com\myweb\pojo\Job.class
 com\myweb\pojo\Company.class
@@ -57,14 +56,12 @@ com\myweb\repositories\impl\DayRepositoryImplement.class
 com\myweb\controllers\ApplicationController.class
 com\myweb\repositories\DayRepository.class
 com\myweb\configs\WebApplicationContextConfig.class
-com\myweb\repositories\FollowRepository.class
-com\myweb\services\impl\FollowServiceImplement.class
 com\myweb\services\UserService.class
 com\myweb\pojo\Day.class
 com\myweb\repositories\ApplicationRepository.class
 com\myweb\pojo\DayJob.class
 com\myweb\repositories\CompanyRepository.class
-com\myweb\services\FollowService.class
+com\myweb\formatters\ErrorResponseFormatter.class
 com\myweb\services\impl\DayServiceImplement.class
 com\myweb\pojo\Major.class
 com\myweb\backend\resources\JakartaEE11Resource.class

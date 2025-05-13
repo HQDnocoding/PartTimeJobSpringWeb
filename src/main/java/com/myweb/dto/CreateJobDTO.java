@@ -8,6 +8,7 @@ import jakarta.validation.Payload;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 
 import java.lang.annotation.ElementType;
@@ -45,8 +46,15 @@ public class CreateJobDTO {
 
     @NotBlank(message = "Yêu cầu công việc không được để trống")
     private String jobRequired;
-
+    
+@NotBlank(message = "Kinh độ không được để trống")
+    @Pattern(regexp = "^-?([0-9]{1,3}(\\.[0-9]+)?|180(\\.0+)?)$",
+            message = "Kinh độ phải từ -180 đến 180, ví dụ: 106.720604")
     private String latitude;
+    
+    @NotBlank(message = "Vĩ độ không được để trống")
+    @Pattern(regexp = "^-?([0-8]?[0-9](\\.\\d+)?|90(\\.0+)?)$",
+            message = "Vĩ độ phải từ -90 đến 90, ví dụ: 10.738967")
     private String longitude;
 
     private Integer ageFrom;
