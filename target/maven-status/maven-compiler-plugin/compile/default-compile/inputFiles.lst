@@ -17,6 +17,7 @@ E:\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApiUserController.ja
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApplicationController.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\CandidateController.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\CompanyController.java
+E:\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\FollowController.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\IndexController.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\JobController.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ReportController.java
@@ -28,6 +29,8 @@ E:\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\CreateJobDTO.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\GetCandidateDTO.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\GetJobDTO.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\GetReportDTO.java
+E:\PartTimeJobSpringWeb\src\main\java\com\myweb\event\JobCreatedEvent.java
+E:\PartTimeJobSpringWeb\src\main\java\com\myweb\event\JobEventListener.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\filters\JwtFilters.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\formatters\CandidateFormatter.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\formatters\DateFormatter.java
@@ -50,6 +53,7 @@ E:\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\ApplicationReposito
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\CandidateRepository.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\CompanyRepository.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\DayRepository.java
+E:\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\FollowRepository.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\impl\ApplicationRepositoryImplement.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\impl\CandidateRepositoryImplement.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\repositories\impl\CompanyRepositoryImplement.java
@@ -67,10 +71,12 @@ E:\PartTimeJobSpringWeb\src\main\java\com\myweb\services\ApplicationService.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\services\CandidateService.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\services\CompanyService.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\services\DayService.java
+E:\PartTimeJobSpringWeb\src\main\java\com\myweb\services\FollowService.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\services\impl\ApplicationServiceImplement.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\services\impl\CandidateServiceImplement.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\services\impl\CompanyServiceImplement.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\services\impl\DayServiceImplement.java
+E:\PartTimeJobSpringWeb\src\main\java\com\myweb\services\impl\FollowServiceImplement.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\services\impl\JobServiceImplement.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\services\impl\MajorServiceImplement.java
 E:\PartTimeJobSpringWeb\src\main\java\com\myweb\services\impl\ReportServiceImplement.java

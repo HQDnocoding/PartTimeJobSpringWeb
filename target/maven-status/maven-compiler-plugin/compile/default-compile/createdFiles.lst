@@ -1,6 +1,7 @@
 com\myweb\controllers\ApiJobController.class
 com\myweb\configs\DispatcherServletInit.class
 com\myweb\repositories\impl\ApplicationRepositoryImplement.class
+com\myweb\event\JobCreatedEvent.class
 com\myweb\utils\JwtUtils.class
 com\myweb\controllers\ApiUserController.class
 com\myweb\utils\ValidationUtils.class
@@ -8,6 +9,8 @@ com\myweb\configs\EnvConfig.class
 com\myweb\repositories\impl\UserRepositoryImplement.class
 com\myweb\services\JobService.class
 com\myweb\services\DayService.class
+com\myweb\event\JobEventListener.class
+com\myweb\controllers\FollowController.class
 com\myweb\configs\HibernateConfigs.class
 com\myweb\dto\CreateJobDTO$SalaryRangeValidator.class
 com\myweb\dto\GetReportDTO.class
@@ -56,11 +59,14 @@ com\myweb\repositories\impl\DayRepositoryImplement.class
 com\myweb\controllers\ApplicationController.class
 com\myweb\repositories\DayRepository.class
 com\myweb\configs\WebApplicationContextConfig.class
+com\myweb\repositories\FollowRepository.class
+com\myweb\services\impl\FollowServiceImplement.class
 com\myweb\services\UserService.class
 com\myweb\pojo\Day.class
 com\myweb\repositories\ApplicationRepository.class
 com\myweb\pojo\DayJob.class
 com\myweb\repositories\CompanyRepository.class
+com\myweb\services\FollowService.class
 com\myweb\formatters\ErrorResponseFormatter.class
 com\myweb\services\impl\DayServiceImplement.class
 com\myweb\pojo\Major.class
