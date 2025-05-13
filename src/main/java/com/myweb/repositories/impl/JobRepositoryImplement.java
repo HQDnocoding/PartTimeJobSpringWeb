@@ -130,11 +130,18 @@ public class JobRepositoryImplement implements JobRepository {
 
             String city = params.get("city");
             if (city != null && !city.isEmpty()) {
-                predicates.add(cb.equal(jobRoot.get("city"), city));
+                city = normalizeLocation(city); // Chuẩn hóa city
+                if (city != null) {
+                    predicates.add(cb.equal(cb.lower(jobRoot.get("city")), city.toLowerCase()));
+                }
             }
+
             String district = params.get("district");
             if (district != null && !district.isEmpty()) {
-                predicates.add(cb.equal(jobRoot.get("district"), district));
+                district = normalizeLocation(district); // Chuẩn hóa district
+                if (district != null) {
+                    predicates.add(cb.equal(cb.lower(jobRoot.get("district")), district.toLowerCase()));
+                }
             }
 
             String dayId = params.get("dayId");
@@ -148,6 +155,18 @@ public class JobRepositoryImplement implements JobRepository {
         }
 
         return predicates;
+    }
+
+    private String normalizeLocation(String location) {
+        if (location == null || location.trim().isEmpty()) {
+            return null;
+        }
+        // Loại bỏ tiền tố "Thành phố", "Tỉnh" và chuẩn hóa
+        String normalized = location.trim()
+                .replaceAll("^(Thành phố|Tỉnh)\\s*", "") // Bỏ "Thành phố" hoặc "Tỉnh" ở đầu
+                .replaceAll("\\s+", " "); // Thay nhiều khoảng trắng bằng 1 khoảng trắng
+        // Viết hoa chữ cái đầu, còn lại viết thường
+        return normalized.substring(0, 1).toUpperCase() + normalized.substring(1).toLowerCase();
     }
 
     @Override

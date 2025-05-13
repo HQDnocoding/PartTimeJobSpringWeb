@@ -52,57 +52,76 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         }
     }
 
-    // Lấy danh sách ứng viên với lọc/phân trang (theo tên, email, thành phố, điện thoại)
+    // Chuẩn hóa giá trị địa điểm (location) bằng cách loại bỏ tiền tố "Thành phố", "Tỉnh" và định dạng lại chuỗi.
+    private String normalizeLocation(String location) {
+        // Kiểm tra nếu location null hoặc rỗng sau khi trim
+        if (location == null || location.trim().isEmpty()) {
+            return null;
+        }
+        // Loại bỏ tiền tố "Thành phố", "Tỉnh" và chuẩn hóa khoảng trắng
+        String normalized = location.trim()
+                .replaceAll("^(Thành phố|Tỉnh)\\s*", "") // Bỏ "Thành phố" hoặc "Tỉnh" ở đầu
+                .replaceAll("\\s+", " "); // Thay nhiều khoảng trắng bằng 1 khoảng trắng
+        // Viết hoa chữ cái đầu, còn lại viết thường
+        return normalized.substring(0, 1).toUpperCase() + normalized.substring(1).toLowerCase();
+    }
+
+    // Lấy danh sách ứng viên với các tiêu chí lọc và phân trang.
     @Override
     public Map<String, Object> getListCandidate(Map<String, String> params) {
+        // Lấy session hiện tại từ Hibernate
         Session s = this.factory.getObject().getCurrentSession();
+        // Khởi tạo CriteriaBuilder để xây dựng truy vấn động
         CriteriaBuilder cb = s.getCriteriaBuilder();
 
-        // Tạo CriteriaQuery cho Candidate
+        // Tạo CriteriaQuery để truy vấn đối tượng Candidate
         CriteriaQuery<Candidate> cq = cb.createQuery(Candidate.class);
         Root<Candidate> candidateRoot = cq.from(Candidate.class);
 
+        // Danh sách các điều kiện lọc
         List<Predicate> predicates = new ArrayList<>();
 
-        // Tìm kiếm
+        // Xử lý các tham số lọc
         if (params != null) {
-            // Họ tên (tìm kiếm gần đúng)
+            // Lọc theo họ tên (tìm kiếm gần đúng với LIKE)
             String fullName = params.get("fullName");
             if (fullName != null && !fullName.isEmpty()) {
                 predicates.add(cb.like(candidateRoot.get("fullName"), String.format("%%%s%%", fullName)));
             }
 
-            // Email (tìm kiếm chính xác)
+            // Lọc theo email (so sánh chính xác)
             String email = params.get("email");
             if (email != null && !email.isEmpty()) {
                 predicates.add(cb.equal(candidateRoot.get("email"), email));
             }
 
-            // Thành phố
+            // Lọc theo thành phố (chuẩn hóa trước khi so sánh)
             String city = params.get("city");
             if (city != null && !city.isEmpty()) {
-                predicates.add(cb.equal(candidateRoot.get("city"), city));
+                city = normalizeLocation(city); // Chuẩn hóa giá trị city
+                if (city != null) {
+                    // So sánh không phân biệt hoa thường
+                    predicates.add(cb.equal(cb.lower(candidateRoot.get("city")), city.toLowerCase()));
+                }
             }
 
-            // Số điện thoại
+            // Lọc theo số điện thoại (so sánh chính xác)
             String phone = params.get("phone");
             if (phone != null && !phone.isEmpty()) {
                 predicates.add(cb.equal(candidateRoot.get("phone"), phone));
             }
         }
 
-        // Áp dụng điều kiện
+        // Áp dụng các điều kiện lọc vào truy vấn
         if (!predicates.isEmpty()) {
             cq.where(cb.and(predicates.toArray(Predicate[]::new)));
         }
 
-        // Tạo truy vấn chính
+        // Tạo truy vấn và đếm tổng số bản ghi
         Query query = s.createQuery(cq);
-        // Đếm tổng số bản ghi
-
         int totalRecords = query.getResultList().size();
 
-        // Phân trang
+        // Xử lý phân trang
         int page = 1;
         try {
             page = Integer.parseInt(params.getOrDefault("page", "1"));
@@ -111,10 +130,11 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         }
         int start = (page - 1) * GeneralUtils.PAGE_SIZE;
 
+        // Thiết lập phân trang cho truy vấn
         query.setFirstResult(start);
         query.setMaxResults(GeneralUtils.PAGE_SIZE);
 
-        // Lấy danh sách kết quả
+        // Lấy danh sách ứng viên
         List<Candidate> results = query.getResultList();
         System.out.println("Results: " + results);
 
@@ -197,7 +217,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
     public void deleteCandidate(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         Candidate c = this.getCandidateById(id);
-        
+
         s.remove(c.getUserId());
     }
 
