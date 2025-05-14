@@ -16,10 +16,12 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import java.util.Properties;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 
 @Configuration
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:mail.properties")
+@EnableAsync
 public class EnvConfig {
 
     @Autowired

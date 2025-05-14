@@ -51,6 +51,7 @@ com\myweb\repositories\impl\JobRepositoryImplement.class
 com\myweb\controllers\ApiDayController.class
 com\myweb\formatters\DateFormatter.class
 com\myweb\repositories\impl\CompanyRepositoryImplement.class
+com\myweb\services\EmailService.class
 com\myweb\pojo\Job.class
 com\myweb\pojo\Company.class
 com\myweb\pojo\User.class
@@ -86,7 +87,6 @@ com\myweb\services\CompanyService.class
 com\myweb\controllers\ReportController.class
 com\myweb\services\impl\JobServiceImplement.class
 com\myweb\dto\GetCandidateDTO.class
-com\myweb\controllers\TestController.class
 com\myweb\pojo\CandidateReview.class
 com\myweb\services\impl\ReportServiceImplement.class
 com\myweb\repositories\JobRepository.class

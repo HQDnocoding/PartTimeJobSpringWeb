@@ -104,13 +104,13 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
-            <version>6.0.22</version> <!-- Phù hợp với Spring Framework 6.x -->
+            <version>6.0.22</version> 
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
-            <version>3.2.5</version> <!-- Hoặc phiên bản Spring Boot bạn dùng -->
+            <version>3.2.5</version> 
         </dependency>
 
         <dependency>
@@ -119,6 +119,12 @@
             <version>2.0.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <version>2.1.3</version> 
+        </dependency>
+        
     </dependencies>
     
     <build>

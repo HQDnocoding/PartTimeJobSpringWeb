@@ -85,7 +85,7 @@ public class SpringSecurityConfigs {
                         .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/report/**").permitAll()
-                        .requestMatchers("/api/follow/**").hasRole("CANDIDATE")
+                        .requestMatchers("/test/follow/**").hasRole("CANDIDATE")
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
