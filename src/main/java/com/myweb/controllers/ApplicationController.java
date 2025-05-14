@@ -6,6 +6,7 @@ package com.myweb.controllers;
 
 import com.myweb.dto.CreateApplicationDTO;
 import com.myweb.dto.CreateCandidateDTO;
+import com.myweb.dto.GetJobDTO;
 import com.myweb.pojo.Application;
 import com.myweb.pojo.Candidate;
 import com.myweb.pojo.Job;
@@ -82,7 +83,7 @@ public class ApplicationController {
     @GetMapping("/applications/create-application")
     public String createApplicationView(Model model) {
         List<Candidate> candidateList = this.candidateService.getCandidateList();
-        List<Job> jobList = this.jobService.getJobList();
+        List<GetJobDTO> jobList = this.jobService.getJobList();
         Map<String, Object> data = new HashMap<>();
         data.put("application", new Application());
         data.put("candidates", candidateList);

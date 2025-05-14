@@ -55,11 +55,7 @@ public class JobRepositoryImplement implements JobRepository {
 
         int page = 1;
         if (params != null) {
-            try {
-                page = Integer.parseInt(params.getOrDefault("page", GeneralUtils.PAGE));
-            } catch (NumberFormatException e) {
-                logger.warning("Invalid page format: " + params.get("page"));
-            }
+            page = Integer.parseInt(params.getOrDefault("page", GeneralUtils.PAGE));
         }
         int start = (page - 1) * GeneralUtils.PAGE_SIZE;
         List<Job> jobs = session.createQuery(cq)
@@ -104,33 +100,21 @@ public class JobRepositoryImplement implements JobRepository {
 
             String majorId = params.get("majorId");
             if (majorId != null && !majorId.isEmpty()) {
-                try {
-                    predicates.add(cb.equal(jobRoot.join("majorJobCollection").join("majorId").get("id"), Integer.parseInt(majorId)));
-                } catch (NumberFormatException e) {
-                    logger.warning("Invalid majorId format: " + majorId);
-                }
+                predicates.add(cb.equal(jobRoot.join("majorJobCollection").join("majorId").get("id"), Integer.parseInt(majorId)));
             }
 
             String salaryMin = params.get("salaryMin");
             if (salaryMin != null && !salaryMin.isEmpty()) {
-                try {
-                    predicates.add(cb.greaterThanOrEqualTo(jobRoot.get("salaryMin"), new BigInteger(salaryMin)));
-                } catch (NumberFormatException e) {
-                    logger.warning("Invalid salaryMin format: " + salaryMin);
-                }
+                predicates.add(cb.greaterThanOrEqualTo(jobRoot.get("salaryMin"), new BigInteger(salaryMin)));
             }
             String salaryMax = params.get("salaryMax");
             if (salaryMax != null && !salaryMax.isEmpty()) {
-                try {
-                    predicates.add(cb.lessThanOrEqualTo(jobRoot.get("salaryMax"), new BigInteger(salaryMax)));
-                } catch (NumberFormatException e) {
-                    logger.warning("Invalid salaryMax format: " + salaryMax);
-                }
+                predicates.add(cb.lessThanOrEqualTo(jobRoot.get("salaryMax"), new BigInteger(salaryMax)));
             }
 
             String city = params.get("city");
             if (city != null && !city.isEmpty()) {
-                city = normalizeLocation(city); // Chuẩn hóa city
+                city = normalizeLocation(city);
                 if (city != null) {
                     predicates.add(cb.equal(cb.lower(jobRoot.get("city")), city.toLowerCase()));
                 }
@@ -138,7 +122,7 @@ public class JobRepositoryImplement implements JobRepository {
 
             String district = params.get("district");
             if (district != null && !district.isEmpty()) {
-                district = normalizeLocation(district); // Chuẩn hóa district
+                district = normalizeLocation(district);
                 if (district != null) {
                     predicates.add(cb.equal(cb.lower(jobRoot.get("district")), district.toLowerCase()));
                 }
@@ -146,11 +130,7 @@ public class JobRepositoryImplement implements JobRepository {
 
             String dayId = params.get("dayId");
             if (dayId != null && !dayId.isEmpty()) {
-                try {
-                    predicates.add(cb.equal(jobRoot.join("dayJobCollection").join("dayId").get("id"), Integer.parseInt(dayId)));
-                } catch (NumberFormatException e) {
-                    logger.warning("Invalid dayId format: " + dayId);
-                }
+                predicates.add(cb.equal(jobRoot.join("dayJobCollection").join("dayId").get("id"), Integer.parseInt(dayId)));
             }
         }
 
@@ -161,11 +141,9 @@ public class JobRepositoryImplement implements JobRepository {
         if (location == null || location.trim().isEmpty()) {
             return null;
         }
-        // Loại bỏ tiền tố "Thành phố", "Tỉnh" và chuẩn hóa
         String normalized = location.trim()
-                .replaceAll("^(Thành phố|Tỉnh)\\s*", "") // Bỏ "Thành phố" hoặc "Tỉnh" ở đầu
-                .replaceAll("\\s+", " "); // Thay nhiều khoảng trắng bằng 1 khoảng trắng
-        // Viết hoa chữ cái đầu, còn lại viết thường
+                .replaceAll("^(Thành phố|Tỉnh)\\s*", "")
+                .replaceAll("\\s+", " ");
         return normalized.substring(0, 1).toUpperCase() + normalized.substring(1).toLowerCase();
     }
 
@@ -356,19 +334,14 @@ public class JobRepositoryImplement implements JobRepository {
     @Override
     public void deleteJob(int jobId) {
         Session session = sessionFactory.getCurrentSession();
-        try {
-            Job job = session.get(Job.class, jobId);
-            if (job != null) {
-                job.setIsActive(false); // Thay vì xóa cứng, đánh dấu là không hoạt động
-                session.update(job);
-                logger.info("Successfully soft-deleted job with ID: " + jobId);
-            } else {
-                logger.warning("Job not found with ID: " + jobId);
-                throw new IllegalArgumentException("Công việc không tồn tại.");
-            }
-        } catch (Exception e) {
-            logger.severe("Error deleting job: " + e.getMessage());
-            throw new RuntimeException("Lỗi khi xóa công việc: " + e.getMessage(), e);
+        Job job = session.get(Job.class, jobId);
+        if (job != null) {
+            job.setIsActive(false);
+            session.update(job);
+            logger.info("Successfully soft-deleted job with ID: " + jobId);
+        } else {
+            logger.warning("Job not found with ID: " + jobId);
+            throw new IllegalArgumentException("Công việc không tồn tại.");
         }
     }
 
@@ -391,79 +364,62 @@ public class JobRepositoryImplement implements JobRepository {
     @Override
     public boolean addJob(Job j) {
         Session s = this.sessionFactory.getCurrentSession();
-        try {
-            if (j != null) {
-                s.merge(j); // Thay saveOrUpdate bằng merge
-                logger.info("Successfully saved job with ID: " + (j.getId() != null ? j.getId() : "new"));
-                return true;
-            } else {
-                logger.warning("Job object is null");
-                return false;
-            }
-        } catch (Exception e) {
-            logger.severe("Error adding job: " + e.getMessage());
-            throw new RuntimeException("Lỗi khi lưu công việc: " + e.getMessage(), e);
+        if (j != null) {
+            s.merge(j);
+            logger.info("Successfully saved job with ID: " + (j.getId() != null ? j.getId() : "new"));
+            return true;
+        } else {
+            logger.warning("Job object is null");
+            return false;
         }
     }
 
     @Override
-    public Job addJobDTO(Job j) { // Thay đổi để trả về Job thay vì boolean
+    public Job addJobDTO(Job j) {
         Session s = this.sessionFactory.getCurrentSession();
-        try {
-            if (j != null) {
-                Job mergedJob = (Job) s.merge(j); // Gán đối tượng đã merge
-                s.flush(); // Đảm bảo job được lưu và có ID
-                logger.info("Successfully saved job with ID: " + (mergedJob.getId() != null ? mergedJob.getId() : "new"));
-                return mergedJob;
-            } else {
-                logger.warning("Job object is null");
-                throw new IllegalArgumentException("Công việc không hợp lệ.");
-            }
-        } catch (Exception e) {
-            logger.severe("Error adding job: " + e.getMessage() + ", Stack trace: " + getStackTrace(e));
-            throw new RuntimeException("Lỗi khi lưu công việc: " + e.getMessage(), e);
+        if (j != null) {
+            Job mergedJob = (Job) s.merge(j);
+            s.flush();
+            logger.info("Successfully saved job with ID: " + (mergedJob.getId() != null ? mergedJob.getId() : "new"));
+            return mergedJob;
+        } else {
+            logger.warning("Job object is null");
+            throw new IllegalArgumentException("Công việc không hợp lệ.");
         }
     }
 
     @Override
     public void addDaysToJob(Job job, List<Integer> dayIds) {
         Session session = sessionFactory.getCurrentSession();
-        try {
-            if (job == null || job.getId() == null) {
-                logger.severe("Job or Job ID is null");
-                throw new IllegalArgumentException("Công việc không hợp lệ hoặc chưa được lưu.");
-            }
+        if (job == null || job.getId() == null) {
+            logger.severe("Job or Job ID is null");
+            throw new IllegalArgumentException("Công việc không hợp lệ hoặc chưa được lưu.");
+        }
 
-            // Xóa các bản ghi cũ trong day_job để tránh trùng lặp
-            session.createQuery("DELETE FROM DayJob dj WHERE dj.jobId.id = :jobId")
-                    .setParameter("jobId", job.getId())
-                    .executeUpdate();
+        session.createQuery("DELETE FROM DayJob dj WHERE dj.jobId.id = :jobId")
+                .setParameter("jobId", job.getId())
+                .executeUpdate();
 
-            // Lấy danh sách ngày từ repository
-            List<Day> days = session.createQuery("FROM Day", Day.class).getResultList();
-            List<Integer> validDayIds = days.stream().map(Day::getId).toList();
+        List<Day> days = session.createQuery("FROM Day", Day.class).getResultList();
+        List<Integer> validDayIds = days.stream().map(Day::getId).toList();
 
-            if (dayIds != null && !dayIds.isEmpty()) {
-                for (Integer dayId : dayIds) {
-                    if (dayId == null || !validDayIds.contains(dayId)) {
-                        logger.warning("Invalid or null dayId: " + dayId);
-                        continue;
-                    }
-                    Day day = days.stream().filter(d -> d.getId().equals(dayId)).findFirst()
-                            .orElseThrow(() -> new IllegalArgumentException("Ngày làm việc không tồn tại: " + dayId));
-                    DayJob dayJob = new DayJob();
-                    dayJob.setJobId(job);
-                    dayJob.setDayId(day);
-                    session.save(dayJob);
-                    logger.info("Added DayJob: jobId=" + job.getId() + ", dayId=" + dayId);
+        if (dayIds != null && !dayIds.isEmpty()) {
+            for (Integer dayId : dayIds) {
+                if (dayId == null || !validDayIds.contains(dayId)) {
+                    logger.warning("Invalid or null dayId: " + dayId);
+                    continue;
                 }
-                session.flush(); // Đảm bảo tất cả DayJob được lưu
-            } else {
-                logger.info("No dayIds provided for jobId: " + job.getId());
+                Day day = days.stream().filter(d -> d.getId().equals(dayId)).findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("Ngày làm việc không tồn tại: " + dayId));
+                DayJob dayJob = new DayJob();
+                dayJob.setJobId(job);
+                dayJob.setDayId(day);
+                session.save(dayJob);
+                logger.info("Added DayJob: jobId=" + job.getId() + ", dayId=" + dayId);
             }
-        } catch (Exception e) {
-            logger.severe("Error adding days to job: " + e.getMessage() + ", Stack trace: " + getStackTrace(e));
-            throw new RuntimeException("Lỗi khi thêm ngày làm việc: " + e.getMessage(), e);
+            session.flush();
+        } else {
+            logger.info("No dayIds provided for jobId: " + job.getId());
         }
     }
 
