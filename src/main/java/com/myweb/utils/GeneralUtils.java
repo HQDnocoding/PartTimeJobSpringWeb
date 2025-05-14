@@ -60,6 +60,11 @@ public class GeneralUtils {
         public String getLabel() {
             return label;
         }
+
+        public String getShortName() {
+            return this.name().substring(5);
+        }
+
     }
 
     public static String dateFormatter(String input, String pattern) {

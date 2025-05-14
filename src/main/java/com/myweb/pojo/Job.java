@@ -4,10 +4,13 @@
  */
 package com.myweb.pojo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -122,14 +125,18 @@ public class Job implements Serializable {
     @Column(name = "latitude")
     private String latitude;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
+    @JsonIgnore
     private Collection<MajorJob> majorJobCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
+    @JsonIgnore
     private Collection<CandidateReview> candidateReviewCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId", fetch = FetchType.EAGER)
     private Collection<DayJob> dayJobCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
+    @JsonIgnore
     private Collection<Application> applicationCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
+    @JsonIgnore
     private Collection<CompanyReview> companyReviewCollection;
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     @ManyToOne(optional = false)

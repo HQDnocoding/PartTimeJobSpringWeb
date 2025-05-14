@@ -5,7 +5,6 @@
 package com.myweb.services.impl;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.ImageWorkplace;
@@ -14,13 +13,9 @@ import com.myweb.repositories.CompanyRepository;
 import com.myweb.repositories.UserRepository;
 import com.myweb.services.CompanyService;
 import com.myweb.utils.GeneralUtils;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -60,15 +55,6 @@ public class CompanyServiceImplement implements CompanyService {
 
     @Override
     public Company addOrUpdate(Company c) {
-//        if (!c.getFile().isEmpty()) {
-//            try {
-//                Map res = cloudinary.uploader().upload(c.getFile().getBytes(), ObjectUtils.asMap("resource_type", "auto"));
-//                c.setAvatar(res.get("secure_url").toString());
-//            } catch (IOException ex) {
-//                Logger.getLogger(CompanyServiceImplement.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-
         return this.companyRepository.addOrUpdateCompany(c);
     }
 
@@ -174,8 +160,6 @@ public class CompanyServiceImplement implements CompanyService {
             throw new IllegalArgumentException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin.");
         }
     }
-
-
 
     @Override
     public Object getAllCompany() {

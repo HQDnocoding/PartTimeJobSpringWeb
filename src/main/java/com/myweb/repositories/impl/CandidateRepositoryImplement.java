@@ -197,7 +197,6 @@ public class CandidateRepositoryImplement implements CandidateRepository {
     public void deleteCandidate(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         Candidate c = this.getCandidateById(id);
-        
         s.remove(c.getUserId());
     }
 

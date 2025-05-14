@@ -41,7 +41,7 @@
                                     Hành động
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="actionDropdown">
-                                    <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/users} + '\',  \'.company-checkbox:checked\')'">Xóa</a></li>
+                                    <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/admin/companies} + '\',  \'.company-checkbox:checked\')'">Xóa</a></li>
                                     <li><a class="dropdown-item" th:href="@{/companies/create-company}">Tạo mới</a></li>
                                 </ul>
                             </div>
@@ -72,8 +72,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="c,stat : ${companies}">
-                                    <td><input type="checkbox" class="company-checkbox" th:value="${c.userId.id}"></td>
+                                <tr th:each="c,stat : ${companies}"  th:if="${c != null}">
+                                    <td><input type="checkbox" class="company-checkbox" th:value="${c.id}"></td>
                                     <td th:text="${stat.index+1}"></td>
                                     <td><a th:href="@{/companies/{id}(id=${c.id})}" th:text="${c.name}"></a></td>
                                     <td th:text="${c.email}"></td>
@@ -104,7 +104,7 @@
 
         </div>
         <div style="flex-grow: 1">
-            <form th:action="@{/companies}" method="get" class="p-3 bg-light rounded">
+            <form th:action="@{/companies}" method="get" class="p-3 bg-light rounded"  onsubmit="removeEmptyParams(this)">
                 <h5 class="mb-3">Tìm kiếm công ty</h5>
                 <div class="mb-3">
                     <label for="name" class="form-label">Tên công ty</label>
@@ -137,7 +137,7 @@
                 </div>
                 <!-- Giữ tham số phân trang -->
                 <input type="hidden" name="page" th:value="${currentPage}">
-                <input type="hidden" name="size" th:value="${pageSize}">
+                <!--<input type="hidden" name="size" th:value="${pageSize}">-->
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                     <a th:href="@{/company}" class="btn btn-secondary">Xóa bộ lọc</a>

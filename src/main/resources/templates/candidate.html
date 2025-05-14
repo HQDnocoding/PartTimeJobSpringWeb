@@ -42,7 +42,7 @@
                                 Hành động
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="actionDropdown">
-                                <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/candidates} + '\',  \'.candidate-checkbox:checked\')'" id="deleteSelected">Xóa</a></li>
+                                <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/admin/candidates} + '\',  \'.candidate-checkbox:checked\')'" id="deleteSelected">Xóa</a></li>
                                 <li><a class="dropdown-item" th:href="@{/candidates/create-candidate}">Tạo mới</a></li>
 
                             </ul>
@@ -92,7 +92,7 @@
             </div>
         </div>
         <div style="flex-grow: 1">
-            <form th:action="@{/candidates}" method="get" class="p-3 bg-light rounded">
+            <form th:action="@{/candidates}" method="get" class="p-3 bg-light rounded"  onsubmit="removeEmptyParams(this)">
                 <h5 class="mb-3">Tìm kiếm ứng viên</h5>
                 <div class="mb-3">
                     <label for="fullName" class="form-label">Họ tên</label>
@@ -114,7 +114,7 @@
                 </div>
                 <!-- Giữ tham số phân trang -->
                 <input type="hidden" name="page" th:value="${currentPage}">
-                <input type="hidden" name="size" th:value="${pageSize}">
+                <!--<input type="hidden" name="size" th:value="${pageSize}">-->
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                     <a th:href="@{/candidates}" class="btn btn-secondary">Xóa bộ lọc</a>

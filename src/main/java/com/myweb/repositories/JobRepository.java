@@ -65,5 +65,11 @@ public interface JobRepository {
     Job addJobDTO(Job j); 
 
     void addDaysToJob(Job job, List<Integer> dayIds);
+    
+    
+    //dat
+    Job getOnlyJobById(int id);
+    List<Job> getJobByAuthenticateCompany(int companyId);
+    
 
 }

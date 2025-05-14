@@ -42,7 +42,7 @@
                                 Hành động
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="actionDropdown">
-                                <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/applications} + '\',  \'.application-checkbox:checked\')'" id="deleteSelected">Xóa</a></li>
+                                <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/admin/applications} + '\',  \'.application-checkbox:checked\')'" id="deleteSelected">Xóa</a></li>
                                 <li><a class="dropdown-item" th:href="@{/applications/create-application}" id="deleteSelected">Tạo mới</a></li>
                             </ul>
                         </div>
@@ -56,7 +56,7 @@
                                 <a class="page-link" th:href="@{/applications(page=${currentPage - 1}, status=${param.status}, candidateName=${param.candidateName}, jobName=${param.jobName})}">Previous</a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
-                                <a class="page-link" th:href="@{/applications(page=${i}, status=${param.status}, candidateName=${param.candidateName}, jobName=${param.jobName})}" th:text="${i}"></a>
+                                <a class="page-link" onclick="" th:href="@{/applications(page=${i}, status=${param.status}, candidateName=${param.candidateName}, jobName=${param.jobName})}" th:text="${i}"></a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                                 <a class="page-link" th:href="@{/applications(page=${currentPage + 1}, status=${param.status}, candidateName=${param.candidateName}, jobName=${param.jobName})}">Next</a>
@@ -99,7 +99,7 @@
             </div>
         </div>
         <div style="flex-grow: 2">
-            <form th:action="@{/applications}" method="get" class="p-3 bg-light rounded">
+            <form th:action="@{/applications}" method="get" class="p-3 bg-light rounded" onsubmit="removeEmptyParams(this)">
                 <h5 class="mb-3">Tìm kiếm đơn ứng tuyển</h5>
                 <div class="mb-3">
                     <label for="status" class="form-label">Trạng thái</label>
@@ -120,7 +120,7 @@
                 </div>
                 <!-- Giữ tham số phân trang -->
                 <input type="hidden" name="page" th:value="${currentPage}">
-                <input type="hidden" name="size" th:value="${pageSize}">
+                <!--<input type="hidden" name="size" th:value="${pageSize}">-->
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                     <a th:href="@{/applications}" class="btn btn-secondary">Xóa bộ lọc</a>

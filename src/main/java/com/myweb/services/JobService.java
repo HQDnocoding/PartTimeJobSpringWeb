@@ -3,6 +3,7 @@ package com.myweb.services;
 import com.myweb.dto.CreateJobDTO;
 import com.myweb.dto.GetJobDTO;
 import com.myweb.pojo.Job;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -29,4 +30,9 @@ public interface JobService {
     List<Job> getAllJobs();
     List<Job> getJobList();
     GetJobDTO createJobDTO(CreateJobDTO jobDTO);
+    
+    
+    //dat
+    Job getOnlyJobById(int id);
+    List<Job> getJobByAuthenticateCompany(Principal principal);
 }

@@ -77,7 +77,7 @@ public class JobController {
                 "", "Tên công việc", "Công ty", "Lương", "Thành phố", "Ngành nghề", "Thời gian làm việc", "Ngày đăng", "Hành động"
         ));
 
-        Map<String, Object> result = jobService.searchJobs(params);
+        Map<String, Object> result = this.jobService.searchJobs(params);
 
         model.addAttribute("jobs", result.get("jobs"));
         model.addAttribute("currentPage", result.get("currentPage"));

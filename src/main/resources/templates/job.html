@@ -101,7 +101,7 @@
             </div>
         </div>
         <div style="flex-grow: 1">
-            <form th:action="@{/job}" method="get" class="p-3 bg-light rounded">
+            <form th:action="@{/job}" method="get" class="p-3 bg-light rounded"  onsubmit="removeEmptyParams(this)">
                 <h5 class="mb-3">Tìm kiếm công việc</h5>
                 <div class="mb-3">
                     <label for="keyword" class="form-label">Từ khóa</label>
@@ -163,7 +163,7 @@
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
     </div>
-
+    <script th:src="@{/js/main.js}"/>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.toast').forEach(toast => {

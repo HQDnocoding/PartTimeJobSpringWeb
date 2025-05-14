@@ -32,7 +32,6 @@ com\myweb\pojo\Candidate.class
 com\myweb\repositories\CandidateRepository.class
 com\myweb\services\ApplicationService.class
 com\myweb\utils\GeneralUtils.class
-com\myweb\pojo\ImageWorkplace.class
 com\myweb\services\impl\CompanyServiceImplement.class
 com\myweb\dto\CreateCandidateDTO.class
 com\myweb\services\impl\ApplicationServiceImplement.class

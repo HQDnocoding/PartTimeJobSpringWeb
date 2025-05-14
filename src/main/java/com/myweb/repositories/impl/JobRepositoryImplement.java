@@ -455,4 +455,52 @@ public class JobRepositoryImplement implements JobRepository {
         }
         return sb.toString();
     }
+
+    //dat
+    @Override
+    public Job getOnlyJobById(int id) {
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Job> cq = cb.createQuery(Job.class);
+            Root<Job> jobRoot = cq.from(Job.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(jobRoot.get("id"), id));
+            predicates.add(cb.equal(jobRoot.get("isActive"), true));
+            predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
+            predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
+
+            cq.where(cb.and(predicates.toArray(Predicate[]::new)));
+
+            return session.createQuery(cq).getSingleResult();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    @Override
+    public List<Job> getJobByAuthenticateCompany(int companyId) {
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Job> cq = cb.createQuery(Job.class);
+        Root<Job> jobRoot = cq.from(Job.class);
+
+        jobRoot.fetch("companyId", JoinType.LEFT);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(jobRoot.get("companyId").get("id"), companyId));
+        predicates.add(cb.equal(jobRoot.get("isActive"), true));
+
+        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        cq.orderBy(cb.asc(jobRoot.get("id")));
+
+        List<Job> jobs = session.createQuery(cq).getResultList();
+
+        return jobs;
+    }
+
 }

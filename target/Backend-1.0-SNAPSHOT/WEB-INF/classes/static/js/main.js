@@ -5,28 +5,38 @@ function deleteRecord(e, endpoint, checkBoxClass) {
             .map(checkbox => checkbox.value);
 
     if (selectedIds.length === 0) {
-        alert('Vui lòng chọn ít nhất một ứng viên để xóa!');
+        alert('Vui lòng chọn ít nhất hàng để xóa!');
         return;
     }
 
-    if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.length} ứng viên đã chọn?`)) {
+    if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.length} dòng đã chọn?`)) {
         Promise.all(selectedIds.map(id =>
             fetch(`${endpoint}/${id}`, {method: 'DELETE'})
                     .then(response => {
                         if (!response.ok) {
                             throw new Error(`Lỗi khi xóa ứng viên ID ${id}`);
                         }
-                        
+
                         return id;
                     })
         ))
                 .then(() => {
-                    alert('Xóa ứng viên thành công!');
+                    alert('Xóa thành công!');
                     location.reload();
                 })
                 .catch(error => {
                     console.error('Lỗi:', error);
-                    alert('Đã xảy ra lỗi khi xóa ứng viên!');
+                    alert('Đã xảy ra lỗi khi xóa!');
                 });
     }
+}
+
+
+function removeEmptyParams(form) {
+    const inputs = form.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        if (!input.value || input.value.trim() === '') {
+            input.disabled = true;
+        }
+    });
 }

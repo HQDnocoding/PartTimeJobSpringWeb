@@ -5,26 +5,20 @@
 package com.myweb.repositories.impl;
 
 import com.myweb.pojo.Application;
+import com.myweb.pojo.User;
 import com.myweb.repositories.ApplicationRepository;
 import com.myweb.utils.GeneralUtils;
 import jakarta.persistence.Query;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
- *
  * @author huaquangdat
  */
 @Repository
@@ -46,14 +40,13 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
             }
             return a;
         } catch (Exception e) {
-            e.printStackTrace();
-            return null; 
+            return null;
         }
     }
 
     // Lấy danh sách đơn ứng tuyển với các tiêu chí lọc và phân trang
     @Override
-    public Map<String, Object> getListApplication(Map<String, String> params) {
+    public Map<String, Object> getListApplication(Map<String, String> params, User user) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder cb = s.getCriteriaBuilder();
 
@@ -65,6 +58,13 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
 
         // Tìm kiếm
         if (params != null) {
+
+            if (user.getRole().equals(GeneralUtils.Role.ROLE_COMPANY.toString())) {
+                predicates.add(cb.equal(applicationRoot.get("jobId").get("companyId").get("id"), user.getCompany().getId()));
+            } else if (Objects.equals(user.getRole(), GeneralUtils.Role.ROLE_CANDIDATE.toString())) {
+                predicates.add(cb.equal(applicationRoot.get("candidateId").get("id"), user.getCandidate().getId()));
+            }
+
             // Trạng thái
             String status = params.get("status");
             if (status != null && !status.isEmpty()) {
@@ -82,6 +82,16 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
             if (jobName != null && !jobName.isEmpty()) {
                 predicates.add(cb.like(applicationRoot.get("jobId").get("jobName"), String.format("%%%s%%", jobName)));
             }
+
+            String jobIdStr = params.get("jobId");
+            if (jobIdStr != null && !jobIdStr.isEmpty()) {
+                try {
+                    Long jobId = Long.valueOf(jobIdStr);
+                    predicates.add(cb.equal(applicationRoot.get("jobId").get("id"), jobId));
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid jobId: " + jobIdStr);
+                }
+            }
         }
 
         // Áp dụng điều kiện
@@ -89,12 +99,28 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
             cq.where(cb.and(predicates.toArray(Predicate[]::new)));
         }
 
-        // Tạo truy vấn chính
+        String sortBy = params.getOrDefault("sortBy", "appliedDate");
+        String sortOrder = params.getOrDefault("sortOrder", "desc");
+
+        //sắp xếp
+        switch (sortBy) {
+            case "candidateId.name" ->                 {
+                    Path<String> sortPath = applicationRoot.get("candidate").get("name");
+                    cq.orderBy(sortOrder.equalsIgnoreCase("asc") ? cb.asc(sortPath) : cb.desc(sortPath));
+                }
+            case "jobId.jobName" ->                 {
+                    Path<String> sortPath = applicationRoot.get("job").get("jobName");
+                    cq.orderBy(sortOrder.equalsIgnoreCase("asc") ? cb.asc(sortPath) : cb.desc(sortPath));
+                }
+            default -> cq.orderBy(sortOrder.equalsIgnoreCase("asc")
+                        ? cb.asc(applicationRoot.get(sortBy))
+                        : cb.desc(applicationRoot.get(sortBy)));
+        }
+
         Query query = s.createQuery(cq);
-        // Đếm tổng số bản ghi
+
         int totalRecords = query.getResultList().size();
 
-        // Phân trang
         int page = 1;
         try {
             page = Integer.parseInt(params.getOrDefault("page", "1"));

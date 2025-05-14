@@ -5,11 +5,8 @@
 package com.myweb.controllers;
 
 import com.myweb.dto.CreateCandidateDTO;
-import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Candidate;
-import com.myweb.pojo.Company;
 import com.myweb.services.CandidateService;
-import com.myweb.utils.GeneralUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
