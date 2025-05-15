@@ -83,7 +83,7 @@ public class ApplicationController {
     @GetMapping("/applications/create-application")
     public String createApplicationView(Model model) {
         List<Candidate> candidateList = this.candidateService.getCandidateList();
-        List<GetJobDTO> jobList = this.jobService.getJobList();
+        List<Job> jobList = this.jobService.getJobList();
         Map<String, Object> data = new HashMap<>();
         data.put("application", new Application());
         data.put("candidates", candidateList);

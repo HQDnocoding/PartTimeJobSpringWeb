@@ -337,7 +337,7 @@ public class JobRepositoryImplement implements JobRepository {
         Job job = session.get(Job.class, jobId);
         if (job != null) {
             job.setIsActive(false);
-            session.update(job);
+            session.merge(job);
             logger.info("Successfully soft-deleted job with ID: " + jobId);
         } else {
             logger.warning("Job not found with ID: " + jobId);
@@ -396,7 +396,7 @@ public class JobRepositoryImplement implements JobRepository {
             throw new IllegalArgumentException("Công việc không hợp lệ hoặc chưa được lưu.");
         }
 
-        session.createQuery("DELETE FROM DayJob dj WHERE dj.jobId.id = :jobId")
+        session.createMutationQuery("DELETE FROM DayJob dj WHERE dj.jobId.id = :jobId")
                 .setParameter("jobId", job.getId())
                 .executeUpdate();
 
@@ -414,7 +414,7 @@ public class JobRepositoryImplement implements JobRepository {
                 DayJob dayJob = new DayJob();
                 dayJob.setJobId(job);
                 dayJob.setDayId(day);
-                session.save(dayJob);
+                session.persist(dayJob);
                 logger.info("Added DayJob: jobId=" + job.getId() + ", dayId=" + dayId);
             }
             session.flush();
