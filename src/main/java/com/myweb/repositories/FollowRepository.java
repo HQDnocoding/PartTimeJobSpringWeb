@@ -4,10 +4,13 @@
  */
 package com.myweb.repositories;
 
-/**
- *
- * @author Admin
- */
-public class FollowRepository {
-    
+import com.myweb.pojo.Follow;
+import java.util.List;
+
+public interface FollowRepository {
+    Follow addFollow(Follow follow);
+    void deleteFollow(int candidateId, int companyId);
+    boolean isFollowing(int candidateId, int companyId);
+    List<Follow> getFollowedCompanies(int candidateId);
+    List<Follow> getFollowers(int companyId);
 }

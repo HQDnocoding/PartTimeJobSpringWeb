@@ -3,7 +3,6 @@ package com.myweb.controllers;
 import com.myweb.dto.CreateJobDTO;
 import com.myweb.dto.GetJobDTO;
 import com.myweb.pojo.Company;
-import com.myweb.pojo.Job;
 import com.myweb.services.CompanyService;
 import com.myweb.services.DayService;
 import com.myweb.services.JobService;
@@ -29,7 +28,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.beans.PropertyEditorSupport;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,11 +59,7 @@ public class JobController {
                 if (text == null || text.trim().isEmpty()) {
                     setValue(null);
                 } else {
-                    try {
-                        setValue(new BigInteger(text));
-                    } catch (NumberFormatException e) {
-                        throw new IllegalArgumentException("Giá trị lương không hợp lệ: " + text);
-                    }
+                    setValue(new BigInteger(text));
                 }
             }
         });
@@ -77,8 +71,7 @@ public class JobController {
                 "", "Tên công việc", "Công ty", "Lương", "Thành phố", "Ngành nghề", "Thời gian làm việc", "Ngày đăng", "Hành động"
         ));
 
-        Map<String, Object> result = this.jobService.searchJobs(params);
-
+        Map<String, Object> result = jobService.searchJobs(params);
         model.addAttribute("jobs", result.get("jobs"));
         model.addAttribute("currentPage", result.get("currentPage"));
         model.addAttribute("pageSize", result.get("pageSize"));
@@ -94,7 +87,7 @@ public class JobController {
 
     @GetMapping("/{id}")
     public String jobDetail(@PathVariable("id") int id, Model model, RedirectAttributes redirectAttributes) {
-        Job job = jobService.getJobById(id);
+        GetJobDTO job = jobService.getJobById(id);
         if (job == null) {
             logger.warn("Job not found with ID: {}", id);
             redirectAttributes.addFlashAttribute("errorMessage", "Công việc không tồn tại.");
@@ -109,7 +102,6 @@ public class JobController {
         model.addAttribute("jobDTO", new CreateJobDTO());
         model.addAttribute("majors", majorService.getMajors());
         model.addAttribute("days", dayService.getDays());
-        // Sử dụng getAllCompaniesForDropdown thay vì getListCompany
         List<Company> companies = companyService.getAllCompaniesForDropdown();
         System.out.println("Number of companies passed to create-job: " + companies.size());
         model.addAttribute("companies", companies);
@@ -122,7 +114,6 @@ public class JobController {
             logger.warn("Validation errors: {}", result.getAllErrors());
             model.addAttribute("majors", majorService.getMajors());
             model.addAttribute("days", dayService.getDays());
-            // Sử dụng getAllCompaniesForDropdown thay vì getListCompany
             List<Company> companies = companyService.getAllCompaniesForDropdown();
             System.out.println("Number of companies passed to create-job (on error): " + companies.size());
             model.addAttribute("companies", companies);
@@ -132,50 +123,23 @@ public class JobController {
             return "create-job";
         }
 
-        try {
-            GetJobDTO createdJob = jobService.createJobDTO(jobDTO);
-            logger.info("Created job with ID: {}", createdJob.getId());
-            redirectAttributes.addFlashAttribute("successMessage", "Tạo công việc thành công!");
-            return "redirect:/job";
-        } catch (IllegalArgumentException e) {
-            logger.warn("Error creating job: {}", e.getMessage());
-            model.addAttribute("majors", majorService.getMajors());
-            model.addAttribute("days", dayService.getDays());
-            // Sử dụng getAllCompaniesForDropdown thay vì getListCompany
-            List<Company> companies = companyService.getAllCompaniesForDropdown();
-            System.out.println("Number of companies passed to create-job (on IllegalArgumentException): " + companies.size());
-            model.addAttribute("companies", companies);
-            model.addAttribute("errorMessage", e.getMessage());
-            return "create-job";
-        } catch (Throwable t) {
-            logger.error("Unexpected error creating job: {}", t.getMessage(), t);
-            model.addAttribute("majors", majorService.getMajors());
-            model.addAttribute("days", dayService.getDays());
-            // Sử dụng getAllCompaniesForDropdown thay vì getListCompany
-            List<Company> companies = companyService.getAllCompaniesForDropdown();
-            System.out.println("Number of companies passed to create-job (on Throwable): " + companies.size());
-            model.addAttribute("companies", companies);
-            model.addAttribute("errorMessage", "Lỗi hệ thống: " + t.getMessage());
-            return "create-job";
-        }
+        GetJobDTO createdJob = jobService.createJobDTO(jobDTO);
+        logger.info("Created job with ID: {}", createdJob.getId());
+        redirectAttributes.addFlashAttribute("successMessage", "Tạo công việc thành công!");
+        return "redirect:/job";
     }
 
     @DeleteMapping("/api/job/{id}")
     public ResponseEntity<Void> deleteJob(@PathVariable("id") int id) {
-        Job job = jobService.getJobById(id);
+        GetJobDTO job = jobService.getJobById(id);
         if (job == null) {
             logger.warn("Attempted to delete non-existent job with ID: {}", id);
             return ResponseEntity.notFound().build();
         }
 
-        try {
-            jobService.deleteJob(id);
-            logger.info("Deleted job with ID: {}", id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            logger.error("Error deleting job with ID: {}", id, e);
-            return ResponseEntity.status(500).build();
-        }
+        jobService.deleteJob(id);
+        logger.info("Deleted job with ID: {}", id);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/job/delete")
@@ -185,15 +149,10 @@ public class JobController {
             return "redirect:/job";
         }
 
-        try {
-            for (Integer jobId : jobIds) {
-                jobService.deleteJob(jobId);
-            }
-            model.addAttribute("successMessage", "Xóa " + jobIds.size() + " công việc thành công!");
-        } catch (Exception ex) {
-            model.addAttribute("errorMessage", "Lỗi hệ thống: " + ex.getMessage());
+        for (Integer jobId : jobIds) {
+            jobService.deleteJob(jobId);
         }
-
+        model.addAttribute("successMessage", "Xóa " + jobIds.size() + " công việc thành công!");
         return "redirect:/job";
     }
 }

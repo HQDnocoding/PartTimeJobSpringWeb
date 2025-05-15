@@ -8,31 +8,53 @@ import java.util.List;
 import java.util.Map;
 
 public interface JobService {
+
     Map<String, Object> searchJobs(Map<String, String> params);
-    List<Job> getListJobByMajor(int majorId);
-    Job getJobById(int jobId);
-    List<Job> getListJobByRecommend(int majorId, int cityId);
-    List<Job> getListJobByCompanyId(int companyId);
-    List<Job> getListJobByCompanyId1(int companyId);
-    List<Job> getListJobByCompanyExceptCurrentJob(int companyId, int jobId);
-    Job getNameJob(int jobId);
-    List<Job> getListJobByCandidate(int candidateId);
-    List<Job> getListJobByCheckAdmin();
-    List<Job> getListJobByMajorAndCity(int majorId, String city, String kw);
-    List<Job> getListJobForManageCompany(int companyId);
+
+    List<GetJobDTO> getListJobByMajor(int majorId);
+
+    GetJobDTO getJobById(int jobId);
+
+    List<GetJobDTO> getListJobByRecommend(int majorId, int cityId);
+
+    List<GetJobDTO> getListJobByCompanyId(int companyId);
+
+    List<GetJobDTO> getListJobByCompanyId1(int companyId);
+
+    List<GetJobDTO> getListJobByCompanyExceptCurrentJob(int companyId, int jobId);
+
+    GetJobDTO getNameJob(int jobId);
+
+    List<GetJobDTO> getListJobByCandidate(int candidateId);
+
+    List<GetJobDTO> getListJobByCheckAdmin();
+
+    List<GetJobDTO> getListJobByMajorAndCity(int majorId, String city, String kw);
+
+    List<GetJobDTO> getListJobForManageCompany(int companyId);
+
     void updateJob(int jobId);
-    List<Job> getListJobByCityKw(String city, String kw);
-    List<Job> getListJobByCityKwPage(String city, String kw, int page);
+
+    List<GetJobDTO> getListJobByCityKw(String city, String kw);
+
+    List<GetJobDTO> getListJobByCityKwPage(String city, String kw, int page);
+
     Long countJob();
-    void deleteJob(int jobId);
-    List<Job> getListJobForManage();
+
+    List<GetJobDTO> getListJobForManage();
+
     boolean addJob(Job j);
-    List<Job> getAllJobs();
-    List<Job> getJobList();
+
+    List<GetJobDTO> getAllJobs();
+
+    List<GetJobDTO> getJobList();
+
     GetJobDTO createJobDTO(CreateJobDTO jobDTO);
-    
-    
+
+    void deleteJob(int jobId);
+
     //dat
     Job getOnlyJobById(int id);
+
     List<Job> getJobByAuthenticateCompany(Principal principal);
 }

@@ -29,8 +29,12 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\CreateJobDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\GetCandidateDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\GetJobDTO.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\dto\GetReportDTO.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\event\JobCreatedEvent.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\event\JobEventListener.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\filters\JwtFilters.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\formatters\CandidateFormatter.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\formatters\DateFormatter.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\formatters\ErrorResponseFormatter.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\formatters\JobFormatter.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Application.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\pojo\Candidate.java
@@ -67,6 +71,7 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\services\ApplicationSe
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\services\CandidateService.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\services\CompanyService.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\services\DayService.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\services\EmailService.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\services\FollowService.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\services\impl\ApplicationServiceImplement.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\services\impl\CandidateServiceImplement.java
@@ -84,5 +89,4 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\services\UserService.j
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\utils\GeneralUtils.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\utils\JwtUtils.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\utils\ValidationUtils.java
-P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\statistic\js.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\test.java

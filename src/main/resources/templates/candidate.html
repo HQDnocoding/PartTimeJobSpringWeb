@@ -1,29 +1,61 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Quản lý ứng viên</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <title>Quản lý ứng viên</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <th:block th:replace="base :: bootstrap"></th:block>
     <style>
+        /* Định dạng container bảng */
+        .table-responsive {
+            flex-grow: 3;
+            overflow-x: auto;
+            overflow-y: auto;
+        }
+
+        /* Đảm bảo table-section mở rộng */
+        .table-section {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        /* Đảm bảo bảng có chiều rộng tối thiểu */
+        .table {
+            width: max-content;
+            min-width: 100%;
+        }
+
+        /* Thu hẹp cột "Id" (cột đầu tiên) */
+        .table th:nth-child(1),
+        .table td:nth-child(1) {
+            min-width: 40px !important;
+            width: 40px !important;
+            padding: 2px !important;
+            text-align: center; /* Căn giữa checkbox và số */
+        }
+
+        /* Định dạng header và pagination */
+        .header-section, .pagination-section {
+            flex: 0 0 auto;
+        }
+
+        /* Đảm bảo thead cố định khi cuộn */
         .table-responsive thead {
             position: sticky;
             top: 0;
             z-index: 3;
-            background: #fff; 
+            background: #fff;
         }
+
         .pagination {
             justify-content: flex-start;
             margin-top: 10px;
-            margin-bottom: 20px; 
+            margin-bottom: 20px;
         }
-        .table-section {
-            overflow-y: auto;
-            max-height: 70vh; 
-        }
+
         .header-section {
             display: flex;
-            justify-content: space-between; 
+            justify-content: space-between;
             align-items: center;
             width: 100%;
         }
@@ -31,10 +63,10 @@
 </head>
 <body>
     <div th:replace="base :: header"></div>
-    <main class="container column-gap-3 min-vh-90" style="display: flex; flex-direction: row">
-        <div style="flex-grow: 3; max-height: 90vh;" class="table-responsive">
+    <main class="container min-vh-100" style="display: flex; flex-direction: row; column-gap: 3rem;">
+        <div class="table-responsive" style="flex-grow: 3;">
             <div class="d-flex flex-column h-100">
-                <div class="header-section" style="flex: 0;">
+                <div class="header-section">
                     <div class="d-flex justify-content-between align-items-center mb-3 w-100">
                         <h5>Danh sách ứng viên</h5>
                         <div class="dropdown">
@@ -44,12 +76,11 @@
                             <ul class="dropdown-menu" aria-labelledby="actionDropdown">
                                 <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/admin/candidates} + '\',  \'.candidate-checkbox:checked\')'" id="deleteSelected">Xóa</a></li>
                                 <li><a class="dropdown-item" th:href="@{/candidates/create-candidate}">Tạo mới</a></li>
-
                             </ul>
                         </div>
                     </div>
                 </div>
-                <div class="pagination-section" style="flex: 0;">
+                <div class="pagination-section">
                     <nav aria-label="Page navigation" th:if="${totalPages > 1}">
                         <ul class="pagination">
                             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
@@ -76,7 +107,7 @@
                         <tbody>
                             <tr th:each="c,stat : ${candidates}" th:if="${c != null}">
                                 <td><input type="checkbox" class="candidate-checkbox" th:value="${c.id}"></td>
-                                <td th:text="${stat.index+1}"></td>
+                                <td th:text="${stat.index + 1}"></td>
                                 <td><a th:href="@{/candidates/{id}(id=${c.id})}" th:text="${c.fullName}"></a></td>
                                 <td th:text="${c.email}"></td>
                                 <td th:text="${c.dateOfBirth}"></td>
@@ -92,7 +123,7 @@
             </div>
         </div>
         <div style="flex-grow: 1">
-            <form th:action="@{/candidates}" method="get" class="p-3 bg-light rounded"  onsubmit="removeEmptyParams(this)">
+            <form th:action="@{/candidates}" method="get" class="p-3 bg-light rounded" onsubmit="removeEmptyParams(this)">
                 <h5 class="mb-3">Tìm kiếm ứng viên</h5>
                 <div class="mb-3">
                     <label for="fullName" class="form-label">Họ tên</label>
@@ -112,7 +143,6 @@
                     <label for="phone" class="form-label">Số điện thoại</label>
                     <input type="text" class="form-control" id="phone" name="phone" th:value="${param.phone}" placeholder="Nhập số điện thoại...">
                 </div>
-                <!-- Giữ tham số phân trang -->
                 <input type="hidden" name="page" th:value="${currentPage}">
                 <!--<input type="hidden" name="size" th:value="${pageSize}">-->
                 <div class="d-flex gap-2">
@@ -124,30 +154,34 @@
     </main>
     <div th:replace="base :: footer"></div>
 
-    <script th:src="@{/js/main.js}">
-        // Chọn tất cả checkbox
+    <script>
         document.getElementById('selectAll').addEventListener('change', function () {
             document.querySelectorAll('.candidate-checkbox').forEach(checkbox => {
                 checkbox.checked = this.checked;
             });
         });
 
-        // Tải danh sách thành phố
         document.addEventListener('DOMContentLoaded', function () {
+            const citySelect = document.getElementById('city');
             fetch('https://provinces.open-api.vn/api/p/')
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok ' + response.statusText);
+                        }
+                        return response.json();
+                    })
                     .then(provinces => {
                         if (!Array.isArray(provinces)) {
                             throw new Error('Dữ liệu thành phố không đúng định dạng');
                         }
-                        const citySelect = document.getElementById('city');
                         provinces.forEach(province => {
                             const option = document.createElement('option');
-                            option.value = province.code;
+                            option.value = province.name; // Sử dụng tên thành phố (ví dụ: "Hà Nội")
                             option.text = province.name;
                             citySelect.appendChild(option);
                         });
 
+                        // Lấy giá trị city từ URL params và chọn lại
                         const urlParams = new URLSearchParams(window.location.search);
                         const selectedCity = urlParams.get('city');
                         if (selectedCity) {
@@ -156,7 +190,7 @@
                     })
                     .catch(error => {
                         console.error('Lỗi khi tải danh sách thành phố:', error);
-                        alert('Không thể tải danh sách thành phố!');
+                        alert('Không thể tải danh sách thành phố! Vui lòng kiểm tra kết nối hoặc liên hệ admin.');
                     });
         });
     </script>

@@ -15,7 +15,6 @@ import com.myweb.repositories.MajorRepository;
 import com.myweb.repositories.UserRepository;
 import com.myweb.services.JobService;
 import java.security.Principal;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,195 +25,161 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-
+import java.util.stream.Collectors;
 @Service
 public class JobServiceImplement implements JobService {
 
-    private static final Logger logger = Logger.getLogger(JobServiceImplement.class.getName());
-
-    @Autowired
-    private JobRepository jobRepository;
-
-    @Autowired
-    private CompanyRepository companyRepository;
-
-    @Autowired
-    private MajorRepository majorRepository;
-
-    @Autowired
-    private DayRepository dayRepository;
-
+     private static final Logger logger = Logger.getLogger(JobServiceImplement.class.getName());
     @Autowired
     private UserRepository userRepo;
-
-    private void initializeJobCollections(Job job) {
-        if (job != null && Hibernate.isInitialized(job)) {
-            Hibernate.initialize(job.getMajorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
-    }
-
-    private void initializeJobCollections(List<Job> jobs) {
-        if (jobs != null) {
-            for (Job job : jobs) {
-                initializeJobCollections(job);
-            }
-        }
-    }
-
+     
+    @Autowired
+    private JobRepository jobRepository;
+    
+    @Autowired
+    private CompanyRepository companyRepository;
+    
+    @Autowired
+    private MajorRepository majorRepository;
+    
+    @Autowired
+    private DayRepository dayRepository;
+    
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> searchJobs(Map<String, String> params) {
         Map<String, Object> result = jobRepository.searchJobs(params);
-        List<Job> jobs = (List<Job>) result.get("jobs");
-//        initializeJobCollections(jobs);
         return result;
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getListJobByMajor(int majorId) {
+    public List<GetJobDTO> getListJobByMajor(int majorId) {
         List<Job> jobs = jobRepository.getListJobByMajor(majorId);
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public Job getJobById(int jobId) {
+    public GetJobDTO getJobById(int jobId) {
         Job job = jobRepository.getJobById(jobId);
-//        initializeJobCollections(job);
-        return job;
+        return new GetJobDTO(job);
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getListJobByRecommend(int majorId, int cityId) {
+    public List<GetJobDTO> getListJobByRecommend(int majorId, int cityId) {
         List<Job> jobs = jobRepository.getListJobByRecommend(majorId, cityId);
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getListJobByCompanyId(int companyId) {
+    public List<GetJobDTO> getListJobByCompanyId(int companyId) {
         List<Job> jobs = jobRepository.getListJobByCompanyId(companyId);
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getListJobByCompanyId1(int companyId) {
+    public List<GetJobDTO> getListJobByCompanyId1(int companyId) {
         List<Job> jobs = jobRepository.getListJobByCompanyId1(companyId);
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getListJobByCompanyExceptCurrentJob(int companyId, int jobId) {
+    public List<GetJobDTO> getListJobByCompanyExceptCurrentJob(int companyId, int jobId) {
         List<Job> jobs = jobRepository.getListJobByCompanyExceptCurrentJob(companyId, jobId);
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public Job getNameJob(int jobId) {
+    public GetJobDTO getNameJob(int jobId) {
         Job job = jobRepository.getNameJob(jobId);
-//        initializeJobCollections(job);
-        return job;
+        return new GetJobDTO(job);
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getListJobByCandidate(int candidateId) {
+    public List<GetJobDTO> getListJobByCandidate(int candidateId) {
         List<Job> jobs = jobRepository.getListJobByCandidate(candidateId);
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getListJobByCheckAdmin() {
+    public List<GetJobDTO> getListJobByCheckAdmin() {
         List<Job> jobs = jobRepository.getListJobByCheckAdmin();
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getListJobByMajorAndCity(int majorId, String city, String kw) {
+    public List<GetJobDTO> getListJobByMajorAndCity(int majorId, String city, String kw) {
         List<Job> jobs = jobRepository.getListJobByMajorAndCity(majorId, city, kw);
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getListJobForManageCompany(int companyId) {
+    public List<GetJobDTO> getListJobForManageCompany(int companyId) {
         List<Job> jobs = jobRepository.getListJobForManageCompany(companyId);
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     public void updateJob(int jobId) {
         jobRepository.updateJob(jobId);
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getListJobByCityKw(String city, String kw) {
+    public List<GetJobDTO> getListJobByCityKw(String city, String kw) {
         List<Job> jobs = jobRepository.getListJobByCityKw(city, kw);
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getListJobByCityKwPage(String city, String kw, int page) {
+    public List<GetJobDTO> getListJobByCityKwPage(String city, String kw, int page) {
         List<Job> jobs = jobRepository.getListJobByCityKwPage(city, kw, page);
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     public Long countJob() {
         return jobRepository.countJob();
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getListJobForManage() {
+    public List<GetJobDTO> getListJobForManage() {
         List<Job> jobs = jobRepository.getListJobForManage();
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     public boolean addJob(Job j) {
         return jobRepository.addJob(j);
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getAllJobs() {
+    public List<GetJobDTO> getAllJobs() {
         List<Job> jobs = jobRepository.searchJobs(null).get("jobs") != null
                 ? (List<Job>) jobRepository.searchJobs(null).get("jobs") : List.of();
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public List<Job> getJobList() {
+    public List<GetJobDTO> getJobList() {
         List<Job> jobs = jobRepository.getListJobForManage();
-//        initializeJobCollections(jobs);
-        return jobs;
+        return jobs.stream().map(GetJobDTO::new).collect(Collectors.toList());
     }
-
+    
     @Override
     @Transactional
     public GetJobDTO createJobDTO(CreateJobDTO jobDTO) {
@@ -262,14 +227,9 @@ public class JobServiceImplement implements JobService {
         String city = company.getCity();
         String district = company.getDistrict();
 
-        //Gán tọa độ
+        // Gán tọa độ
         job.setLongitude(jobDTO.getLongitude());
         job.setLatitude(jobDTO.getLatitude());
-
-        //Gán tuổi, kn
-        job.setExperienceRequired(jobDTO.getExperienceRequired());
-        job.setAgeFrom(jobDTO.getAgeFrom());
-        job.setAgeTo(jobDTO.getAgeTo());
 
         // Kiểm tra dữ liệu từ company
         if (fullAddress == null || fullAddress.trim().isEmpty()) {

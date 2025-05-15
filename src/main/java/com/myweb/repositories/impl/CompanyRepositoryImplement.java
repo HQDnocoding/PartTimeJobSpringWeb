@@ -43,19 +43,19 @@ public class CompanyRepositoryImplement implements CompanyRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
 
-     @PersistenceContext
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     public List<Object[]> countCompaniesByMonth(Date startDate) {
-        String query = "SELECT DATE_FORMAT(c.createdDate, '%Y-%m') as time, COUNT(c) as count " +
-                      "FROM Company c WHERE c.createdDate >= :startDate " +
-                      "GROUP BY DATE_FORMAT(c.createdDate, '%Y-%m')";
+        String query = "SELECT DATE_FORMAT(c.createdDate, '%Y-%m') as time, COUNT(c) as count "
+                + "FROM Company c WHERE c.createdDate >= :startDate "
+                + "GROUP BY DATE_FORMAT(c.createdDate, '%Y-%m')";
         return entityManager.createQuery(query, Object[].class)
                 .setParameter("startDate", startDate)
                 .getResultList();
     }
-    
+
     // Thêm hoặc cập nhật công ty
     @Override
     public Company addOrUpdateCompany(Company c) {
@@ -74,19 +74,30 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         return c;
     }
 
+
+    private String normalizeLocation(String location) {
+        if (location == null || location.trim().isEmpty()) {
+            return null;
+        }
+        // Loại bỏ tiền tố "Thành phố", "Tỉnh" và chuẩn hóa
+        String normalized = location.trim()
+                .replaceAll("^(Thành phố|Tỉnh)\\s*", "")
+                .replaceAll("\\s+", " ");
+        // Viết hoa chữ cái đầu, còn lại viết thường
+        return normalized.substring(0, 1).toUpperCase() + normalized.substring(1).toLowerCase();
+    }
+
     // Lấy danh sách công ty với lọc/phân trang
     @Override
     public Map<String, Object> getListCompany(Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder cb = s.getCriteriaBuilder();
 
-        // Tạo CriteriaQuery cho Company
         CriteriaQuery<Company> cq = cb.createQuery(Company.class);
         Root<Company> companyRoot = cq.from(Company.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
-        // Tìm kiếm
         if (params != null) {
             String name = params.get("name");
             if (name != null && !name.isEmpty()) {
@@ -102,26 +113,27 @@ public class CompanyRepositoryImplement implements CompanyRepository {
             }
             String city = params.get("city");
             if (city != null && !city.isEmpty()) {
-                predicates.add(cb.equal(companyRoot.get("city"), city));
+                city = normalizeLocation(city);
+                if (city != null) {
+                    predicates.add(cb.equal(cb.lower(companyRoot.get("city")), city.toLowerCase()));
+                }
             }
             String district = params.get("district");
             if (district != null && !district.isEmpty()) {
-                predicates.add(cb.equal(companyRoot.get("district"), district));
+                district = normalizeLocation(district);
+                if (district != null) {
+                    predicates.add(cb.equal(cb.lower(companyRoot.get("district")), district.toLowerCase()));
+                }
             }
         }
 
-        // Áp dụng điều kiện
         if (!predicates.isEmpty()) {
             cq.where(cb.and(predicates.toArray(Predicate[]::new)));
         }
 
-        // Tạo truy vấn chính
         Query query = s.createQuery(cq);
-        // Đếm tổng số bản ghi
-
         int totalRecords = query.getResultList().size();
 
-        // Phân trang
         int page = 1;
         try {
             page = Integer.parseInt(params.getOrDefault("page", "1"));
@@ -133,14 +145,11 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         query.setFirstResult(start);
         query.setMaxResults(GeneralUtils.PAGE_SIZE);
 
-        // Lấy danh sách kết quả
         List<Company> results = query.getResultList();
         System.out.println("Results: " + results);
 
-        // Tính tổng số trang
         int totalPages = (int) Math.ceil((double) totalRecords / GeneralUtils.PAGE_SIZE);
 
-        // Tạo kết quả trả về
         Map<String, Object> result = new HashMap<>();
         result.put("companies", results);
         result.put("currentPage", page);

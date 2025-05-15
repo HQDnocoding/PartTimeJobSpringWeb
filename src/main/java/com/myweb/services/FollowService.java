@@ -4,10 +4,14 @@
  */
 package com.myweb.services;
 
-/**
- *
- * @author Admin
- */
-public class FollowService {
-    
+import com.myweb.pojo.Follow;
+
+import java.util.List;
+
+public interface FollowService {
+    Follow followCompany(int candidateId, int companyId);
+    void unfollowCompany(int candidateId, int companyId);
+    boolean isFollowing(int candidateId, int companyId);
+    List<Follow> getFollowedCompanies(int candidateId);
+    List<Follow> getFollowers(int companyId);
 }

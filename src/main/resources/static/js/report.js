@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 responsive: true,
                 plugins: {
                     legend: { position: 'top' },
-                    title: { display: true, text: 'JobHome Statistics' }
+                    title: { display: true, text: 'Biểu đồ' }
                 },
                 scales: {
                     y: { beginAtZero: true, title: { display: true, text: 'Số lượng' } },
