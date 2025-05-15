@@ -3,6 +3,7 @@ package com.myweb.controllers;
 import com.myweb.dto.CreateJobDTO;
 import com.myweb.dto.GetJobDTO;
 import com.myweb.pojo.Company;
+import com.myweb.pojo.Job;
 import com.myweb.services.CompanyService;
 import com.myweb.services.DayService;
 import com.myweb.services.JobService;
@@ -87,7 +88,7 @@ public class JobController {
 
     @GetMapping("/{id}")
     public String jobDetail(@PathVariable("id") int id, Model model, RedirectAttributes redirectAttributes) {
-        GetJobDTO job = jobService.getJobById(id);
+        Job job = jobService.getJobById(id);
         if (job == null) {
             logger.warn("Job not found with ID: {}", id);
             redirectAttributes.addFlashAttribute("errorMessage", "Công việc không tồn tại.");
@@ -131,7 +132,7 @@ public class JobController {
 
     @DeleteMapping("/api/job/{id}")
     public ResponseEntity<Void> deleteJob(@PathVariable("id") int id) {
-        GetJobDTO job = jobService.getJobById(id);
+        Job job = jobService.getJobById(id);
         if (job == null) {
             logger.warn("Attempted to delete non-existent job with ID: {}", id);
             return ResponseEntity.notFound().build();

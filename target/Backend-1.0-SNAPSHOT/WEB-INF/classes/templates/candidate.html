@@ -123,7 +123,7 @@
             </div>
         </div>
         <div style="flex-grow: 1">
-            <form th:action="@{/candidates}" method="get" class="p-3 bg-light rounded">
+            <form th:action="@{/candidates}" method="get" class="p-3 bg-light rounded" onsubmit="removeEmptyParams(this)">
                 <h5 class="mb-3">Tìm kiếm ứng viên</h5>
                 <div class="mb-3">
                     <label for="fullName" class="form-label">Họ tên</label>
