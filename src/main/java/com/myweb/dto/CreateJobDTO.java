@@ -18,7 +18,6 @@ import java.lang.annotation.Target;
 import java.math.BigInteger;
 import java.util.List;
 
-@SalaryRange
 public class CreateJobDTO {
 
     @NotBlank(message = "Tên công việc không được để trống")
@@ -46,16 +45,12 @@ public class CreateJobDTO {
 
     @NotBlank(message = "Yêu cầu công việc không được để trống")
     private String jobRequired;
-    
-@NotBlank(message = "Kinh độ không được để trống")
-    @Pattern(regexp = "^-?([0-9]{1,3}(\\.[0-9]+)?|180(\\.0+)?)$",
-            message = "Kinh độ phải từ -180 đến 180, ví dụ: 106.720604")
-    private String latitude;
-    
-    @NotBlank(message = "Vĩ độ không được để trống")
-    @Pattern(regexp = "^-?([0-8]?[0-9](\\.\\d+)?|90(\\.0+)?)$",
-            message = "Vĩ độ phải từ -90 đến 90, ví dụ: 10.738967")
-    private String longitude;
+
+    @LongitudeRange
+    private Double longitude;
+
+    @LatitudeRange
+    private Double latitude;
 
     private Integer ageFrom;
     private Integer ageTo;
@@ -85,6 +80,54 @@ public class CreateJobDTO {
                 return true; // Let @NotNull handle null cases
             }
             return dto.getSalaryMax().compareTo(dto.getSalaryMin()) >= 0;
+        }
+    }
+
+    // Custom validation for longitude
+    @Target({ElementType.FIELD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Constraint(validatedBy = LongitudeRangeValidator.class)
+    @interface LongitudeRange {
+
+        String message() default "Kinh độ phải từ -180 đến 180";
+
+        Class<?>[] groups() default {};
+
+        Class<? extends Payload>[] payload() default {};
+    }
+
+    static class LongitudeRangeValidator implements ConstraintValidator<LongitudeRange, Double> {
+
+        @Override
+        public boolean isValid(Double value, ConstraintValidatorContext context) {
+            if (value == null) {
+                return true; // Optional now
+            }
+            return value >= -180 && value <= 180;
+        }
+    }
+
+    // Custom validation for latitude
+    @Target({ElementType.FIELD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Constraint(validatedBy = LatitudeRangeValidator.class)
+    @interface LatitudeRange {
+
+        String message() default "Vĩ độ phải từ -90 đến 90";
+
+        Class<?>[] groups() default {};
+
+        Class<? extends Payload>[] payload() default {};
+    }
+
+    static class LatitudeRangeValidator implements ConstraintValidator<LatitudeRange, Double> {
+
+        @Override
+        public boolean isValid(Double value, ConstraintValidatorContext context) {
+            if (value == null) {
+                return true; // Optional now
+            }
+            return value >= -90 && value <= 90;
         }
     }
 
@@ -153,6 +196,22 @@ public class CreateJobDTO {
         this.jobRequired = jobRequired;
     }
 
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
     public String getFullAddress() {
         return fullAddress;
     }
@@ -169,74 +228,27 @@ public class CreateJobDTO {
         this.city = city;
     }
 
-    /**
-     * @return the latitude
-     */
-    public String getLatitude() {
-        return latitude;
-    }
-
-    /**
-     * @param latitude the latitude to set
-     */
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    /**
-     * @return the longitude
-     */
-    public String getLongitude() {
-        return longitude;
-    }
-
-    /**
-     * @param longitude the longitude to set
-     */
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
-    /**
-     * @return the ageFrom
-     */
     public Integer getAgeFrom() {
         return ageFrom;
     }
 
-    /**
-     * @param ageFrom the ageFrom to set
-     */
     public void setAgeFrom(Integer ageFrom) {
         this.ageFrom = ageFrom;
     }
 
-    /**
-     * @return the ageTo
-     */
     public Integer getAgeTo() {
         return ageTo;
     }
 
-    /**
-     * @param ageTo the ageTo to set
-     */
     public void setAgeTo(Integer ageTo) {
         this.ageTo = ageTo;
     }
 
-    /**
-     * @return the experienceRequired
-     */
     public Integer getExperienceRequired() {
         return experienceRequired;
     }
 
-    /**
-     * @param experienceRequired the experienceRequired to set
-     */
     public void setExperienceRequired(Integer experienceRequired) {
         this.experienceRequired = experienceRequired;
     }
-
 }

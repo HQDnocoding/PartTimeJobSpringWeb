@@ -53,6 +53,9 @@
                 <p><strong>Địa chỉ:</strong> <span th:text="${job.fullAddress} + ', ' + ${job.district} + ', ' + ${job.city}"></span></p>
                 <p><strong>Ngành nghề:</strong> <span th:text="${job.MajorJobCollection != null and !#lists.isEmpty(job.MajorJobCollection)} ? ${#strings.listJoin(job.MajorJobCollection.![majorId.name], ', ')} : '-'"></span></p>
                 <p><strong>Thời gian làm việc:</strong> <span th:text="${job.dayJobCollection != null and !#lists.isEmpty(job.dayJobCollection)} ? ${#strings.listJoin(job.dayJobCollection.![dayId.name], ', ')} : '-'"></span></p>
+                <p><strong>Tuổi từ:</strong> <span th:text="${job.ageFrom != null} ? ${job.ageFrom} : '-'"></span></p>
+                <p><strong>Tuổi đến:</strong> <span th:text="${job.ageTo != null} ? ${job.ageTo} : '-'"></span></p>
+                <p><strong>Kinh nghiệm:</strong> <span th:text="${job.experienceRequired != null} ? ${job.experienceRequired} + ' năm' : '-'"></span></p>
                 <p><strong>Mô tả:</strong> <span th:text="${job.description}"></span></p>
                 <p><strong>Yêu cầu:</strong> <span th:text="${job.jobRequired}"></span></p>
                 <p><strong>Ngày đăng:</strong> <span th:text="${#dates.format(job.postedDate, 'dd/MM/yyyy HH:mm:ss')}"></span></p>

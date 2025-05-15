@@ -336,12 +336,10 @@ public class JobRepositoryImplement implements JobRepository {
         Session session = sessionFactory.getCurrentSession();
         Job job = session.get(Job.class, jobId);
         if (job != null) {
-            job.setIsActive(false);
-            session.merge(job);
-            logger.info("Successfully soft-deleted job with ID: " + jobId);
+            session.delete(job);
+            session.flush(); // Đảm bảo xóa ngay lập tức
         } else {
-            logger.warning("Job not found with ID: " + jobId);
-            throw new IllegalArgumentException("Công việc không tồn tại.");
+            throw new IllegalArgumentException("Không tìm thấy công việc có ID: " + jobId);
         }
     }
 

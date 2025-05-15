@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Tạo mới công việc</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <title>Tạo mới công việc</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <th:block th:replace="~{base :: bootstrap}"></th:block>
     <style>
         .invalid-feedback {
@@ -75,6 +75,21 @@
                             <option th:each="major : ${majors}" th:value="${major.id}" th:text="${major.name}"></option>
                         </select>
                         <div class="invalid-feedback" id="majorIdError" th:if="${#fields.hasErrors('majorId')}" th:errors="*{majorId}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="ageFrom" class="form-label">Tuổi tối thiểu</label>
+                        <input type="number" id="ageFrom" th:field="*{ageFrom}" class="form-control" placeholder="Nhập tuổi tối thiểu" min="0">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('ageFrom')}" th:errors="*{ageFrom}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="ageTo" class="form-label">Tuổi tối đa</label>
+                        <input type="number" id="ageTo" th:field="*{ageTo}" class="form-control" placeholder="Nhập tuổi tối đa" min="0">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('ageTo')}" th:errors="*{ageTo}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="experienceRequired" class="form-label">Kinh nghiệm yêu cầu (năm)</label>
+                        <input type="number" id="experienceRequired" th:field="*{experienceRequired}" class="form-control" placeholder="Nhập số năm kinh nghiệm" min="0">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('experienceRequired')}" th:errors="*{experienceRequired}"></div>
                     </div>
                     <div class="col-12">
                         <label for="description" class="form-label">Mô tả công việc *</label>
@@ -160,7 +175,7 @@
             console.log("Number of companies in dropdown: " + (companySelect.options.length - 1));
 
             // Form validation
-            document.getElementById('jobForm').addEventListener('submit', function(e) {
+            document.getElementById('jobForm').addEventListener('submit', function (e) {
                 let isValid = true;
 
                 // Validate jobName

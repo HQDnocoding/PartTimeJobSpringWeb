@@ -110,17 +110,12 @@ public class Job implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date postedDate;
 
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 1000)
     @Column(name = "longitude")
-    private String longitude;
+    private Double longitude;
 
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 1000)
     @Column(name = "latitude")
-    private String latitude;
+    private Double latitude;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
     private Collection<MajorJob> majorJobCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
@@ -358,28 +353,28 @@ public class Job implements Serializable {
     /**
      * @return the longitude
      */
-    public String getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
     /**
      * @param longtitude the longitude to set
      */
-    public void setLongitude(String longtitude) {
+    public void setLongitude(Double longtitude) {
         this.longitude = longtitude;
     }
 
     /**
      * @return the latitude
      */
-    public String getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
     /**
      * @param latitude the latitude to set
      */
-    public void setLatitude(String latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 

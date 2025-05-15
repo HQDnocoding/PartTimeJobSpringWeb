@@ -8,6 +8,7 @@ com\myweb\utils\ValidationUtils.class
 com\myweb\configs\EnvConfig.class
 com\myweb\repositories\impl\UserRepositoryImplement.class
 com\myweb\services\JobService.class
+com\myweb\dto\CreateJobDTO$LatitudeRangeValidator.class
 com\myweb\services\DayService.class
 com\myweb\event\JobEventListener.class
 com\myweb\controllers\FollowController.class
@@ -23,7 +24,9 @@ com\myweb\dto\CreateCompanyDTO.class
 com\myweb\repositories\impl\MajorRepositoryImplement.class
 com\myweb\configs\ThymeleafConfig.class
 com\myweb\services\ReportService.class
+com\myweb\dto\CreateJobDTO$LatitudeRange.class
 com\myweb\repositories\UserRepository.class
+com\myweb\dto\CreateJobDTO$LongitudeRangeValidator.class
 com\myweb\formatters\CandidateFormatter.class
 com\myweb\controllers\ApiApplicationController.class
 com\myweb\dto\CreateApplicationDTO.class
@@ -36,6 +39,7 @@ com\myweb\services\ApplicationService.class
 com\myweb\utils\GeneralUtils.class
 com\myweb\pojo\ImageWorkplace.class
 com\myweb\services\impl\CompanyServiceImplement.class
+com\myweb\dto\CreateJobDTO$LongitudeRange.class
 com\myweb\dto\CreateCandidateDTO.class
 com\myweb\services\impl\ApplicationServiceImplement.class
 com\myweb\pojo\CompanyReview.class
