@@ -35,7 +35,7 @@ public class ApiCandidateController {
     @Autowired
     private CandidateService candidateService;
 
-    @GetMapping("/candidates")
+    @GetMapping("/admin/candidates")
     public List<GetCandidateDTO> getCandidateList() {
         List<Candidate> candidates = candidateService.getCandidateList();
         return candidates.stream().map(c -> {
@@ -44,7 +44,7 @@ public class ApiCandidateController {
         }).collect(Collectors.toList());
     }
 
-    @DeleteMapping("/candidates/{candidateId}")
+    @DeleteMapping("/admin/candidates/{candidateId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompany(@PathVariable(value = "candidateId") int candidateId) {
         try {

@@ -6,6 +6,7 @@ package com.myweb.configs;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.myweb.utils.GeneralUtils;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -33,9 +35,9 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableTransactionManagement
 @EnableWebSecurity
 @ComponentScan(basePackages = {
-        "com.myweb.controllers",
-        "com.myweb.repositories",
-        "com.myweb.services"
+    "com.myweb.controllers",
+    "com.myweb.repositories",
+    "com.myweb.services"
 })
 public class SpringSecurityConfigs {
 
@@ -51,7 +53,7 @@ public class SpringSecurityConfigs {
     @Bean
     public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
         return new HandlerMappingIntrospector();
-    } 
+    }
 
     @Bean
     public Cloudinary cloudinary() {
@@ -67,41 +69,43 @@ public class SpringSecurityConfigs {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(c -> c.disable())
-                .cors(cors->cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/", "/home").permitAll()
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/admin").permitAll()
-                        .requestMatchers("/candidates/**").permitAll()
-                        .requestMatchers("/applications/**").permitAll()
-                        .requestMatchers("/company").permitAll()
-                        .requestMatchers("/job/**").permitAll()
-                        .requestMatchers("/applications").permitAll()
-                        .requestMatchers("/candidates").permitAll()
-                        .requestMatchers("/companies/**").permitAll()
-                        .requestMatchers("/update-status").permitAll()
-                        .requestMatchers("/js/**").permitAll()
-                        .requestMatchers("/css/**").permitAll()
-                        .requestMatchers("/images/**").permitAll()
-                        .requestMatchers("/api/**").permitAll()
-                        .requestMatchers("/report/**").permitAll()
-                        .requestMatchers("/test/follow/**").hasRole("CANDIDATE")
-                        .anyRequest().authenticated())
+                .requestMatchers("/", "/home").permitAll()
+                .requestMatchers("/api/secure/**").authenticated()
+                .requestMatchers("/login").permitAll()
+                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/admin/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
+                .requestMatchers("/api/admin/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
+                .requestMatchers(HttpMethod.POST, "/api/secure/applications").hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
+                .requestMatchers(HttpMethod.PATCH, "/api/secure/applications/update-status").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers(HttpMethod.GET, "/api/secure/applications/**")
+                .hasAnyRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName(), GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers(HttpMethod.POST, "/api/secure/jobs").hasAnyRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers("/candidates/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
+                .requestMatchers("/applications/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
+                .requestMatchers("/company/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
+                .requestMatchers("/job/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
+                .requestMatchers("/candidates/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
+                .requestMatchers("/companies/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
+                .requestMatchers("/report/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
+                .requestMatchers("/js/**").permitAll()
+                .anyRequest().authenticated())
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)
-                        .failureUrl("/login?error=true")
-                        .permitAll())
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/login?error=true")
+                .permitAll())
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/login")
-                        .permitAll());
+                .logoutSuccessUrl("/login")
+                .permitAll());
 
         return http.build();
     }
 
     @Bean
-    @Order(0)   
+    @Order(0)
     public StandardServletMultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
@@ -112,7 +116,7 @@ public class SpringSecurityConfigs {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of("http://localhost:3000")); // frontend origin
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
         config.setAllowCredentials(true); // Nếu dùng cookie/session

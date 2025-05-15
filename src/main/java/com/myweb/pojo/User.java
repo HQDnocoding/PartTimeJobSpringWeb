@@ -4,6 +4,7 @@
      */
     package com.myweb.pojo;
 
+    import com.fasterxml.jackson.annotation.JsonFilter;
     import jakarta.persistence.Basic;
     import jakarta.persistence.CascadeType;
     import jakarta.persistence.Column;
@@ -26,6 +27,7 @@
      *
      * @author dat
      */
+    @JsonFilter("UserFilter")
     @Entity
     @Table(name = "user")
     @NamedQueries({
@@ -43,40 +45,41 @@
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Basic(optional = false)
         @Column(name = "id")
+
         private Integer id;
-        
+
         @Basic(optional = false)
         @NotNull
         @Size(min = 1, max = 50)
         @Column(name = "username")
         private String username;
-        
+
         @Basic(optional = false)
         @NotNull
         @Size(min = 1, max = 200)
         @Column(name = "password")
         private String password;
-        
+
         @Basic(optional = false)
         @NotNull
         @Column(name = "register_date")
         @Temporal(TemporalType.TIMESTAMP)
         private Date registerDate;
-        
+
         @Basic(optional = false)
         @NotNull
         @Size(min = 1, max = 40)
         @Column(name = "role")
         private String role;
-        
+
         @Basic(optional = false)
         @NotNull
         @Column(name = "is_active")
         private boolean isActive;
-        
+
         @OneToOne(cascade = CascadeType.ALL, mappedBy = "userId")
         private Candidate candidate;
-        
+
         @OneToOne(cascade = CascadeType.ALL, mappedBy = "userId")
         private Company company;
 

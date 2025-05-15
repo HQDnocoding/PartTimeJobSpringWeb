@@ -5,6 +5,7 @@
 package com.myweb.repositories;
 
 import com.myweb.pojo.Application;
+import com.myweb.pojo.User;
 import java.util.Map;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Map;
  */
 public interface ApplicationRepository {
     Application addOrUpdateApplication(Application a);
-    Map<String, Object> getListApplication(Map<String, String> params);
+    Map<String, Object> getListApplication(Map<String, String> params, User user);
     Application getApplicationById(int applicationId);
     void deleteApplication(int id);
     

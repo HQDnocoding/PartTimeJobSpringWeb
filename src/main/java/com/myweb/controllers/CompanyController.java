@@ -7,7 +7,6 @@ package com.myweb.controllers;
 import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
 import com.myweb.services.CompanyService;
-import com.myweb.utils.GeneralUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

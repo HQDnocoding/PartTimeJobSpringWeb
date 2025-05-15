@@ -4,15 +4,14 @@
  */
 package com.myweb.controllers;
 
-import com.myweb.dto.CreateApplicationDTO;
-import com.myweb.dto.CreateCandidateDTO;
-import com.myweb.dto.GetJobDTO;
+
 import com.myweb.pojo.Application;
 import com.myweb.pojo.Candidate;
 import com.myweb.pojo.Job;
 import com.myweb.services.ApplicationService;
 import com.myweb.services.CandidateService;
 import com.myweb.services.JobService;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,13 +43,13 @@ public class ApplicationController {
     private JobService jobService;
 
     @GetMapping("/applications")
-    public String applicationView(Model model, @RequestParam Map<String, String> params) {
+    public String applicationView(Model model, @RequestParam Map<String, String> params,  Principal principal) {
         // Định nghĩa tiêu đề cột cho bảng
         Collection<String> headCols = new ArrayList<>(List.of(
                 "Id", "Ứng viên", "Ngày ứng tuyển", "Lời nhắn", "Trạng thái", "Công việc"
         ));
 
-        Map<String, Object> result = applicationService.getListApplication(params);
+        Map<String, Object> result = applicationService.getListApplication(params,principal);
 
         model.addAttribute("applications", result.get("applications"));
         model.addAttribute("currentPage", result.get("currentPage"));
@@ -94,13 +93,6 @@ public class ApplicationController {
 
     @PostMapping("/applications")
     public String createApplication(Model model, @ModelAttribute(value = "application") Application application) {
-//        List<Candidate> candidateList = this.candidateService.getCandidateList();
-//        List<Job> jobList = this.jobService.getJobList();
-//        Map<String, Object> data = new HashMap<>();
-//        data.put("application", new Application());
-//        data.put("candidates", candidateList);
-//        data.put("jobs", jobList);
-//        model.addAllAttributes(data);
         try {
             Application app = this.applicationService.addApplication(application);
             return "redirect:/applications/" + app.getId();

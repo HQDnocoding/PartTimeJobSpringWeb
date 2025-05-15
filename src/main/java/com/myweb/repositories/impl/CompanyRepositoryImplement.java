@@ -172,7 +172,7 @@ public class CompanyRepositoryImplement implements CompanyRepository {
     public void deleteCompany(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         Company c = this.getCompanyById(id);
-
+        System.out.println(c);
         s.remove(c.getUserId());
     }
 

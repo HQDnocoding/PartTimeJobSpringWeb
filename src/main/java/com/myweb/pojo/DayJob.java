@@ -4,6 +4,7 @@
  */
 package com.myweb.pojo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,13 +35,14 @@ public class DayJob implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    
+
     @JoinColumn(name = "day_id", referencedColumnName = "id")
     @ManyToOne
     private Day dayId;
-    
+
     @JoinColumn(name = "job_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonBackReference
     private Job jobId;
 
     public DayJob() {
@@ -98,5 +100,5 @@ public class DayJob implements Serializable {
     public String toString() {
         return "com.myweb.pojo.DayJob[ id=" + id + " ]";
     }
-    
+
 }

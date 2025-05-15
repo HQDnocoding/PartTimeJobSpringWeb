@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Danh sách công việc</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <title>Danh sách công việc</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <th:block th:replace="~{base :: bootstrap}"></th:block>
     <style>
         .table-responsive thead {
@@ -54,13 +54,13 @@
                     <nav aria-label="Page navigation" th:if="${totalPages > 1}">
                         <ul class="pagination">
                             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                                <a class="page-link" th:href="@{/job(page=${currentPage - 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId})}">Previous</a>
+                                <a class="page-link" th:href="@{/job(page=${currentPage - 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, dayId=${selectedDayId})}">Previous</a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
-                                <a class="page-link" th:href="@{/job(page=${i}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId})}" th:text="${i}"></a>
+                                <a class="page-link" th:href="@{/job(page=${i}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, dayId=${selectedDayId})}" th:text="${i}"></a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                                <a class="page-link" th:href="@{/job(page=${currentPage + 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId})}">Next</a>
+                                <a class="page-link" th:href="@{/job(page=${currentPage + 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, dayId=${selectedDayId})}">Next</a>
                             </li>
                         </ul>
                     </nav>
@@ -101,7 +101,7 @@
             </div>
         </div>
         <div style="flex-grow: 1">
-            <form th:action="@{/job}" method="get" class="p-3 bg-light rounded">
+            <form th:action="@{/job}" method="get" class="p-3 bg-light rounded"  onsubmit="removeEmptyParams(this)">
                 <h5 class="mb-3">Tìm kiếm công việc</h5>
                 <div class="mb-3">
                     <label for="keyword" class="form-label">Từ khóa</label>
@@ -135,10 +135,6 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="fullAddress" class="form-label">Địa chỉ</label>
-                    <input type="text" id="fullAddress" name="fullAddress" th:value="${fullAddress}" class="form-control" placeholder="Tìm theo địa chỉ cụ thể">
-                </div>
-                <div class="mb-3">
                     <label for="dayId" class="form-label">Thời gian làm việc</label>
                     <select id="dayId" name="dayId" class="form-control">
                         <option value="" th:selected="${selectedDayId == null}">Tất cả</option>
@@ -167,7 +163,82 @@
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
     </div>
+    <script th:src="@{/js/main.js}"/>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.toast').forEach(toast => {
+                new bootstrap.Toast(toast).show();
+            });
 
-    <script th:src="@{/js/cityDistrictLoad.js}"></script>
+            // Chọn tất cả checkbox
+            document.getElementById('selectAll').addEventListener('change', function () {
+                document.querySelectorAll('.job-checkbox').forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+            });
+
+            // Tải danh sách thành phố và quận/huyện
+            fetch('https://provinces.open-api.vn/api/p/')
+                    .then(response => response.json())
+                    .then(provinces => {
+                        if (!Array.isArray(provinces)) {
+                            throw new Error('Dữ liệu thành phố không đúng định dạng');
+                        }
+                        const citySelect = document.getElementById('city');
+                        provinces.forEach(province => {
+                            const option = document.createElement('option');
+                            option.value = province.code;
+                            option.text = province.name;
+                            citySelect.appendChild(option);
+                        });
+
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const selectedCity = urlParams.get('city');
+                        if (selectedCity) {
+                            citySelect.value = selectedCity;
+                            loadDistricts(selectedCity, urlParams.get('district'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi khi tải danh sách thành phố:', error);
+                        alert('Không thể tải danh sách thành phố!');
+                    });
+        });
+
+        document.getElementById('city').addEventListener('change', function () {
+            const cityCode = this.value;
+            const districtSelect = document.getElementById('district');
+            districtSelect.innerHTML = '<option value="">Tất cả</option>';
+
+            if (cityCode) {
+                loadDistricts(cityCode);
+            }
+        });
+
+        function loadDistricts(cityCode, selectedDistrict = null) {
+            fetch(`https://provinces.open-api.vn/api/p/${cityCode}?depth=2`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.districts || !Array.isArray(data.districts)) {
+                            throw new Error('Dữ liệu quận/huyện không đúng định dạng');
+                        }
+                        const districtSelect = document.getElementById('district');
+                        data.districts.forEach(district => {
+                            const option = document.createElement('option');
+                            option.value = district.code;
+                            option.text = district.name;
+                            districtSelect.appendChild(option);
+                        });
+
+                        if (selectedDistrict) {
+                            districtSelect.value = selectedDistrict;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi khi tải danh sách quận/huyện:', error);
+                        alert('Không thể tải danh sách quận/huyện!');
+                    });
+        }
+    </script>
 </body>
 </html>

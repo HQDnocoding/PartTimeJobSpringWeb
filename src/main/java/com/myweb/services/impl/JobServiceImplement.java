@@ -7,12 +7,15 @@ import com.myweb.pojo.Day;
 import com.myweb.pojo.Job;
 import com.myweb.pojo.Major;
 import com.myweb.pojo.MajorJob;
+import com.myweb.pojo.User;
 import com.myweb.repositories.CompanyRepository;
 import com.myweb.repositories.DayRepository;
 import com.myweb.repositories.JobRepository;
 import com.myweb.repositories.MajorRepository;
+import com.myweb.repositories.UserRepository;
 import com.myweb.services.JobService;
 import org.hibernate.Hibernate;
+import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +27,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import java.util.stream.Collectors;
 @Service
 public class JobServiceImplement implements JobService {
 
     private static final Logger logger = Logger.getLogger(JobServiceImplement.class.getName());
+
+
+    @Autowired
+    private UserRepository userRepo;
 
     @Autowired
     private JobRepository jobRepository;
@@ -314,4 +322,17 @@ public class JobServiceImplement implements JobService {
     public void deleteJob(int jobId) {
         jobRepository.deleteJob(jobId);
     }
+
+    //dat
+    @Override
+    public Job getOnlyJobById(int id) {
+        return this.jobRepository.getOnlyJobById(id);
+    }
+
+    @Override
+    public List<Job> getJobByAuthenticateCompany(Principal principal) {
+        User user = this.userRepo.getUserByUsername(principal.getName());
+        return this.jobRepository.getJobByAuthenticateCompany(user.getCompany().getId());
+    }
+
 }

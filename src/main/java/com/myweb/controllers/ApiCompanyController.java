@@ -30,14 +30,18 @@ public class ApiCompanyController {
     @Autowired
     private CompanyService cpnyService;
 
-    @DeleteMapping("/companies/{companyId}")
+    @DeleteMapping("/admin/companies/{companyId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompany(@PathVariable(value = "companyId") int companyId) {
-        this.cpnyService.deleteCompany(companyId);
+        try {
+            this.cpnyService.deleteCompany(companyId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @PostMapping(path = "/register-company", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createCompany(CreateCompanyDTO dto){
+    public ResponseEntity<?> createCompany(CreateCompanyDTO dto) {
         try {
             Object result = this.cpnyService.createCompanyDTO(dto);
             return new ResponseEntity<>(Map.of("message", "Đăng ký thành công", "data", result), HttpStatus.CREATED);

@@ -1,58 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Quản lý đơn ứng tuyển</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <title>Quản lý đơn ứng tuyển</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <th:block th:replace="base :: bootstrap"></th:block>
     <style>
-        /* Định dạng container bảng */
-        .table-responsive {
-            flex-grow: 3;
-            overflow-x: auto;
-            overflow-y: auto;
-        }
-
-        /* Đảm bảo table-section mở rộng */
-        .table-section {
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-
-        /* Đảm bảo bảng có chiều rộng tối thiểu */
-        .table {
-            width: max-content;
-            min-width: 100%;
-        }
-
-        /* Thu hẹp cột "Id" (cột đầu tiên) */
-        .table th:nth-child(1),
-        .table td:nth-child(1) {
-            min-width: 40px !important;
-            width: 40px !important;
-            padding: 2px !important;
-            text-align: center; /* Căn giữa checkbox và số */
-        }
-
-        /* Định dạng header và pagination */
-        .header-section, .pagination-section {
-            flex: 0 0 auto;
-        }
-
-        /* Đảm bảo thead cố định khi cuộn */
         .table-responsive thead {
             position: sticky;
             top: 0;
             z-index: 3;
             background: #fff;
         }
-
         .pagination {
             justify-content: flex-start;
             margin-top: 10px;
             margin-bottom: 20px;
         }
-
+        .table-section {
+            overflow-y: auto;
+            max-height: 70vh;
+        }
         .header-section {
             display: flex;
             justify-content: space-between;
@@ -63,8 +31,8 @@
 </head>
 <body>
     <div th:replace="base :: header"></div>
-    <main class="container min-vh-100" style="display: flex; flex-direction: row; column-gap: 3rem;">
-        <div class="table-responsive" style="flex-grow: 3;">
+    <main class="container column-gap-3 min-vh-90" style="display: flex; flex-direction: row">
+        <div style="flex-grow: 3; max-height: 90vh; overflow-y: auto" class="table-responsive">
             <div class="d-flex flex-column h-100">
                 <div class="header-section" style="flex: 0;">
                     <div class="d-flex justify-content-between align-items-center mb-3 w-100">
@@ -74,12 +42,13 @@
                                 Hành động
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="actionDropdown">
-                                <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/applications} + '\',  \'.application-checkbox:checked\')'" id="deleteSelected">Xóa</a></li>
+                                <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/admin/applications} + '\',  \'.application-checkbox:checked\')'" id="deleteSelected">Xóa</a></li>
                                 <li><a class="dropdown-item" th:href="@{/applications/create-application}" id="deleteSelected">Tạo mới</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
+
                 <div class="pagination-section" style="flex: 0;">
                     <nav aria-label="Page navigation" th:if="${totalPages > 1}">
                         <ul class="pagination">
@@ -87,7 +56,7 @@
                                 <a class="page-link" th:href="@{/applications(page=${currentPage - 1}, status=${param.status}, candidateName=${param.candidateName}, jobName=${param.jobName})}">Previous</a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
-                                <a class="page-link" th:href="@{/applications(page=${i}, status=${param.status}, candidateName=${param.candidateName}, jobName=${param.jobName})}" th:text="${i}"></a>
+                                <a class="page-link" onclick="" th:href="@{/applications(page=${i}, status=${param.status}, candidateName=${param.candidateName}, jobName=${param.jobName})}" th:text="${i}"></a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                                 <a class="page-link" th:href="@{/applications(page=${currentPage + 1}, status=${param.status}, candidateName=${param.candidateName}, jobName=${param.jobName})}">Next</a>
@@ -95,7 +64,7 @@
                         </ul>
                     </nav>
                 </div>
-                <div class="table-section">
+                <div class="table-section" style="flex: 8; overflow-y: auto;">
                     <table class="table caption-top">
                         <thead class="position-sticky top-0 z-3">
                             <tr>
@@ -105,10 +74,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="a,stat : ${applications}" th:if="${a != null}">
+                            <tr th:each="a ,stat : ${applications}" th:if="${a != null}">
                                 <td><input type="checkbox" class="application-checkbox" th:value="${a.id}"></td>
-                                <td th:text="${stat.index + 1}"></td>
+
+                                <td th:text="${stat.index+1}"></td>
                                 <td><a th:href="@{/applications/{id}(id=${a.id})}" th:text="${a.candidateId.fullName}"></a></td>
+                                <!--                                <td th:text="${a.curriculumVitae}"></td>-->
                                 <td th:text="${a.appliedDate}"></td>
                                 <td th:text="${a.message}"></td>
                                 <td th:switch="${a.status}">
@@ -127,8 +98,8 @@
                 </div>
             </div>
         </div>
-        <div style="flex-grow: 2;">
-            <form th:action="@{/applications}" method="get" class="p-3 bg-light rounded">
+        <div style="flex-grow: 2">
+            <form th:action="@{/applications}" method="get" class="p-3 bg-light rounded" onsubmit="removeEmptyParams(this)">
                 <h5 class="mb-3">Tìm kiếm đơn ứng tuyển</h5>
                 <div class="mb-3">
                     <label for="status" class="form-label">Trạng thái</label>
@@ -147,8 +118,9 @@
                     <label for="jobName" class="form-label">Tên công việc</label>
                     <input type="text" class="form-control" id="jobName" name="jobName" th:value="${param.jobName}" placeholder="Nhập tên công việc...">
                 </div>
+                <!-- Giữ tham số phân trang -->
                 <input type="hidden" name="page" th:value="${currentPage}">
-                <input type="hidden" name="size" th:value="${pageSize}">
+                <!--<input type="hidden" name="size" th:value="${pageSize}">-->
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                     <a th:href="@{/applications}" class="btn btn-secondary">Xóa bộ lọc</a>
@@ -159,6 +131,7 @@
     <div th:replace="base :: footer"></div>
 
     <script>
+        // Chọn tất cả checkbox
         document.getElementById('selectAll').addEventListener('change', function () {
             document.querySelectorAll('.application-checkbox').forEach(checkbox => {
                 checkbox.checked = this.checked;

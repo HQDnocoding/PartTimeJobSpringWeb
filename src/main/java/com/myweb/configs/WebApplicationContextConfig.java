@@ -4,6 +4,9 @@
  */
 package com.myweb.configs;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.myweb.formatters.CandidateFormatter;
 import com.myweb.formatters.JobFormatter;
 import org.springframework.context.annotation.Bean;
@@ -64,6 +67,12 @@ public class WebApplicationContextConfig implements WebMvcConfigurer {
         jsonConverter.setDefaultCharset(StandardCharsets.UTF_8);
         jsonConverter.setSupportedMediaTypes(List.of(org.springframework.http.MediaType.APPLICATION_JSON));
         converters.add(jsonConverter);
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleFilterProvider filters = new SimpleFilterProvider()
+                .addFilter("UserFilter", SimpleBeanPropertyFilter.serializeAllExcept("password", "isActive", "username", "registerDate", "id"));
+        mapper.setFilterProvider(filters);
+        jsonConverter.setObjectMapper(mapper);
 
         // Thêm StringHttpMessageConverter cho text/plain
         StringHttpMessageConverter stringConverter = new StringHttpMessageConverter(StandardCharsets.UTF_8);
