@@ -46,7 +46,7 @@ public class ApplicationController {
     public String applicationView(Model model, @RequestParam Map<String, String> params,  Principal principal) {
         // Định nghĩa tiêu đề cột cho bảng
         Collection<String> headCols = new ArrayList<>(List.of(
-                "Id", "Ứng viên", "Ngày ứng tuyển", "Lời nhắn", "Trạng thái", "Công việc"
+                "STT", "Ứng viên", "Ngày ứng tuyển", "Lời nhắn", "Trạng thái", "Công việc"
         ));
 
         Map<String, Object> result = applicationService.getListApplication(params,principal);

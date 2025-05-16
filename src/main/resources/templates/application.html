@@ -77,11 +77,11 @@
                             <tr th:each="a ,stat : ${applications}" th:if="${a != null}">
                                 <td><input type="checkbox" class="application-checkbox" th:value="${a.id}"></td>
 
-                                <td th:text="${stat.index+1}"></td>
+                                <td th:text="${stat.count + (currentPage-1)*pageSize }"></td>
                                 <td><a th:href="@{/applications/{id}(id=${a.id})}" th:text="${a.candidateId.fullName}"></a></td>
                                 <!--                                <td th:text="${a.curriculumVitae}"></td>-->
                                 <td th:text="${a.appliedDate}"></td>
-                                <td th:text="${a.message}"></td>
+                                <!--<td style="word-wrap: break-word; white-space: normal" th:text="${a.message}"></td>-->
                                 <td th:switch="${a.status}">
                                     <span th:case="'approved'" class="text-success" th:text="${a.status}"></span>
                                     <span th:case="'pending'" class="text-warning" th:text="${a.status}"></span>

@@ -36,7 +36,7 @@ public class CompanyController {
 
     @GetMapping("/companies")
     public String companyView(Model model, @RequestParam Map<String, String> params) {
-        Collection<String> headCols = new ArrayList<>(List.of("Id", "Tên công ty", "Email", "Địa chỉ", "Mã số thuế", "Ngày đăng ký", "Trạng thái"));
+        Collection<String> headCols = new ArrayList<>(List.of("STT", "Tên công ty", "Email", "Địa chỉ", "Mã số thuế", "Ngày đăng ký", "Trạng thái"));
 
         Map<String, Object> result = cpnyService.getListCompany(params);
 

@@ -5,9 +5,6 @@
 package com.myweb.services.impl;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-import com.myweb.pojo.Candidate;
-import com.myweb.pojo.Company;
 import com.myweb.pojo.User;
 import com.myweb.repositories.UserRepository;
 import com.myweb.services.UserService;
@@ -112,7 +109,7 @@ public class UserServiceImplement implements UserService {
 
 
     @Override
-    public boolean authenticate(String username, String password) {
+    public User authenticate(String username, String password) {
         return this.userRepo.authenticate(username, password);
     }
 

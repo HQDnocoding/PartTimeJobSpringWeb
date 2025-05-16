@@ -22,13 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class UserRepositoryImplement implements UserRepository {
-    
+
     @Autowired
     private LocalSessionFactoryBean factory;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    
+
     // Thêm tài khoản người dùng
     @Override
     public User addUser(User user) {
@@ -37,28 +37,28 @@ public class UserRepositoryImplement implements UserRepository {
         s.refresh(user);
         return user;
     }
-    
+
     // Lấy thông tin người dùng theo username 
     @Override
     public User getUserByUsername(String username) {
         Session s = this.factory.getObject().getCurrentSession();
         Query query = s.createNamedQuery("User.findByUsername", User.class);
         query.setParameter("username", username);
-        
-        List<User> rs=query.getResultList();
-        
-        return rs.isEmpty()?null:rs.get(0);
+
+        List<User> rs = query.getResultList();
+
+        return rs.isEmpty() ? null : rs.get(0);
     }
-    
+
     // Xóa tài khoản người dùng
     @Override
     public void deleteUser(int id) {
         Session s = this.factory.getObject().getCurrentSession();
-        
+
         User u = this.getUserById(id);
         s.remove(u);
     }
-    
+
     // Lấy thông tin người dùng theo ID
     @Override
     public User getUserById(int id) {
@@ -66,12 +66,14 @@ public class UserRepositoryImplement implements UserRepository {
         return s.get(User.class, id);
     }
 
-
     @Override
-    public boolean authenticate(String username, String password) {
+    public User authenticate(String username, String password) {
         User u = this.getUserByUsername(username);
 
-        return this.passwordEncoder.matches(password, u.getPassword());
+        if (this.passwordEncoder.matches(password, u.getPassword())) {
+            return u;
+        }
+        return null;
     }
-    
+
 }

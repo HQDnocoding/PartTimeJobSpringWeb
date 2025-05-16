@@ -33,7 +33,7 @@ public class CandidateController {
     @GetMapping("/candidates")
     public String candidateView(Model model, @RequestParam Map<String, String> params) {
         Collection<String> headCols = new ArrayList<>(List.of(
-                "Id", "Họ tên", "Email", "Ngày sinh", "Thành phố", "Số điện thoại"
+                "STT", "Họ tên", "Email", "Ngày sinh", "Thành phố", "Số điện thoại"
         ));
 
         Map<String, Object> result = candidateService.getListCandidate(params);

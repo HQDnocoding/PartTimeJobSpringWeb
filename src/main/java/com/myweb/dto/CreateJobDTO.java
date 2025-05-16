@@ -56,7 +56,7 @@ public class CreateJobDTO {
     private Integer ageTo;
     private Integer experienceRequired;
 
-    private String fullAddress;
+        private String fullAddress;
     private String city;
 
     // Custom validation annotation for salary range

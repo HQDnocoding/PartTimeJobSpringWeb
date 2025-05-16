@@ -18,6 +18,6 @@ public interface UserRepository {
     
     User getUserById(int id);
 
-    boolean authenticate(String username, String password);
+    User authenticate(String username, String password);
 
 }

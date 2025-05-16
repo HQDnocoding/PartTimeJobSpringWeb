@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -40,10 +41,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class ApiUserController {
 
-    private static final SimpleBeanPropertyFilter USER_FILTER =
-            SimpleBeanPropertyFilter.serializeAllExcept("password", "isActive", "registerDate", "id");
-    private static final FilterProvider FILTER_PROVIDER =
-            new SimpleFilterProvider().addFilter("UserFilter", USER_FILTER);
+    private static final SimpleBeanPropertyFilter USER_FILTER
+            = SimpleBeanPropertyFilter.serializeAllExcept("password", "isActive", "registerDate", "id");
+    private static final FilterProvider FILTER_PROVIDER
+            = new SimpleFilterProvider().addFilter("UserFilter", USER_FILTER);
 
     @Autowired
     private UserService userService;
@@ -56,9 +57,10 @@ public class ApiUserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User u) {
-        if (this.userService.authenticate(u.getUsername(), u.getPassword())) {
+        User user = this.userService.authenticate(u.getUsername(), u.getPassword());
+        if (user != null) {
             try {
-                String token = JwtUtils.generateToken(u.getUsername());
+                String token = JwtUtils.generateToken(user.getUsername(), List.of(user.getRole()));
                 return ResponseEntity.ok().body(Collections.singletonMap("token", token));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -76,8 +78,9 @@ public class ApiUserController {
         MappingJacksonValue mapping = new MappingJacksonValue(user);
         mapping.setFilters(FILTER_PROVIDER);
 
+        System.out.println(user);
+
         return new ResponseEntity<>(mapping, HttpStatus.OK);
     }
-
 
 }

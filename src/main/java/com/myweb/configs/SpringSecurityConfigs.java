@@ -6,6 +6,7 @@ package com.myweb.configs;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.myweb.filters.JwtFilters;
 import com.myweb.utils.GeneralUtils;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -69,19 +71,22 @@ public class SpringSecurityConfigs {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(c -> c.disable())
+                .addFilterBefore(new JwtFilters(), UsernamePasswordAuthenticationFilter.class)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(requests -> requests
                 .requestMatchers("/", "/home").permitAll()
-                .requestMatchers("/api/secure/**").authenticated()
                 .requestMatchers("/login").permitAll()
-                .requestMatchers("/api/**").permitAll()
                 .requestMatchers("/admin/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
                 .requestMatchers("/api/admin/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
-                .requestMatchers(HttpMethod.POST, "/api/secure/applications").hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
-                .requestMatchers(HttpMethod.PATCH, "/api/secure/applications/update-status").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers(HttpMethod.PATCH, "/api/secure/applications/update-status")
+                .hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
                 .requestMatchers(HttpMethod.GET, "/api/secure/applications/**")
                 .hasAnyRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName(), GeneralUtils.Role.ROLE_COMPANY.getShortName())
-                .requestMatchers(HttpMethod.POST, "/api/secure/jobs").hasAnyRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers(HttpMethod.POST, "/api/secure/jobs/**")
+                .hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers(HttpMethod.POST, "/api/secure/applications")
+                .hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
+                .requestMatchers("/api/secure/**").authenticated()
                 .requestMatchers("/candidates/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
                 .requestMatchers("/applications/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
                 .requestMatchers("/company/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
@@ -90,6 +95,7 @@ public class SpringSecurityConfigs {
                 .requestMatchers("/companies/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
                 .requestMatchers("/report/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
                 .requestMatchers("/js/**").permitAll()
+                .requestMatchers("/api/**").permitAll()
                 .anyRequest().authenticated())
                 .formLogin(form -> form
                 .loginPage("/login")
