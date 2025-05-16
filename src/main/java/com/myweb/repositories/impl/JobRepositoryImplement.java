@@ -428,9 +428,7 @@ public class JobRepositoryImplement implements JobRepository {
         }
         return sb.toString();
     }
-<<<<<<< HEAD
-=======
-
+    
     //dat
     @Override
     public Job getOnlyJobById(int id) {
@@ -477,6 +475,4 @@ public class JobRepositoryImplement implements JobRepository {
 
         return jobs;
     }
-
->>>>>>> b42ba5b11e76fc2db9a3d23b0e95a942f21978bb
 }

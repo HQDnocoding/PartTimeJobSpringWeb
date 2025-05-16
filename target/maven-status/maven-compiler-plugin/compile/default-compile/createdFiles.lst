@@ -37,6 +37,7 @@ com\myweb\pojo\Candidate.class
 com\myweb\repositories\CandidateRepository.class
 com\myweb\services\ApplicationService.class
 com\myweb\utils\GeneralUtils.class
+com\myweb\pojo\ImageWorkplace.class
 com\myweb\services\impl\CompanyServiceImplement.class
 com\myweb\dto\CreateJobDTO$LongitudeRange.class
 com\myweb\dto\CreateCandidateDTO.class
@@ -64,6 +65,7 @@ com\myweb\controllers\ApplicationController.class
 com\myweb\repositories\DayRepository.class
 com\myweb\configs\WebApplicationContextConfig.class
 com\myweb\repositories\FollowRepository.class
+com\myweb\services\GeocodingService.class
 com\myweb\services\impl\FollowServiceImplement.class
 com\myweb\services\UserService.class
 com\myweb\pojo\Day.class
