@@ -107,7 +107,7 @@
                         <tbody>
                             <tr th:each="c,stat : ${candidates}" th:if="${c != null}">
                                 <td><input type="checkbox" class="candidate-checkbox" th:value="${c.id}"></td>
-                                <td th:text="${stat.index + 1}"></td>
+                                <td th:text="${stat.count + (currentPage-1)*pageSize }"></td>
                                 <td><a th:href="@{/candidates/{id}(id=${c.id})}" th:text="${c.fullName}"></a></td>
                                 <td th:text="${c.email}"></td>
                                 <td th:text="${c.dateOfBirth}"></td>

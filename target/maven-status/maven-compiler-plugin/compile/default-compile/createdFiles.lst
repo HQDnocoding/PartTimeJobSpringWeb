@@ -71,6 +71,7 @@ com\myweb\repositories\ApplicationRepository.class
 com\myweb\pojo\DayJob.class
 com\myweb\repositories\CompanyRepository.class
 com\myweb\services\FollowService.class
+com\myweb\utils\JwtUtils$TokenInfo.class
 com\myweb\formatters\ErrorResponseFormatter.class
 com\myweb\services\impl\DayServiceImplement.class
 com\myweb\pojo\Major.class
