@@ -6,7 +6,6 @@ package com.myweb.pojo;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -22,11 +21,15 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -71,6 +74,7 @@ public class Candidate implements Serializable {
     @NotNull
     @Column(name = "date_of_birth")
     @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateOfBirth;
 
     @Basic(optional = false)
@@ -116,6 +120,12 @@ public class Candidate implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "candidateId")
     @JsonIgnore
     private Collection<CompanyReview> companyReviewCollection;
+
+    @Transient
+    private MultipartFile curriculumVitaeFile;
+
+    @Transient
+    private MultipartFile avatarFile;
 
     public Candidate() {
     }
@@ -261,6 +271,34 @@ public class Candidate implements Serializable {
     @Override
     public String toString() {
         return "com.myweb.pojo.Candidate[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the curriculumVitaeFile
+     */
+    public MultipartFile getCurriculumVitaeFile() {
+        return curriculumVitaeFile;
+    }
+
+    /**
+     * @param curriculumVitaeFile the curriculumVitaeFile to set
+     */
+    public void setCurriculumVitaeFile(MultipartFile curriculumVitaeFile) {
+        this.curriculumVitaeFile = curriculumVitaeFile;
+    }
+
+    /**
+     * @return the avatarFile
+     */
+    public MultipartFile getAvatarFile() {
+        return avatarFile;
+    }
+
+    /**
+     * @param avatarFile the avatarFile to set
+     */
+    public void setAvatarFile(MultipartFile avatarFile) {
+        this.avatarFile = avatarFile;
     }
 
 }

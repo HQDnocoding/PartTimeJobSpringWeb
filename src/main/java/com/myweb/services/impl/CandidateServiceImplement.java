@@ -43,18 +43,29 @@ public class CandidateServiceImplement implements CandidateService {
     private BCryptPasswordEncoder passwordEncoder;
 
     // Thêm hoặc cập nhật ứng viên
+    @Override
     public Candidate addOrUpdateCandidate(Candidate c) {
-        return candidateRepository.addOrUpdateCandidate(c);
+        if (c.getId() != null) {
+            if (!c.getAvatarFile().isEmpty()) {
+                c.setCurriculumVitae(GeneralUtils.uploadFileToCloud(cloudinary, c.getCurriculumVitaeFile()));
+            }
+            if (!c.getAvatarFile().isEmpty()) {
+                c.setAvatar(GeneralUtils.uploadFileToCloud(cloudinary, c.getAvatarFile()));
+            }
+        }
+        return this.candidateRepository.addOrUpdateCandidate(c);
     }
 
     // Lấy danh sách ứng viên với lọc/phân trang
+    @Override
     public Map<String, Object> getListCandidate(Map<String, String> params) {
-        return candidateRepository.getListCandidate(params);
+        return this.candidateRepository.getListCandidate(params);
     }
 
     // Lấy chi tiết ứng viên theo ID
+    @Override
     public Candidate getCandidateById(int candidateId) {
-        return candidateRepository.getCandidateById(candidateId);
+        return this.candidateRepository.getCandidateById(candidateId);
     }
 
     // Tạo 1 ứng viên mới
@@ -133,28 +144,26 @@ public class CandidateServiceImplement implements CandidateService {
         can.setUserId(u);
 
         try {
-            return candidateRepository.createCandidate(u, can);
+            return this.candidateRepository.createCandidate(u, can);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin.");
         }
     }
 
-
     // Lấy tất cả ứng viên
     @Override
     public List<Candidate> getCandidateList() {
-        return candidateRepository.getCandidateList();
+        return this.candidateRepository.getCandidateList();
     }
-    
+
     // Xóa ứng viên theo ID, xử lý ngoại lệ
     @Override
     public void deleteCandidate(int id) {
-        try{
+        try {
             this.candidateRepository.deleteCandidate(id);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    
 }

@@ -55,6 +55,10 @@ public class CompanyServiceImplement implements CompanyService {
 
     @Override
     public Company addOrUpdate(Company c) {
+        System.out.println(String.format("id %s distr %s", c.getId(), c.getDistrict()));
+        if (!c.getAvatarFile().isEmpty()) {
+            c.setAvatar(GeneralUtils.uploadFileToCloud(cloudinary, c.getAvatarFile()));
+        }
         return this.companyRepository.addOrUpdateCompany(c);
     }
 

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.myweb.formatters.CandidateFormatter;
 import com.myweb.formatters.JobFormatter;
+import com.myweb.formatters.UserFormatter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -22,10 +23,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 /**
  *
@@ -58,6 +62,7 @@ public class WebApplicationContextConfig implements WebMvcConfigurer {
     public void addFormatters(FormatterRegistry registry) {
         registry.addFormatter(new CandidateFormatter());
         registry.addFormatter(new JobFormatter());
+        registry.addFormatter(new UserFormatter());
     }
 
     @Override
@@ -95,5 +100,12 @@ public class WebApplicationContextConfig implements WebMvcConfigurer {
     @Bean
     public StandardServletMultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
+    }
+    
+    @Bean
+    public LocaleResolver localeResolver() {
+        SessionLocaleResolver slr = new SessionLocaleResolver();
+        slr.setDefaultLocale(new Locale("vi", "VN"));
+        return slr;
     }
 }

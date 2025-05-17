@@ -84,4 +84,23 @@ public class CandidateController {
             return "create-candidate";
         }
     }
+
+    @PostMapping("/candidates/{candidateId}/update")
+    public String updateCandidate(Model model, @PathVariable("candidateId") int id, @ModelAttribute("candidate") Candidate candidate) {
+        try {
+            System.out.println("City: " + candidate.getCity() + ", FullName: " + candidate.getFullName() + ", tinh: " + candidate.getCity());
+            Candidate updatedCandidate = candidateService.addOrUpdateCandidate(candidate);
+            System.out.println("City: " + candidate.getCity() + ", FullName: " + candidate.getFullName() + ", tinh: " + updatedCandidate.getCity());
+
+            return "redirect:/candidates/" + id;
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            e.printStackTrace();
+            return "redirect:/candidates/" + id;
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("errorMessage", e.getMessage());
+            return "redirect:/candidates/" + id;
+        }
+    }
 }

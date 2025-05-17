@@ -69,7 +69,7 @@ public class CompanyRepositoryImplement implements CompanyRepository {
                 session.merge(c);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println(e.getStackTrace());
         }
         return c;
     }

@@ -48,7 +48,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
             return c;
         } catch (Exception e) {
             e.printStackTrace();
-            return null; // Hoặc ném ngoại lệ tùy yêu cầu
+            return null; 
         }
     }
 
@@ -83,36 +83,29 @@ public class CandidateRepositoryImplement implements CandidateRepository {
 
         // Xử lý các tham số lọc
         if (params != null) {
-            // Lọc theo họ tên (tìm kiếm gần đúng với LIKE)
             String fullName = params.get("fullName");
             if (fullName != null && !fullName.isEmpty()) {
                 predicates.add(cb.like(candidateRoot.get("fullName"), String.format("%%%s%%", fullName)));
             }
 
-            // Lọc theo email (so sánh chính xác)
             String email = params.get("email");
             if (email != null && !email.isEmpty()) {
                 predicates.add(cb.equal(candidateRoot.get("email"), email));
             }
 
-            // Lọc theo thành phố (chuẩn hóa trước khi so sánh)
             String city = params.get("city");
             if (city != null && !city.isEmpty()) {
-                city = normalizeLocation(city); // Chuẩn hóa giá trị city
+                city = normalizeLocation(city); 
                 if (city != null) {
-                    // So sánh không phân biệt hoa thường
                     predicates.add(cb.equal(cb.lower(candidateRoot.get("city")), city.toLowerCase()));
                 }
             }
 
-            // Lọc theo số điện thoại (so sánh chính xác)
             String phone = params.get("phone");
             if (phone != null && !phone.isEmpty()) {
                 predicates.add(cb.equal(candidateRoot.get("phone"), phone));
             }
         }
-
-        // Áp dụng các điều kiện lọc vào truy vấn
         if (!predicates.isEmpty()) {
             cq.where(cb.and(predicates.toArray(Predicate[]::new)));
         }
@@ -138,10 +131,8 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         List<Candidate> results = query.getResultList();
         System.out.println("Results: " + results);
 
-        // Tính tổng số trang
         int totalPages = (int) Math.ceil((double) totalRecords / GeneralUtils.PAGE_SIZE);
 
-        // Tạo kết quả trả về
         Map<String, Object> result = new HashMap<>();
         result.put("candidates", results);
         result.put("currentPage", page);

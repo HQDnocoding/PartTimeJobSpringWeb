@@ -32,8 +32,6 @@ public class CompanyController {
     @Autowired
     private CompanyService cpnyService;
 
-
-
     @GetMapping("/companies")
     public String companyView(Model model, @RequestParam Map<String, String> params) {
         Collection<String> headCols = new ArrayList<>(List.of("STT", "Tên công ty", "Email", "Địa chỉ", "Mã số thuế", "Ngày đăng ký", "Trạng thái"));
@@ -84,4 +82,19 @@ public class CompanyController {
         }
     }
 
+    @PostMapping("/companies/{companyId}/update")
+    public String updateCompany(Model model, @PathVariable("companyId") int id, @ModelAttribute(value = "company") Company company) {
+        try {
+            System.out.println(company.getDistrict());
+            Company updatedCompany = this.cpnyService.addOrUpdate(company);
+            System.out.println("City: " + updatedCompany.getCity() + ", District: " + updatedCompany.getDistrict());
+            return "redirect:/companies/" + id;
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "redirect:/companies/" + id;
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Đã có lỗi xảy ra, vui lòng thử lại.");
+            return "redirect:/companies/" + id;
+        }
+    }
 }

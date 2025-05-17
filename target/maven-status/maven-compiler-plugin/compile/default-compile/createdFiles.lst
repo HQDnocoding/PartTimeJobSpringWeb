@@ -59,6 +59,7 @@ com\myweb\services\EmailService.class
 com\myweb\pojo\Job.class
 com\myweb\pojo\Company.class
 com\myweb\pojo\User.class
+com\myweb\formatters\UserFormatter.class
 com\myweb\controllers\CompanyController.class
 com\myweb\repositories\impl\DayRepositoryImplement.class
 com\myweb\controllers\ApplicationController.class

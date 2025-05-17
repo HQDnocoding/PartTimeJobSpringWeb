@@ -6,10 +6,8 @@ package com.myweb.services;
 
 import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
-import jakarta.data.page.Page;
 import java.util.List;
 import java.util.Map;
-import org.springframework.stereotype.Service;
 
 /**
  *

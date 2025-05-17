@@ -6,7 +6,6 @@ package com.myweb.pojo;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -130,7 +129,7 @@ public class Company implements Serializable {
     private Collection<Job> jobCollection;
 
     @Transient
-    private MultipartFile file;
+    private MultipartFile avatarFile;
 
     public Company() {
     }
@@ -297,17 +296,18 @@ public class Company implements Serializable {
     }
 
     /**
-     * @return the file
+     * @return the avatarFile
      */
-    public MultipartFile getFile() {
-        return file;
+    public MultipartFile getAvatarFile() {
+        return avatarFile;
     }
 
     /**
-     * @param file the file to set
+     * @param avatarFile the avatarFile to set
      */
-    public void setFile(MultipartFile file) {
-        this.file = file;
+    public void setAvatarFile(MultipartFile avatarFile) {
+        this.avatarFile = avatarFile;
     }
 
+ 
 }
