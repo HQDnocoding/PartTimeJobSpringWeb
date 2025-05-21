@@ -22,6 +22,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -45,33 +46,34 @@ public class Application implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "curriculum_vitae")
     private String curriculumVitae;
-    
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "applied_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date appliedDate;
-    
+
     @Size(max = 400)
     @Column(name = "message")
     private String message;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 8)
     @Column(name = "status")
     private String status;
-    
+
     @JoinColumn(name = "candidate_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Candidate candidateId;
-    
+
     @JoinColumn(name = "job_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Job jobId;

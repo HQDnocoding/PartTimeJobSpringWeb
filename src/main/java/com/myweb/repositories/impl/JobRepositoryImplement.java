@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.hibernate.HibernateException;
 
 @Repository
 @Transactional
@@ -336,8 +338,8 @@ public class JobRepositoryImplement implements JobRepository {
         Session session = sessionFactory.getCurrentSession();
         Job job = session.get(Job.class, jobId);
         if (job != null) {
-            session.delete(job);
-            session.flush(); // Đảm bảo xóa ngay lập tức
+            session.remove(job);
+            session.flush();
         } else {
             throw new IllegalArgumentException("Không tìm thấy công việc có ID: " + jobId);
         }
@@ -354,7 +356,7 @@ public class JobRepositoryImplement implements JobRepository {
         predicates.add(cb.equal(root.get("status"), GeneralUtils.Status.approved.toString()));
         predicates.add(cb.equal(root.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
 
-        q.where(cb.and(predicates.toArray(new Predicate[0])));
+        q.where(cb.and(predicates.toArray(Predicate[]::new)));
         q.orderBy(cb.asc(root.get("id")));
         return s.createQuery(q).getResultList();
     }
@@ -364,7 +366,7 @@ public class JobRepositoryImplement implements JobRepository {
         Session s = this.sessionFactory.getCurrentSession();
         if (j != null) {
             s.merge(j);
-            logger.info("Successfully saved job with ID: " + (j.getId() != null ? j.getId() : "new"));
+            logger.log(Level.INFO, "Successfully saved job with ID: {0}", j.getId() != null ? j.getId() : "new");
             return true;
         } else {
             logger.warning("Job object is null");
@@ -378,7 +380,7 @@ public class JobRepositoryImplement implements JobRepository {
         if (j != null) {
             Job mergedJob = (Job) s.merge(j);
             s.flush();
-            logger.info("Successfully saved job with ID: " + (mergedJob.getId() != null ? mergedJob.getId() : "new"));
+            logger.log(Level.INFO, "Successfully saved job with ID: {0}", mergedJob.getId() != null ? mergedJob.getId() : "new");
             return mergedJob;
         } else {
             logger.warning("Job object is null");
@@ -404,7 +406,7 @@ public class JobRepositoryImplement implements JobRepository {
         if (dayIds != null && !dayIds.isEmpty()) {
             for (Integer dayId : dayIds) {
                 if (dayId == null || !validDayIds.contains(dayId)) {
-                    logger.warning("Invalid or null dayId: " + dayId);
+                    logger.log(Level.WARNING, "Invalid or null dayId: {0}", dayId);
                     continue;
                 }
                 Day day = days.stream().filter(d -> d.getId().equals(dayId)).findFirst()
@@ -413,21 +415,14 @@ public class JobRepositoryImplement implements JobRepository {
                 dayJob.setJobId(job);
                 dayJob.setDayId(day);
                 session.persist(dayJob);
-                logger.info("Added DayJob: jobId=" + job.getId() + ", dayId=" + dayId);
+                logger.log(Level.INFO, "Added DayJob: jobId={0}, dayId={1}", new Object[]{job.getId(), dayId});
             }
             session.flush();
         } else {
-            logger.info("No dayIds provided for jobId: " + job.getId());
+            logger.log(Level.INFO, "No dayIds provided for jobId: {0}", job.getId());
         }
     }
 
-    private String getStackTrace(Exception e) {
-        StringBuilder sb = new StringBuilder();
-        for (StackTraceElement element : e.getStackTrace()) {
-            sb.append(element.toString()).append("\n");
-        }
-        return sb.toString();
-    }
 
     //dat
     @Override
@@ -448,8 +443,7 @@ public class JobRepositoryImplement implements JobRepository {
 
             return session.createQuery(cq).getSingleResult();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (HibernateException e) {
             return null;
         }
 
@@ -475,5 +469,7 @@ public class JobRepositoryImplement implements JobRepository {
 
         return jobs;
     }
+
+
 
 }

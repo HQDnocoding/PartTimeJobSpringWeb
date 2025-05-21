@@ -28,11 +28,11 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import java.util.stream.Collectors;
+
 @Service
 public class JobServiceImplement implements JobService {
 
     private static final Logger logger = Logger.getLogger(JobServiceImplement.class.getName());
-
 
     @Autowired
     private UserRepository userRepo;
@@ -335,4 +335,9 @@ public class JobServiceImplement implements JobService {
         return this.jobRepository.getJobByAuthenticateCompany(user.getCompany().getId());
     }
 
+//    @Override
+//    public List<Job> getJobListByAuthenticateCandidate(Principal principal) {
+//        User user = this.userRepo.getUserByUsername(principal.getName());
+//        
+//    }
 }

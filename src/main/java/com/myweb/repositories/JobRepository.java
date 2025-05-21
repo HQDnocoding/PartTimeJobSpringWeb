@@ -62,14 +62,14 @@ public interface JobRepository {
     // Thêm một công việc mới.
     boolean addJob(Job j);
 
-    Job addJobDTO(Job j); 
+    Job addJobDTO(Job j);
 
     void addDaysToJob(Job job, List<Integer> dayIds);
-    
-    
+
     //dat
     Job getOnlyJobById(int id);
-    List<Job> getJobByAuthenticateCompany(int companyId);
-    
 
+    List<Job> getJobByAuthenticateCompany(int companyId);
+
+//    List<Job> getJobListByAuthenticateCandidate(int candidateId);
 }

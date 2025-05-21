@@ -5,6 +5,7 @@
 package com.myweb.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.myweb.formatters.CandidateFormatter;
@@ -74,7 +75,7 @@ public class WebApplicationContextConfig implements WebMvcConfigurer {
         converters.add(jsonConverter);
 
         ObjectMapper mapper = new ObjectMapper();
-        SimpleFilterProvider filters = new SimpleFilterProvider()
+        SimpleFilterProvider filters = new SimpleFilterProvider().addFilter("CompanyFilter", SimpleBeanPropertyFilter.serializeAll())
                 .addFilter("UserFilter", SimpleBeanPropertyFilter.serializeAllExcept("password", "isActive", "username", "registerDate", "id"));
         mapper.setFilterProvider(filters);
         jsonConverter.setObjectMapper(mapper);
@@ -101,11 +102,12 @@ public class WebApplicationContextConfig implements WebMvcConfigurer {
     public StandardServletMultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
-    
+
     @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver slr = new SessionLocaleResolver();
         slr.setDefaultLocale(new Locale("vi", "VN"));
         return slr;
     }
+
 }

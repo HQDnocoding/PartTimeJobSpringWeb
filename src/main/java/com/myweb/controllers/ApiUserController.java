@@ -7,29 +7,22 @@ package com.myweb.controllers;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.myweb.dto.CreateCandidateDTO;
 import com.myweb.pojo.User;
 import com.myweb.services.UserService;
 import com.myweb.utils.JwtUtils;
-
 import java.security.Principal;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
 import java.util.Collections;
 import java.util.List;
-
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,13 +34,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class ApiUserController {
 
-    private static final SimpleBeanPropertyFilter USER_FILTER
-            = SimpleBeanPropertyFilter.serializeAllExcept("password", "isActive", "registerDate", "id");
-    private static final FilterProvider FILTER_PROVIDER
-            = new SimpleFilterProvider().addFilter("UserFilter", USER_FILTER);
-
     @Autowired
     private UserService userService;
+
+    private static final SimpleBeanPropertyFilter USER_FILTER
+            = SimpleBeanPropertyFilter.serializeAllExcept("password", "isActive", "registerDate");
 
     @DeleteMapping("/admin/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -63,7 +54,6 @@ public class ApiUserController {
                 String token = JwtUtils.generateToken(user.getUsername(), List.of(user.getRole()));
                 return ResponseEntity.ok().body(Collections.singletonMap("token", token));
             } catch (Exception e) {
-                e.printStackTrace();
                 return ResponseEntity.status(500).body("Lỗi khi tạo JWT");
             }
         }
@@ -73,14 +63,19 @@ public class ApiUserController {
     @RequestMapping("/secure/profile")
     @ResponseBody
     @CrossOrigin
-    public ResponseEntity<MappingJacksonValue> getProfile(Principal principal) {
+    public ResponseEntity<?> getProfile(Principal principal) {
         User user = this.userService.getUserByUsername(principal.getName());
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
         MappingJacksonValue mapping = new MappingJacksonValue(user);
-        mapping.setFilters(FILTER_PROVIDER);
+        FilterProvider filters = new SimpleFilterProvider().addFilter("UserFilter", USER_FILTER);
+        mapping.setFilters(filters);
 
-        System.out.println(user);
-
-        return new ResponseEntity<>(mapping, HttpStatus.OK);
+        System.out.println("User fetched: " + user);
+        return ResponseEntity.ok(mapping);
     }
-
+    
+    
 }

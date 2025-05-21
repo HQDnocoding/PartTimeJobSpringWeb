@@ -6,9 +6,12 @@ package com.myweb.repositories;
 
 import com.myweb.pojo.Company;
 import com.myweb.pojo.ImageWorkplace;
+import com.myweb.pojo.Job;
 import com.myweb.pojo.User;
 import jakarta.data.repository.Param;
 import jakarta.data.repository.Query;
+
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -38,4 +41,12 @@ public interface CompanyRepository {
     @Query("SELECT DATE_FORMAT(c.createdDate, '%Y-%m') as time, COUNT(c) as count "
             + "FROM Company c WHERE c.createdDate >= :startDate GROUP BY DATE_FORMAT(c.createdDate, '%Y-%m')")
     List<Object[]> countCompaniesByMonth(@Param("startDate") Date startDate);
+
+    Company getCompanyApproved(int id);
+
+    Collection<Job> getCompanyWithJobs(int id);
+
+    User getUser(int id);
+    
+    Company getCompanyByUserId(int userId);
 }

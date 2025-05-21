@@ -8,15 +8,19 @@ import com.cloudinary.Cloudinary;
 import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.ImageWorkplace;
+import com.myweb.pojo.Job;
 import com.myweb.pojo.User;
 import com.myweb.repositories.CompanyRepository;
 import com.myweb.repositories.UserRepository;
 import com.myweb.services.CompanyService;
 import com.myweb.utils.GeneralUtils;
+
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,9 +28,9 @@ import org.springframework.stereotype.Service;
 
 import static com.myweb.utils.ValidationUtils.isValidPassword;
 import static com.myweb.utils.ValidationUtils.isValidUsername;
+import java.util.HashMap;
 
 /**
- *
  * @author dat
  */
 @Service
@@ -51,6 +55,11 @@ public class CompanyServiceImplement implements CompanyService {
     @Override
     public Company getCompany(int companyId) {
         return this.companyRepository.getCompanyById(companyId);
+    }
+
+    @Override
+    public Company getCompanyApproved(int id) {
+        return this.companyRepository.getCompanyApproved(id);
     }
 
     @Override
@@ -174,4 +183,25 @@ public class CompanyServiceImplement implements CompanyService {
     public List<Company> getAllCompaniesForDropdown() {
         return companyRepository.getAllCompaniesForDropdown();
     }
+
+    @Override
+    public Collection<Job> getCompanyWithJobs(int companyId) {
+        return this.companyRepository.getCompanyWithJobs(companyId);
+    }
+
+    @Override
+    public Map<String, Object> getUserIdAndRole(int id) {
+        User user = this.companyRepository.getUser(id);
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", user.getId());
+        map.put("role", user.getRole());
+        return map;
+    }
+
+    @Override
+    public Company getCompanyByUserId(int userId) {
+        return this.companyRepository.getCompanyByUserId(userId);
+    }
+
+    
 }

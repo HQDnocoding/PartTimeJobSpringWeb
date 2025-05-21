@@ -4,8 +4,16 @@
  */
 package com.myweb.controllers;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.myweb.dto.CreateCompanyDTO;
+import com.myweb.pojo.Company;
+import com.myweb.pojo.Job;
 import com.myweb.services.CompanyService;
+
+import java.util.Collection;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +26,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  *
@@ -29,6 +39,9 @@ public class ApiCompanyController {
 
     @Autowired
     private CompanyService cpnyService;
+
+    private static final SimpleBeanPropertyFilter COMPANY_FILTER
+            = SimpleBeanPropertyFilter.serializeAllExcept("id", "taxCode", "status", "imageWorkplaceCollection");
 
     @DeleteMapping("/admin/companies/{companyId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -49,6 +62,63 @@ public class ApiCompanyController {
             return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>(Map.of("message", "Đăng ký thất bại: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/companies/{companyId}")
+    public ResponseEntity<?> getCompanyWithFilter(@PathVariable(value = "companyId") int companyId) {
+        try {
+            Company company = this.cpnyService.getCompanyApproved(companyId);
+            System.out.println("Company fetched (with filter): " + company);
+            if (company == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Company not found");
+            }
+            return ResponseEntity.ok(company);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching company: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/companies/{companyId}/jobs")
+    public ResponseEntity<?> getJobs(@PathVariable(value = "companyId") int companyId) {
+        try {
+            Collection<Job> jobs = this.cpnyService.getCompanyWithJobs(companyId);
+            if (jobs.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Company not found");
+            }
+            return ResponseEntity.ok(jobs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching company: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/companies/{companyId}/id-role")
+    public ResponseEntity<?> getUserIdAndRole(@PathVariable(value = "companyId") int companyId) {
+        try {
+            Map<String, Object> map = this.cpnyService.getUserIdAndRole(companyId);
+            if (map.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+            return ResponseEntity.ok(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching company: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/companies/{userId}/infor-by-userId")
+    public ResponseEntity<?> getCompanyByUserId(@PathVariable(value = "userId") int userId) {
+        try {
+            Company company = this.cpnyService.getCompanyByUserId(userId);
+            if (company == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+            return ResponseEntity.ok(company);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching company: " + e.getMessage());
         }
     }
 }

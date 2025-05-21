@@ -180,7 +180,7 @@
                                 </div>
                                 <div class="col-auto">
                                     <select id="status" name="status" class="form-select" th:field="*{status}">
-                                        <option value="pending" hidden=""/>
+                                        <option value="pending" hidden/>
                                         <option value="approved">Duyệt</option>
                                         <option value="refused">Từ chối</option>
                                     </select>
@@ -188,7 +188,7 @@
                             </div>
                         </div>
                         <div th:unless="${company.status == 'pending'}">
-                            <input type="hidden" name="status" th:value="${company.status}" />
+                            <input type="hidden" th:field="*{status}" />
                             <p>Trạng thái hiện tại: <strong th:text="${company.status}">Trạng thái</strong>. Không thể cập nhật.</p>
                         </div>
                     </div>

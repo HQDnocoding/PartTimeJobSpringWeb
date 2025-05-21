@@ -4,7 +4,6 @@
  */
 package com.myweb.controllers;
 
-
 import com.myweb.pojo.Application;
 import com.myweb.pojo.Candidate;
 import com.myweb.pojo.Job;
@@ -43,13 +42,13 @@ public class ApplicationController {
     private JobService jobService;
 
     @GetMapping("/applications")
-    public String applicationView(Model model, @RequestParam Map<String, String> params,  Principal principal) {
+    public String applicationView(Model model, @RequestParam Map<String, String> params, Principal principal) {
         // Định nghĩa tiêu đề cột cho bảng
         Collection<String> headCols = new ArrayList<>(List.of(
                 "STT", "Ứng viên", "Ngày ứng tuyển", "Lời nhắn", "Trạng thái", "Công việc"
         ));
 
-        Map<String, Object> result = applicationService.getListApplication(params,principal);
+        Map<String, Object> result = applicationService.getListApplication(params, principal);
 
         model.addAttribute("applications", result.get("applications"));
         model.addAttribute("currentPage", result.get("currentPage"));
@@ -76,6 +75,14 @@ public class ApplicationController {
         System.out.println("Job: " + application.getJobId());
 
         model.addAttribute("appli", application);
+
+        List<Candidate> candidateList = this.candidateService.getCandidateList();
+        List<Job> jobList = this.jobService.getJobList();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("candidates", candidateList);
+        data.put("jobs", jobList);
+        model.addAllAttributes(data);
         return "application-detail";
     }
 
@@ -102,6 +109,20 @@ public class ApplicationController {
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Đã có lỗi xảy ra, vui lòng thử lại.");
             return "forward:/applications/create-application";
+        }
+    }
+    
+    @PostMapping("/applications/{appliId}/update")
+    public String updateCompany(Model model, @PathVariable("appliId") int id, @ModelAttribute(value = "appli") Application app) {
+        try {
+            Application updatedApp = this.applicationService.addOrUpdateApplication(app);
+            return "redirect:/applications/" + id;
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "redirect:/applications/" + id;
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Đã có lỗi xảy ra, vui lòng thử lại.");
+            return "redirect:/applications/" + id;
         }
     }
 }

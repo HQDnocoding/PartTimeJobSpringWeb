@@ -65,6 +65,4 @@ public class ApiJobController { // Đã đổi tên từ JobApiController thành
             return new ResponseEntity<>(Map.of("message", "Lấy thông tin thất bại " + e), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
 }

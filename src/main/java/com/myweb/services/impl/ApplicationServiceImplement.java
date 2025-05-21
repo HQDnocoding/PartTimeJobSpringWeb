@@ -45,10 +45,9 @@ public class ApplicationServiceImplement implements ApplicationService {
     // Thêm mới hoặc cập nhật một đơn ứng tuyển
     public Application addOrUpdateApplication(Application a) {
         if (a.getId() != null) {
-            Application updateApplication = this.applicationRepository.getApplicationById(a.getId());
-            updateApplication.setStatus(a.getStatus());
-            return applicationRepository.addOrUpdateApplication(updateApplication);
-
+            if (a.getCurriculumVitaeFile() != null && !a.getCurriculumVitaeFile().isEmpty()) {
+                a.setCurriculumVitae(GeneralUtils.uploadFileToCloud(cloudinary, a.getCurriculumVitaeFile()));
+            }
         }
         return applicationRepository.addOrUpdateApplication(a);
     }

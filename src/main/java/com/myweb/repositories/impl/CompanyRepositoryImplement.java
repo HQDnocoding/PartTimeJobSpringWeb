@@ -4,9 +4,7 @@
  */
 package com.myweb.repositories.impl;
 
-import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
-import com.myweb.pojo.ImageWorkplace;
 import com.myweb.pojo.Job;
 import com.myweb.pojo.User;
 import com.myweb.repositories.CompanyRepository;
@@ -14,17 +12,12 @@ import com.myweb.utils.GeneralUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import org.hibernate.HibernateException;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +66,6 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         }
         return c;
     }
-
 
     private String normalizeLocation(String location) {
         if (location == null || location.trim().isEmpty()) {
@@ -167,6 +159,32 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         return s.get(Company.class, companyId);
     }
 
+    @Override
+    public Company getCompanyApproved(int companyId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+
+        CriteriaQuery<Company> cq = cb.createQuery(Company.class);
+        Root<Company> companyRoot = cq.from(Company.class);
+
+        Join<Company, User> userJoin = companyRoot.join("userId");
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(cb.equal(companyRoot.get("id"), companyId));
+        predicates.add(cb.equal(companyRoot.get("status"), "approved"));
+        predicates.add(cb.equal(userJoin.get("isActive"), true));
+        cq.where(predicates.toArray(Predicate[]::new));
+
+        try {
+            Company company = s.createQuery(cq).getSingleResult();
+
+            return company;
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
     // Xóa công ty và tài khoản người dùng
     @Override
     public void deleteCompany(int id) {
@@ -216,7 +234,6 @@ public class CompanyRepositoryImplement implements CompanyRepository {
 
     }
 
-    // Lấy danh sách tất cả các công ty cho dropdown mà không bị lỗi phân trang
     @Override
     public List<Company> getAllCompaniesForDropdown() {
         Session s = this.factory.getObject().getCurrentSession();
@@ -230,4 +247,80 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         System.out.println("Total companies retrieved for dropdown: " + companies.size());
         return companies;
     }
+
+    @Override
+    public Collection<Job> getCompanyWithJobs(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+
+        CriteriaQuery<Company> cq = cb.createQuery(Company.class);
+        Root<Company> companyRoot = cq.from(Company.class);
+
+        companyRoot.fetch("jobCollection", JoinType.LEFT);
+
+        Join<Company, User> userJoin = companyRoot.join("userId");
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(cb.equal(companyRoot.get("id"), id));
+        predicates.add(cb.equal(companyRoot.get("status"), "approved"));
+        predicates.add(cb.equal(userJoin.get("isActive"), true));
+        cq.where(predicates.toArray(Predicate[]::new));
+
+        try {
+            Company company = s.createQuery(cq).getSingleResult();
+            return company.getJobCollection();
+
+        } catch (Exception e) {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    public User getUser(int id) {
+
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+
+        CriteriaQuery<Company> cq = cb.createQuery(Company.class);
+        Root<Company> companyRoot = cq.from(Company.class);
+
+        Join<Company, User> userJoin = companyRoot.join("userId");
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(cb.equal(companyRoot.get("id"), id));
+        predicates.add(cb.equal(companyRoot.get("status"), "approved"));
+        predicates.add(cb.equal(userJoin.get("isActive"), true));
+        cq.where(predicates.toArray(Predicate[]::new));
+
+        try {
+            Company company = s.createQuery(cq).getSingleResult();
+            return company.getUserId();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Company getCompanyByUserId(int userId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+
+        CriteriaQuery<Company> cq = cb.createQuery(Company.class);
+        Root<Company> companyRoot = cq.from(Company.class);
+        Join<Company, User> userJoin = companyRoot.join("userId");
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(cb.equal(companyRoot.get("userId").get("id"), userId));
+        predicates.add(cb.equal(companyRoot.get("status"), "approved"));
+        predicates.add(cb.equal(userJoin.get("isActive"), true));
+        cq.where(predicates.toArray(Predicate[]::new));
+
+        try {
+            Company company = s.createQuery(cq).getSingleResult();
+            return company;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }
