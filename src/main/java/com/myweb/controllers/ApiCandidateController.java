@@ -65,4 +65,18 @@ public class ApiCandidateController {
             return new ResponseEntity<>(Map.of("message", "Đăng ký thất bại: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/secure/candidates/{userId}/infor-by-userId")
+    public ResponseEntity<?> getCandidateByUserId(@PathVariable(value = "userId") int userId) {
+        try {
+            Candidate candidate = this.candidateService.getCandidateByUserId(userId);
+            if (candidate == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+            return ResponseEntity.ok(candidate);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching candidate: " + e.getMessage());
+        }
+    }
+
 }

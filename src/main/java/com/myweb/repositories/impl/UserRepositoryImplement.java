@@ -44,6 +44,7 @@ public class UserRepositoryImplement implements UserRepository {
         Session s = this.factory.getObject().getCurrentSession();
         Query query = s.createNamedQuery("User.findByUsername", User.class);
         query.setParameter("username", username);
+        
 
         List<User> rs = query.getResultList();
 

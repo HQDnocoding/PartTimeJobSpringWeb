@@ -4,16 +4,12 @@
  */
 package com.myweb.controllers;
 
-import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.Job;
 import com.myweb.services.CompanyService;
-
 import java.util.Collection;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,10 +35,8 @@ public class ApiCompanyController {
 
     @Autowired
     private CompanyService cpnyService;
-
-    private static final SimpleBeanPropertyFilter COMPANY_FILTER
-            = SimpleBeanPropertyFilter.serializeAllExcept("id", "taxCode", "status", "imageWorkplaceCollection");
-
+    
+    
     @DeleteMapping("/admin/companies/{companyId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompany(@PathVariable(value = "companyId") int companyId) {
@@ -75,7 +69,6 @@ public class ApiCompanyController {
             }
             return ResponseEntity.ok(company);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching company: " + e.getMessage());
         }
     }
@@ -89,7 +82,6 @@ public class ApiCompanyController {
             }
             return ResponseEntity.ok(jobs);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching company: " + e.getMessage());
         }
     }
@@ -103,12 +95,11 @@ public class ApiCompanyController {
             }
             return ResponseEntity.ok(map);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching company: " + e.getMessage());
         }
     }
 
-    @GetMapping("/companies/{userId}/infor-by-userId")
+    @GetMapping("/secure/companies/{userId}/infor-by-userId")
     public ResponseEntity<?> getCompanyByUserId(@PathVariable(value = "userId") int userId) {
         try {
             Company company = this.cpnyService.getCompanyByUserId(userId);
@@ -117,7 +108,6 @@ public class ApiCompanyController {
             }
             return ResponseEntity.ok(company);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching company: " + e.getMessage());
         }
     }

@@ -13,12 +13,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.*;
-
 import java.util.*;
-import java.util.stream.Collectors;
-
-import org.hibernate.HibernateException;
-
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -62,7 +57,7 @@ public class CompanyRepositoryImplement implements CompanyRepository {
                 session.merge(c);
             }
         } catch (Exception e) {
-            System.err.println(e.getStackTrace());
+            e.printStackTrace();
         }
         return c;
     }
@@ -204,7 +199,6 @@ public class CompanyRepositoryImplement implements CompanyRepository {
             s.persist(c);
 
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException("Lỗi: " + e.getMessage());
         }
 

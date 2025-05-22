@@ -20,14 +20,17 @@ public interface CandidateRepository {
     Map<String, Object> getListCandidate(Map<String, String> params);
 
     Candidate getCandidateById(int candidateId);
-    
-    Candidate createCandidate(User u,Candidate c);
-    
+
+    Candidate createCandidate(User u, Candidate c);
+
     Candidate getCandidateByEmail(String email);
-    
+
     Candidate getCandidateByPhone(String phone);
-    
+
     List<Candidate> getCandidateList();
-    
+
     void deleteCandidate(int id);
+
+    Candidate getCandidateByUserId(int userId);
+
 }

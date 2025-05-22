@@ -4,19 +4,20 @@
  */
 package com.myweb.services.impl;
 
-import com.cloudinary.Cloudinary;
+import com.myweb.exeption.AuthenticationException;
 import com.myweb.pojo.User;
 import com.myweb.repositories.UserRepository;
 import com.myweb.services.UserService;
+import com.myweb.utils.GeneralUtils;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,10 +30,6 @@ public class UserServiceImplement implements UserService {
 
     @Autowired
     private UserRepository userRepo;
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-    @Autowired
-    private Cloudinary cloudinary;
 
     // Lấy User theo username
     @Override
@@ -61,8 +58,6 @@ public class UserServiceImplement implements UserService {
     public void deleteUser(int id) {
         this.userRepo.deleteUser(id);
     }
-    
-    
 
     @Override
     public User addUser(Map<String, String> params, MultipartFile avatar) {
@@ -107,10 +102,21 @@ public class UserServiceImplement implements UserService {
         return null;
     }
 
-
     @Override
-    public User authenticate(String username, String password) {
-        return this.userRepo.authenticate(username, password);
+    public User authenticate(String username, String password) throws AuthenticationException {
+        User user = this.userRepo.authenticate(username, password);
+        if (user == null) {
+            throw new AuthenticationException("Sai thông tin đăng nhập");
+        }
+
+        // Kiểm tra vai trò và trạng thái
+        if (user.getRole().equals(GeneralUtils.Role.ROLE_COMPANY.name())
+                && !user.getCompany().getStatus().equals(GeneralUtils.Status.approved.name())) {
+            throw new AuthenticationException("Tài khoản tuyển dụng chưa được xét duyệt");
+        }
+
+        return user;
     }
 
 }
+

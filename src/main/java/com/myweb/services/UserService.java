@@ -4,6 +4,7 @@
  */
 package com.myweb.services;
 
+import com.myweb.exeption.AuthenticationException;
 import com.myweb.pojo.User;
 import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,7 +25,7 @@ public interface UserService extends UserDetailsService{
     // Xóa người dùng theo ID
     void deleteUser(int id);
 
-    User authenticate(String username, String password);
+    User authenticate(String username, String password) throws AuthenticationException;
     
 
 }

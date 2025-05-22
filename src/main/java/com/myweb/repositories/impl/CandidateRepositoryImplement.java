@@ -11,6 +11,7 @@ import com.myweb.utils.GeneralUtils;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
@@ -48,7 +49,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
             return c;
         } catch (Exception e) {
             e.printStackTrace();
-            return null; 
+            return null;
         }
     }
 
@@ -95,7 +96,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
 
             String city = params.get("city");
             if (city != null && !city.isEmpty()) {
-                city = normalizeLocation(city); 
+                city = normalizeLocation(city);
                 if (city != null) {
                     predicates.add(cb.equal(cb.lower(candidateRoot.get("city")), city.toLowerCase()));
                 }
@@ -210,6 +211,28 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         Candidate c = this.getCandidateById(id);
 
         s.remove(c.getUserId());
+    }
+
+    @Override
+    public Candidate getCandidateByUserId(int userId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+
+        CriteriaQuery<Candidate> cq = cb.createQuery(Candidate.class);
+        Root<Candidate> candidateRoot = cq.from(Candidate.class);
+        Join<Candidate, User> userJoin = candidateRoot.join("userId");
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(cb.equal(candidateRoot.get("userId").get("id"), userId));
+        predicates.add(cb.equal(userJoin.get("isActive"), true));
+        cq.where(predicates.toArray(Predicate[]::new));
+
+        try {
+            Candidate candidate = s.createQuery(cq).getSingleResult();
+            return candidate;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

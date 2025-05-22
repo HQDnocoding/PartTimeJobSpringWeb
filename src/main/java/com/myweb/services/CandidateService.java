@@ -32,4 +32,6 @@ public interface CandidateService {
     
     // Xóa ứng viên theo ID
     void deleteCandidate(int id);
+    
+    Candidate getCandidateByUserId(int userId);
 }

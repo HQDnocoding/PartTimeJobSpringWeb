@@ -7,8 +7,10 @@ package com.myweb.controllers;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.myweb.exeption.AuthenticationException;
 import com.myweb.pojo.User;
 import com.myweb.services.UserService;
+import com.myweb.utils.GeneralUtils;
 import com.myweb.utils.JwtUtils;
 import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,16 +52,28 @@ public class ApiUserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User u) {
-        User user = this.userService.authenticate(u.getUsername(), u.getPassword());
-        if (user != null) {
-            try {
-                String token = JwtUtils.generateToken(user.getUsername(), List.of(user.getRole()));
-                return ResponseEntity.ok().body(Collections.singletonMap("token", token));
-            } catch (Exception e) {
-                return ResponseEntity.status(500).body("Lỗi khi tạo JWT");
+        try {
+            // Xác thực người dùng
+            User user = userService.authenticate(u.getUsername(), u.getPassword());
+
+            String token = JwtUtils.generateToken(user.getUsername(), List.of(user.getRole()));
+
+            return ResponseEntity.ok().body(Collections.singletonMap("token", token));
+
+        } catch (AuthenticationException e) {
+            // Xử lý lỗi xác thực
+            if (e.getMessage().equals("Tài khoản tuyển dụng chưa được xét duyệt")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", e.getMessage()));
             }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", e.getMessage()));
+
+        } catch (Exception e) {
+            // Xử lý lỗi hệ thống (ví dụ: lỗi tạo JWT)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Lỗi hệ thống: " + e.getMessage()));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai thông tin đăng nhập");
     }
 
     @RequestMapping("/secure/profile")
@@ -76,6 +92,5 @@ public class ApiUserController {
         System.out.println("User fetched: " + user);
         return ResponseEntity.ok(mapping);
     }
-    
-    
+
 }

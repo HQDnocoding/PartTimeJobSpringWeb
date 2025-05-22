@@ -166,4 +166,13 @@ public class CandidateServiceImplement implements CandidateService {
         }
     }
 
+    @Override
+    public Candidate getCandidateByUserId(int userId) {
+        
+        return this.candidateRepository.getCandidateByUserId(userId);
+    }
+    
+    
+    
+
 }
