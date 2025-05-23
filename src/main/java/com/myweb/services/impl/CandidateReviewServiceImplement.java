@@ -1,26 +1,24 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.myweb.services.impl;
 
 import com.myweb.dto.CreateCandidateReviewDTO;
 import com.myweb.dto.GetCandidateReviewDTO;
 import com.myweb.pojo.Application;
+import com.myweb.pojo.Candidate;
 import com.myweb.pojo.CandidateReview;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.Job;
 import com.myweb.pojo.User;
 import com.myweb.repositories.ApplicationRepository;
+import com.myweb.repositories.CandidateRepository;
 import com.myweb.repositories.CandidateReviewRepository;
 import com.myweb.repositories.CompanyRepository;
 import com.myweb.repositories.JobRepository;
 import com.myweb.repositories.UserRepository;
 import com.myweb.services.CandidateReviewService;
 import com.myweb.utils.GeneralUtils;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.Date;
@@ -28,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional
 public class CandidateReviewServiceImplement implements CandidateReviewService {
 
     @Autowired
@@ -46,8 +45,11 @@ public class CandidateReviewServiceImplement implements CandidateReviewService {
     private UserRepository userRepository;
 
     @Override
-    @Transactional
     public GetCandidateReviewDTO createReview(CreateCandidateReviewDTO dto, Principal principal) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Review data is required.");
+        }
+
         User user = userRepository.getUserByUsername(principal.getName());
         if (!user.getRole().equals(GeneralUtils.Role.ROLE_COMPANY.toString())) {
             throw new SecurityException("Only companies can create candidate reviews.");
@@ -68,7 +70,6 @@ public class CandidateReviewServiceImplement implements CandidateReviewService {
             throw new IllegalArgumentException("Job does not belong to this company.");
         }
 
-        // Kiểm tra xem có Application liên quan với trạng thái approved
         List<Application> applications = applicationRepository.findByJobIdAndStatus(
             dto.getJobId(), GeneralUtils.Status.approved.toString()
         );
@@ -106,8 +107,11 @@ public class CandidateReviewServiceImplement implements CandidateReviewService {
     }
 
     @Override
-    @Transactional
     public GetCandidateReviewDTO updateReview(Integer id, CreateCandidateReviewDTO dto, Principal principal) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Review data is required.");
+        }
+
         User user = userRepository.getUserByUsername(principal.getName());
         CandidateReview review = reviewRepository.getReviewById(id);
 
@@ -131,7 +135,6 @@ public class CandidateReviewServiceImplement implements CandidateReviewService {
     }
 
     @Override
-    @Transactional
     public void deleteReview(Integer id, Principal principal) {
         User user = userRepository.getUserByUsername(principal.getName());
         CandidateReview review = reviewRepository.getReviewById(id);

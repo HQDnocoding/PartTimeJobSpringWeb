@@ -78,6 +78,7 @@
                                 <th scope="col">Ngành nghề</th>
                                 <th scope="col">Thời gian làm việc</th>
                                 <th scope="col">Ngày đăng</th>
+                                <th scope="col">Trạng thái</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -91,9 +92,19 @@
                                 <td th:text="${job.majorJobCollection != null and !#lists.isEmpty(job.majorJobCollection)} ? ${#strings.listJoin(job.majorJobCollection.![majorId.name], ', ')} : '-'"></td>
                                 <td th:text="${job.dayJobCollection != null and !#lists.isEmpty(job.dayJobCollection)} ? ${#strings.listJoin(job.dayJobCollection.![dayId.name], ', ')} : '-'"></td>
                                 <td th:text="${#dates.format(job.postedDate, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                                <td class="d-flex justify-content-center">
+                                    <span class="badge" th:switch="${job.status}"
+                                          th:classappend="
+                                          ${job.status == 'approved'} ? 'bg-success' :
+                                          (${job.status == 'refused'} ? 'bg-danger' : 'bg-warning')">
+                                        <span th:case="'approved'" th:text="${job.status}"></span>
+                                        <span th:case="'refused'" th:text="${job.status}"></span>
+                                        <span th:case="*" th:text="${job.status}"></span>
+                                    </span>
+                                </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(jobs)}">
-                                <td colspan="9" class="text-center">Không có dữ liệu</td>
+                                <td colspan="10" class="text-center">Không có dữ liệu</td>
                             </tr>
                         </tbody>
                     </table>
@@ -143,6 +154,15 @@
                     <select id="dayId" name="dayId" class="form-control">
                         <option value="" th:selected="${selectedDayId == null}">Tất cả</option>
                         <option th:each="day : ${days}" th:value="${day.id}" th:text="${day.name}" th:selected="${day.id == selectedDayId}"></option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">Trạng thái</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="" th:selected="${param.status == null}">Tất cả</option>
+                        <option value="pending" th:selected="${param.status == 'pending'}">Pending</option>
+                        <option value="approved" th:selected="${param.status == 'approved'}">Approved</option>
+                        <option value="refused" th:selected="${param.status == 'refused'}">Refused</option>
                     </select>
                 </div>
                 <input type="hidden" name="page" th:value="${currentPage}">

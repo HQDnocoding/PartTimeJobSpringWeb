@@ -27,6 +27,7 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.List;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Configuration
 @EnableTransactionManagement
@@ -81,14 +82,14 @@ public class SpringSecurityConfigs {
                 .requestMatchers(HttpMethod.GET, "/api/secure/applications/**").hasAnyRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName(), GeneralUtils.Role.ROLE_COMPANY.getShortName())
                 .requestMatchers(HttpMethod.POST, "/api/secure/jobs/**").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
                 .requestMatchers(HttpMethod.POST, "/api/secure/applications").hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
-                .requestMatchers(HttpMethod.POST, "/api/candidate-reviews").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
-                .requestMatchers(HttpMethod.PUT, "/api/candidate-reviews/**").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
-                .requestMatchers(HttpMethod.DELETE, "/api/candidate-reviews/**").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
                 .requestMatchers(HttpMethod.GET, "/api/candidate-reviews/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/company-reviews").hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
-                .requestMatchers(HttpMethod.PUT, "/api/company-reviews/**").hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
-                .requestMatchers(HttpMethod.DELETE, "/api/company-reviews/**").hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
+                .requestMatchers(HttpMethod.POST, "/api/secure/candidate-reviews").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers(HttpMethod.PUT, "/api/secure/candidate-reviews/**").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers(HttpMethod.DELETE, "/api/secure/candidate-reviews/**").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
                 .requestMatchers(HttpMethod.GET, "/api/company-reviews/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/secure/company-reviews").hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
+                .requestMatchers(HttpMethod.PUT, "/api/secure/company-reviews/**").hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
+                .requestMatchers(HttpMethod.DELETE, "/api/secure/company-reviews/**").hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
                 .requestMatchers("/api/secure/**").authenticated()
                 .requestMatchers("/candidates/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
                 .requestMatchers("/applications/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())

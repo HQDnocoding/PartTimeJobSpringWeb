@@ -251,7 +251,7 @@ public class JobServiceImplement implements JobService {
         job.setLatitude(jobDTO.getLatitude());
         job.setDescription(jobDTO.getDescription());
         job.setJobRequired(jobDTO.getJobRequired());
-        job.setStatus("approved");
+        job.setStatus("pending");
         job.setIsActive(true);
         job.setPostedDate(new Date());
 

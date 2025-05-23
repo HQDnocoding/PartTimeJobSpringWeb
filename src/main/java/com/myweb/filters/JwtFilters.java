@@ -20,10 +20,9 @@ public class JwtFilters extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-
         String uri = request.getRequestURI();
         String contextPath = request.getContextPath();
-        logger.debug("Processing request: {}, Context path: {}", uri, contextPath);
+        logger.debug("Processing request: {} {}, Context path: {}", request.getMethod(), uri, contextPath);
 
         if (uri.startsWith(contextPath + "/api/secure")) {
             String header = request.getHeader("Authorization");
@@ -32,7 +31,9 @@ public class JwtFilters extends OncePerRequestFilter {
             if (header == null || !header.startsWith("Bearer ")) {
                 logger.warn("Missing or invalid Authorization header");
                 SecurityContextHolder.clearContext();
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header.");
+                response.setContentType("application/json");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\": \"Missing or invalid Authorization header.\"}");
                 return;
             }
 
@@ -41,22 +42,30 @@ public class JwtFilters extends OncePerRequestFilter {
                 JwtUtils.TokenInfo tokenInfo = JwtUtils.validateTokenAndGetInfo(token);
                 String username = tokenInfo.getUsername();
                 var authorities = tokenInfo.getAuthorities();
-                logger.debug("Username: {}, Authorities: {}", username, authorities);
+                logger.debug("Token validated - Username: {}, Authorities: {}", username, authorities);
 
-                System.out.println("Username: {}, Authorities: {}"+username+authorities );
-                
                 if (username != null) {
                     request.setAttribute("username", username);
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(username, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                    logger.debug("Authentication set for user: {}", username);
                     chain.doFilter(request, response);
+                    return;
+                } else {
+                    logger.warn("Username is null after token validation");
+                    SecurityContextHolder.clearContext();
+                    response.setContentType("application/json");
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("{\"error\": \"Invalid token: username is null.\"}");
                     return;
                 }
             } catch (Exception e) {
-                logger.error("Error validating token: {}", e.getMessage());
+                logger.error("Error validating token: {}", e.getMessage(), e);
                 SecurityContextHolder.clearContext();
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token không hợp lệ hoặc hết hạn");
+                response.setContentType("application/json");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\": \"Token không hợp lệ hoặc hết hạn: " + e.getMessage() + "\"}");
                 return;
             }
         }

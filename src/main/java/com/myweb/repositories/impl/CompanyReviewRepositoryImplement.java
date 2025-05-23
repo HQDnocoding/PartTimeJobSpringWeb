@@ -19,7 +19,6 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-@Transactional
 public class CompanyReviewRepositoryImplement implements CompanyReviewRepository {
 
     @Autowired
@@ -56,12 +54,12 @@ public class CompanyReviewRepositoryImplement implements CompanyReviewRepository
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(builder.equal(companyJoin.get("id"), companyId));
 
-        if (params != null) {
-            if (params.containsKey("rating")) {
-                try {
-                    Integer rating = Integer.parseInt(params.get("rating"));
-                    predicates.add(builder.equal(root.get("rating"), rating));
-                } catch (NumberFormatException ignored) {}
+        if (params != null && params.containsKey("rating")) {
+            try {
+                Integer rating = Integer.parseInt(params.get("rating"));
+                predicates.add(builder.equal(root.get("rating"), rating));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid rating format", e);
             }
         }
 
@@ -77,8 +75,11 @@ public class CompanyReviewRepositoryImplement implements CompanyReviewRepository
 
         CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
         Root<CompanyReview> countRoot = countQuery.from(CompanyReview.class);
+        Join<CompanyReview, Job> countJobJoin = countRoot.join("jobId");
+        Join<Job, Company> countCompanyJoin = countJobJoin.join("companyId");
+
         countQuery.select(builder.count(countRoot));
-        countQuery.where(predicates.toArray(new Predicate[0]));
+        countQuery.where(builder.equal(countCompanyJoin.get("id"), companyId));
         Long total = session.createQuery(countQuery).getSingleResult();
 
         Map<String, Object> result = new HashMap<>();

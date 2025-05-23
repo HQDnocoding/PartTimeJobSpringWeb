@@ -145,7 +145,7 @@ public class JobRepositoryImplement implements JobRepository {
         cq.where(
                 cb.equal(jobRoot.get("isActive"), true),
                 cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()),
-                cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()),
+                cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.pending.toString()),
                 cb.equal(jobRoot.join("majorJobCollection").join("majorId").get("id"), majorId)
         );
         cq.orderBy(cb.asc(jobRoot.get("id")));
@@ -172,7 +172,7 @@ public class JobRepositoryImplement implements JobRepository {
                 cb.equal(jobRoot.get("id"), jobId),
                 cb.equal(jobRoot.get("isActive"), true),
                 cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()),
-                cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString())
+                cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.pending.toString())
         );
 
         Job job = session.createQuery(cq).uniqueResult();

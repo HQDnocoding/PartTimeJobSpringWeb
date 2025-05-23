@@ -33,7 +33,6 @@
         .card-header {
             background-color: #007bff;
             color: white;
-            text-align: center;
             padding: 1rem;
         }
         .card-footer {
@@ -74,7 +73,7 @@
     <div th:replace="~{base :: header}"></div>
     <main class="container my-4 job-detail-container">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header bg-primary text-white">
                 <h1 class="mb-0">Chi tiết công việc</h1>
             </div>
             <div th:if="${successMessage}" class="alert alert-success" role="alert">
@@ -86,7 +85,7 @@
             <div th:if="${job == null}">
                 <div class="card-body">
                     <div class="alert alert-danger" role="alert">
-                        Công việc không tồn tại hoặc chưa được phê duyệt.
+                        Công việc không tồn tại.
                     </div>
                     <a href="/jobs" class="btn btn-secondary">Quay lại danh sách</a>
                 </div>
@@ -112,15 +111,15 @@
                         <div class="card-header bg-primary text-white">
                             <h3 class="mb-0">Chỉnh sửa công việc</h3>
                         </div>
-                        <form id="jobForm" th:action="@{'/jobs/' + ${job.id} + '/update'}" method="post">
+                        <form id="jobForm" th:object="${job}" th:action="@{'/jobs/' + ${job.id} + '/update'}" method="post">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="jobName" class="form-label">Tên công việc *</label>
-                                    <input type="text" id="jobName" name="jobName" th:value="${job.jobName}" class="form-control" required>
+                                    <input type="text" id="jobName" name="jobName" th:field="*{jobName}" class="form-control" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="companyId" class="form-label">Công ty *</label>
-                                    <select id="companyId" name="companyId" class="form-select" required>
+                                    <select id="companyId" name="companyId" th:field="*{companyId.id}" class="form-select" required>
                                         <option value="" disabled>Chọn công ty</option>
                                         <option th:each="company : ${companies}" 
                                                 th:value="${company.id}" 
@@ -131,30 +130,27 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="fullAddress" class="form-label">Địa chỉ</label>
-                                    <input type="text" id="fullAddress" name="fullAddress" th:value="${job.fullAddress}" class="form-control" readonly>
-                                    <input type="hidden" name="fullAddress" th:value="${job.fullAddress}" />
+                                    <input type="text" id="fullAddress" name="fullAddress" th:field="*{fullAddress}" class="form-control" readonly>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="city" class="form-label">Thành phố</label>
-                                    <input type="text" id="city" name="city" th:value="${job.city}" class="form-control" readonly>
-                                    <input type="hidden" name="city" th:value="${job.city}" />
+                                    <input type="text" id="city" name="city" th:field="*{city}" class="form-control" readonly>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="district" class="form-label">Quận/Huyện</label>
-                                    <input type="text" id="district" name="district" th:value="${job.district}" class="form-control" readonly>
-                                    <input type="hidden" name="district" th:value="${job.district}" />
+                                    <input type="text" id="district" name="district" th:field="*{district}" class="form-control" readonly>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="salaryMin" class="form-label">Lương tối thiểu (VNĐ) *</label>
-                                    <input type="number" id="salaryMin" name="salaryMin" th:value="${job.salaryMin}" class="form-control" min="0" required>
+                                    <input type="number" id="salaryMin" name="salaryMin" th:field="*{salaryMin}" class="form-control" min="0" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="salaryMax" class="form-label">Lương tối đa (VNĐ) *</label>
-                                    <input type="number" id="salaryMax" name="salaryMax" th:value="${job.salaryMax}" class="form-control" min="0" required>
+                                    <input type="number" id="salaryMax" name="salaryMax" th:field="*{salaryMax}" class="form-control" min="0" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="majorId" class="form-label">Ngành nghề *</label>
-                                    <select id="majorId" name="majorId" class="form-select" required>
+                                    <select id="majorId" name="majorId" class="form-control" required>
                                         <option value="" disabled>Chọn ngành nghề</option>
                                         <option th:each="major : ${majors}" 
                                                 th:value="${major.id}" 
@@ -164,23 +160,23 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="ageFrom" class="form-label">Tuổi tối thiểu</label>
-                                    <input type="number" id="ageFrom" name="ageFrom" th:value="${job.ageFrom}" class="form-control" min="0">
+                                    <input type="number" id="ageFrom" name="ageFrom" th:field="*{ageFrom}" class="form-control" min="0">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="ageTo" class="form-label">Tuổi tối đa</label>
-                                    <input type="number" id="ageTo" name="ageTo" th:value="${job.ageTo}" class="form-control" min="0">
+                                    <input type="number" id="ageTo" name="ageTo" th:field="*{ageTo}" class="form-control" min="0">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="experienceRequired" class="form-label">Kinh nghiệm yêu cầu (năm)</label>
-                                    <input type="number" id="experienceRequired" name="experienceRequired" th:value="${job.experienceRequired}" class="form-control" min="0">
+                                    <input type="number" id="experienceRequired" name="experienceRequired" th:field="*{experienceRequired}" class="form-control" min="0">
                                 </div>
                                 <div class="col-12">
                                     <label for="description" class="form-label">Mô tả công việc *</label>
-                                    <textarea id="description" name="description" th:text="${job.description}" class="form-control" rows="5" required></textarea>
+                                    <textarea id="description" name="description" th:field="*{description}" class="form-control" rows="5" required></textarea>
                                 </div>
                                 <div class="col-12">
                                     <label for="jobRequired" class="form-label">Yêu cầu công việc *</label>
-                                    <textarea id="jobRequired" name="jobRequired" th:text="${job.jobRequired}" class="form-control" rows="5" required></textarea>
+                                    <textarea id="jobRequired" name="jobRequired" th:field="*{jobRequired}" class="form-control" rows="5" required></textarea>
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Thời gian làm việc * (Chọn ít nhất một)</label>
@@ -195,9 +191,29 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div>
+                                    <h4>Duyệt hồ sơ công việc</h4>
+                                    <div th:if="${job.status == 'pending'}">
+                                        <div class="row g-3 align-items-center mb-3">
+                                            <div class="col-auto">
+                                                <label for="status" class="form-label">Trạng thái</label>
+                                            </div>
+                                            <div class="col-auto">
+                                                <select id="status" name="status" th:field="*{status}">
+                                                    <option value="pending" hidden>Chờ duyệt</option>
+                                                    <option value="approved">Duyệt</option>
+                                                    <option value="refused">Từ chối</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div th:unless="${job.status == 'pending'}">
+                                        <input type="hidden" th:field="*{status}" />
+                                        <p>Trạng thái hiện tại: <strong th:text="${job.status}">Trạng thái</strong>. Không thể cập nhật.</p>
+                                    </div>
+                                </div>
                                 <input type="hidden" name="id" th:value="${job.id}" />
-                                <input type="hidden" name="status" th:value="${job.status}" />
-                                <input type="hidden" name="isActive" th:value="${job.isActive}" />
+                                <input type="hidden" name="isActive" th:field="*{isActive}" />
                             </div>
                         </form>
                     </div>
