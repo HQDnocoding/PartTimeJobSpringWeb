@@ -45,7 +45,7 @@
                                 <li>
                                     <a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/jobs} + '\', \'.job-checkbox:checked\')'" id="deleteSelected">Xóa</a>
                                 </li>
-                                <li><a class="dropdown-item" th:href="@{/job/create-job}">Tạo mới</a></li>
+                                <li><a class="dropdown-item" th:href="@{/jobs/create-job}">Tạo mới</a></li>
                             </ul>
                         </div>
                     </div>
@@ -54,13 +54,13 @@
                     <nav aria-label="Page navigation" th:if="${totalPages > 1}">
                         <ul class="pagination">
                             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                                <a class="page-link" th:href="@{/job(page=${currentPage - 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId})}">Previous</a>
+                                <a class="page-link" th:href="@{/jobs(page=${currentPage - 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId})}">Previous</a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
-                                <a class="page-link" th:href="@{/job(page=${i}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId})}" th:text="${i}"></a>
+                                <a class="page-link" th:href="@{/jobs(page=${i}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId})}" th:text="${i}"></a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                                <a class="page-link" th:href="@{/job(page=${currentPage + 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId})}">Next</a>
+                                <a class="page-link" th:href="@{/jobs(page=${currentPage + 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId})}">Next</a>
                             </li>
                         </ul>
                     </nav>
@@ -84,7 +84,7 @@
                             <tr th:each="job : ${jobs}">
                                 <td><input type="checkbox" class="job-checkbox" th:value="${job.id}"></td>
                                 <td th:text="${job.id}"></td>
-                                <td><a th:href="@{/job/{id}(id=${job.id})}" th:text="${job.jobName}"></a></td>
+                                <td><a th:href="@{/jobs/{id}(id=${job.id})}" th:text="${job.jobName}"></a></td>
                                 <td th:text="${job.companyId.name}"></td>
                                 <td th:text="${job.salaryMin} + ' - ' + ${job.salaryMax} + ' VNĐ'"></td>
                                 <td th:text="${job.city}"></td>
@@ -101,7 +101,7 @@
             </div>
         </div>
         <div style="flex-grow: 1">
-            <form th:action="@{/job}" method="get" class="p-3 bg-light rounded" onsubmit="removeEmptyParams(this)">
+            <form th:action="@{/jobs}" method="get" class="p-3 bg-light rounded" onsubmit="removeEmptyParams(this)">
                 <h5 class="mb-3">Tìm kiếm công việc</h5>
                 <div class="mb-3">
                     <label for="keyword" class="form-label">Từ khóa</label>
@@ -148,7 +148,7 @@
                 <input type="hidden" name="page" th:value="${currentPage}">
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-                    <a th:href="@{/job}" class="btn btn-secondary">Xóa bộ lọc</a>
+                    <a th:href="@{/jobs}" class="btn btn-secondary">Xóa bộ lọc</a>
                 </div>
             </form>
         </div>

@@ -32,4 +32,10 @@ public class DayRepositoryImplement implements DayRepository {
     public Day getDayById(Integer dayId) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+
+    @Override
+    public Day getDayById(int id) {
+        Session session = sessionFactory.getCurrentSession();
+        return session.get(Day.class, id);
+    }
 }

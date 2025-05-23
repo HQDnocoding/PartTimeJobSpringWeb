@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.myweb.repositories.impl;
 
 import com.myweb.pojo.Day;
@@ -22,15 +26,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.hibernate.HibernateException;
 
 @Repository
 @Transactional
 public class JobRepositoryImplement implements JobRepository {
-
-    private static final Logger logger = Logger.getLogger(JobRepositoryImplement.class.getName());
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -43,22 +42,16 @@ public class JobRepositoryImplement implements JobRepository {
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<Job> countRoot = countQuery.from(Job.class);
         countRoot.join("companyId", JoinType.LEFT);
-        List<Predicate> countPredicates = buildPredicates(params, cb, countRoot);
-        countQuery.select(cb.count(countRoot)).where(countPredicates.toArray(new Predicate[0]));
+        countQuery.select(cb.count(countRoot)).where(buildPredicates(params, cb, countRoot).toArray(new Predicate[0]));
         Long totalRecords = session.createQuery(countQuery).getSingleResult();
 
         CriteriaQuery<Job> cq = cb.createQuery(Job.class);
         Root<Job> jobRoot = cq.from(Job.class);
         jobRoot.fetch("companyId", JoinType.LEFT);
-
-        List<Predicate> predicates = buildPredicates(params, cb, jobRoot);
-        cq.where(predicates.toArray(new Predicate[0]));
+        cq.where(buildPredicates(params, cb, jobRoot).toArray(new Predicate[0]));
         cq.orderBy(cb.asc(jobRoot.get("id")));
 
-        int page = 1;
-        if (params != null) {
-            page = Integer.parseInt(params.getOrDefault("page", GeneralUtils.PAGE));
-        }
+        int page = Integer.parseInt(params.getOrDefault("page", GeneralUtils.PAGE));
         int start = (page - 1) * GeneralUtils.PAGE_SIZE;
         List<Job> jobs = session.createQuery(cq)
                 .setFirstResult(start)
@@ -69,11 +62,6 @@ public class JobRepositoryImplement implements JobRepository {
             Hibernate.initialize(job.getMajorJobCollection());
             Hibernate.initialize(job.getDayJobCollection());
         }
-
-        logger.info("Total records: " + totalRecords);
-        logger.info("Page: " + page + ", Start: " + start + ", Page size: " + GeneralUtils.PAGE_SIZE);
-        logger.info("Jobs retrieved: " + jobs.size());
-        jobs.forEach(job -> logger.info("Job ID: " + job.getId()));
 
         int totalPages = (int) Math.ceil((double) totalRecords / GeneralUtils.PAGE_SIZE);
 
@@ -140,9 +128,6 @@ public class JobRepositoryImplement implements JobRepository {
     }
 
     private String normalizeLocation(String location) {
-        if (location == null || location.trim().isEmpty()) {
-            return null;
-        }
         String normalized = location.trim()
                 .replaceAll("^(Thành phố|Tỉnh)\\s*", "")
                 .replaceAll("\\s+", " ");
@@ -157,14 +142,12 @@ public class JobRepositoryImplement implements JobRepository {
         Root<Job> jobRoot = cq.from(Job.class);
 
         jobRoot.fetch("companyId", JoinType.LEFT);
-
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(jobRoot.get("isActive"), true));
-        predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
-        predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
-        predicates.add(cb.equal(jobRoot.join("majorJobCollection").join("majorId").get("id"), majorId));
-
-        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        cq.where(
+                cb.equal(jobRoot.get("isActive"), true),
+                cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()),
+                cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()),
+                cb.equal(jobRoot.join("majorJobCollection").join("majorId").get("id"), majorId)
+        );
         cq.orderBy(cb.asc(jobRoot.get("id")));
 
         List<Job> jobs = session.createQuery(cq).getResultList();
@@ -185,20 +168,17 @@ public class JobRepositoryImplement implements JobRepository {
         Root<Job> jobRoot = cq.from(Job.class);
 
         jobRoot.fetch("companyId", JoinType.LEFT);
+        cq.where(
+                cb.equal(jobRoot.get("id"), jobId),
+                cb.equal(jobRoot.get("isActive"), true),
+                cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()),
+                cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString())
+        );
 
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(jobRoot.get("id"), jobId));
-        predicates.add(cb.equal(jobRoot.get("isActive"), true));
-        predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
-        predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
-
-        cq.where(cb.and(predicates.toArray(new Predicate[0])));
         Job job = session.createQuery(cq).uniqueResult();
 
-        if (job != null) {
-            Hibernate.initialize(job.getMajorJobCollection());
-            Hibernate.initialize(job.getDayJobCollection());
-        }
+        Hibernate.initialize(job.getMajorJobCollection());
+        Hibernate.initialize(job.getDayJobCollection());
 
         return job;
     }
@@ -211,15 +191,13 @@ public class JobRepositoryImplement implements JobRepository {
         Root<Job> jobRoot = cq.from(Job.class);
 
         jobRoot.fetch("companyId", JoinType.LEFT);
-
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(jobRoot.get("isActive"), true));
-        predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
-        predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
-        predicates.add(cb.equal(jobRoot.join("majorJobCollection").join("majorId").get("id"), majorId));
-        predicates.add(cb.equal(jobRoot.get("city"), String.valueOf(cityId)));
-
-        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        cq.where(
+                cb.equal(jobRoot.get("isActive"), true),
+                cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()),
+                cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()),
+                cb.equal(jobRoot.join("majorJobCollection").join("majorId").get("id"), majorId),
+                cb.equal(jobRoot.get("city"), String.valueOf(cityId))
+        );
         cq.orderBy(cb.asc(jobRoot.get("id")));
 
         List<Job> jobs = session.createQuery(cq).getResultList();
@@ -240,14 +218,12 @@ public class JobRepositoryImplement implements JobRepository {
         Root<Job> jobRoot = cq.from(Job.class);
 
         jobRoot.fetch("companyId", JoinType.LEFT);
-
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(jobRoot.get("companyId").get("id"), companyId));
-        predicates.add(cb.equal(jobRoot.get("isActive"), true));
-        predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
-        predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
-
-        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        cq.where(
+                cb.equal(jobRoot.get("companyId").get("id"), companyId),
+                cb.equal(jobRoot.get("isActive"), true),
+                cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()),
+                cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString())
+        );
         cq.orderBy(cb.asc(jobRoot.get("id")));
 
         List<Job> jobs = session.createQuery(cq).getResultList();
@@ -256,29 +232,6 @@ public class JobRepositoryImplement implements JobRepository {
             Hibernate.initialize(job.getMajorJobCollection());
             Hibernate.initialize(job.getDayJobCollection());
         }
-
-        return jobs;
-    }
-
-    @Override
-    public List<Job> getListJobByCompanyId1(int companyId) {
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Job> cq = cb.createQuery(Job.class);
-        Root<Job> jobRoot = cq.from(Job.class);
-
-        jobRoot.fetch("companyId", JoinType.LEFT);
-
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(jobRoot.get("companyId").get("id"), companyId));
-        predicates.add(cb.equal(jobRoot.get("isActive"), true));
-        predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
-        predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
-
-        cq.where(cb.and(predicates.toArray(new Predicate[0])));
-        cq.orderBy(cb.asc(jobRoot.get("id")));
-
-        List<Job> jobs = session.createQuery(cq).getResultList();
 
         return jobs;
     }
@@ -336,117 +289,60 @@ public class JobRepositoryImplement implements JobRepository {
     @Override
     public void deleteJob(int jobId) {
         Session session = sessionFactory.getCurrentSession();
-        Job job = session.get(Job.class, jobId);
-        if (job != null) {
-            session.remove(job);
-            session.flush();
-        } else {
-            throw new IllegalArgumentException("Không tìm thấy công việc có ID: " + jobId);
-        }
+        session.remove(session.get(Job.class, jobId));
+        session.flush();
     }
 
     @Override
     public List<Job> getListJobForManage() {
-        Session s = this.sessionFactory.getCurrentSession();
-        CriteriaBuilder cb = s.getCriteriaBuilder();
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<Job> q = cb.createQuery(Job.class);
         Root<Job> root = q.from(Job.class);
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(root.get("isActive"), true));
-        predicates.add(cb.equal(root.get("status"), GeneralUtils.Status.approved.toString()));
-        predicates.add(cb.equal(root.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
 
-        q.where(cb.and(predicates.toArray(Predicate[]::new)));
+        q.where(
+                cb.equal(root.get("isActive"), true),
+                cb.equal(root.get("status"), GeneralUtils.Status.approved.toString()),
+                cb.equal(root.get("companyId").get("status"), GeneralUtils.Status.approved.toString())
+        );
         q.orderBy(cb.asc(root.get("id")));
-        return s.createQuery(q).getResultList();
+
+        return session.createQuery(q).getResultList();
     }
 
     @Override
-    public boolean addJob(Job j) {
-        Session s = this.sessionFactory.getCurrentSession();
-        if (j != null) {
-            s.merge(j);
-            logger.log(Level.INFO, "Successfully saved job with ID: {0}", j.getId() != null ? j.getId() : "new");
-            return true;
-        } else {
-            logger.warning("Job object is null");
-            return false;
-        }
-    }
-
-    @Override
-    public Job addJobDTO(Job j) {
-        Session s = this.sessionFactory.getCurrentSession();
-        if (j != null) {
-            Job mergedJob = (Job) s.merge(j);
-            s.flush();
-            logger.log(Level.INFO, "Successfully saved job with ID: {0}", mergedJob.getId() != null ? mergedJob.getId() : "new");
-            return mergedJob;
-        } else {
-            logger.warning("Job object is null");
-            throw new IllegalArgumentException("Công việc không hợp lệ.");
-        }
+    public Job addJob(Job j) {
+        Session session = sessionFactory.getCurrentSession();
+        Job mergedJob = (Job) session.merge(j);
+        session.flush();
+        return mergedJob;
     }
 
     @Override
     public void addDaysToJob(Job job, List<Integer> dayIds) {
         Session session = sessionFactory.getCurrentSession();
-        if (job == null || job.getId() == null) {
-            logger.severe("Job or Job ID is null");
-            throw new IllegalArgumentException("Công việc không hợp lệ hoặc chưa được lưu.");
-        }
-
         session.createMutationQuery("DELETE FROM DayJob dj WHERE dj.jobId.id = :jobId")
                 .setParameter("jobId", job.getId())
                 .executeUpdate();
 
         List<Day> days = session.createQuery("FROM Day", Day.class).getResultList();
-        List<Integer> validDayIds = days.stream().map(Day::getId).toList();
-
-        if (dayIds != null && !dayIds.isEmpty()) {
-            for (Integer dayId : dayIds) {
-                if (dayId == null || !validDayIds.contains(dayId)) {
-                    logger.log(Level.WARNING, "Invalid or null dayId: {0}", dayId);
-                    continue;
-                }
-                Day day = days.stream().filter(d -> d.getId().equals(dayId)).findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("Ngày làm việc không tồn tại: " + dayId));
-                DayJob dayJob = new DayJob();
-                dayJob.setJobId(job);
-                dayJob.setDayId(day);
-                session.persist(dayJob);
-                logger.log(Level.INFO, "Added DayJob: jobId={0}, dayId={1}", new Object[]{job.getId(), dayId});
-            }
-            session.flush();
-        } else {
-            logger.log(Level.INFO, "No dayIds provided for jobId: {0}", job.getId());
+        for (Integer dayId : dayIds) {
+            Day day = days.stream().filter(d -> d.getId().equals(dayId)).findFirst().get();
+            DayJob dayJob = new DayJob();
+            dayJob.setJobId(job);
+            dayJob.setDayId(day);
+            session.persist(dayJob);
         }
+        session.flush();
     }
 
-
-    //dat
     @Override
     public Job getOnlyJobById(int id) {
-        try {
-            Session session = sessionFactory.getCurrentSession();
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<Job> cq = cb.createQuery(Job.class);
-            Root<Job> jobRoot = cq.from(Job.class);
-
-            List<Predicate> predicates = new ArrayList<>();
-            predicates.add(cb.equal(jobRoot.get("id"), id));
-            predicates.add(cb.equal(jobRoot.get("isActive"), true));
-            predicates.add(cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()));
-            predicates.add(cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString()));
-
-            cq.where(cb.and(predicates.toArray(Predicate[]::new)));
-
-            return session.createQuery(cq).getSingleResult();
-
-        } catch (HibernateException e) {
-            return null;
-        }
-
+        Session session = sessionFactory.getCurrentSession();
+        Job job = session.get(Job.class, id);
+        Hibernate.initialize(job.getMajorJobCollection());
+        Hibernate.initialize(job.getDayJobCollection());
+        return job;
     }
 
     @Override
@@ -457,19 +353,38 @@ public class JobRepositoryImplement implements JobRepository {
         Root<Job> jobRoot = cq.from(Job.class);
 
         jobRoot.fetch("companyId", JoinType.LEFT);
-
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(jobRoot.get("companyId").get("id"), companyId));
-        predicates.add(cb.equal(jobRoot.get("isActive"), true));
-
-        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        cq.where(
+                cb.equal(jobRoot.get("companyId").get("id"), companyId),
+                cb.equal(jobRoot.get("isActive"), true)
+        );
         cq.orderBy(cb.asc(jobRoot.get("id")));
 
-        List<Job> jobs = session.createQuery(cq).getResultList();
-
-        return jobs;
+        return session.createQuery(cq).getResultList();
     }
 
-
-
+    @Override
+    public Job addOrUpdateJob(Job job) {
+        Session session = sessionFactory.getCurrentSession();
+        Job mergedJob = (Job) session.merge(job);
+        session.flush();
+        return mergedJob;
+    }
+    
+    @Override
+    public void deleteMajorJobsByJobId(int jobId) {
+        Session session = sessionFactory.getCurrentSession();
+        session.createMutationQuery("DELETE FROM MajorJob mj WHERE mj.jobId.id = :jobId")
+                .setParameter("jobId", jobId)
+                .executeUpdate();
+        session.flush();
+    }
+    
+    @Override
+    public void deleteDayJobsByJobId(int jobId) {
+        Session session = sessionFactory.getCurrentSession();
+        session.createMutationQuery("DELETE FROM DayJob dj WHERE dj.jobId.id = :jobId")
+                .setParameter("jobId", jobId)
+                .executeUpdate();
+        session.flush();
+    }
 }

@@ -1,159 +1,187 @@
 package com.myweb.controllers;
 
-import com.myweb.dto.CreateJobDTO;
-import com.myweb.dto.GetJobDTO;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.Job;
+import com.myweb.pojo.Major;
+import com.myweb.pojo.MajorJob;
+import com.myweb.pojo.Day;
+import com.myweb.pojo.DayJob;
 import com.myweb.services.CompanyService;
 import com.myweb.services.DayService;
 import com.myweb.services.JobService;
 import com.myweb.services.MajorService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
+import java.math.BigInteger;
+import java.util.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.beans.PropertyEditorSupport;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import org.springframework.http.ResponseEntity;
-
 @Controller
-@RequestMapping("/job")
 public class JobController {
-
-    private static final Logger logger = LoggerFactory.getLogger(JobController.class);
 
     @Autowired
     private JobService jobService;
-
     @Autowired
     private MajorService majorService;
-
     @Autowired
     private DayService dayService;
-
     @Autowired
     private CompanyService companyService;
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(BigInteger.class, new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) throws IllegalArgumentException {
-                if (text == null || text.trim().isEmpty()) {
-                    setValue(null);
-                } else {
-                    setValue(new BigInteger(text));
-                }
-            }
-        });
-    }
-
-    @GetMapping
+    // Lấy danh sách công việc với bộ lọc và phân trang
+    @GetMapping("/jobs")
     public String listJobs(Model model, @RequestParam Map<String, String> params) {
-        List<String> headCols = new ArrayList<>(List.of(
-                "", "Tên công việc", "Công ty", "Lương", "Thành phố", "Ngành nghề", "Thời gian làm việc", "Ngày đăng", "Hành động"
-        ));
-
         Map<String, Object> result = jobService.searchJobs(params);
         model.addAttribute("jobs", result.get("jobs"));
         model.addAttribute("currentPage", result.get("currentPage"));
         model.addAttribute("pageSize", result.get("pageSize"));
         model.addAttribute("totalPages", result.get("totalPages"));
         model.addAttribute("totalItems", result.get("totalItems"));
-        model.addAttribute("headCols", headCols);
-
+        model.addAttribute("headCols", List.of("", "Tên công việc", "Công ty", "Lương", "Thành phố", "Ngành nghề", "Thời gian làm việc", "Ngày đăng", "Hành động"));
         model.addAttribute("majors", majorService.getMajors());
         model.addAttribute("days", dayService.getDays());
-
         return "job";
     }
 
-    @GetMapping("/{id}")
-    public String jobDetail(@PathVariable("id") int id, Model model, RedirectAttributes redirectAttributes) {
+    // Hiển thị chi tiết công việc theo ID
+    @GetMapping("/jobs/{id}")
+    public String jobDetail(@PathVariable("id") int id, Model model) {
         Job job = jobService.getJobById(id);
-        if (job == null) {
-            logger.warn("Job not found with ID: {}", id);
-            redirectAttributes.addFlashAttribute("errorMessage", "Công việc không tồn tại.");
-            return "redirect:/job";
-        }
         model.addAttribute("job", job);
+        model.addAttribute("majors", majorService.getMajors());
+        model.addAttribute("days", dayService.getDays());
+        model.addAttribute("companies", companyService.getAllCompaniesForDropdown());
         return "job-detail";
     }
 
-    @GetMapping("/create-job")
+    // Hiển thị form tạo công việc mới
+    @GetMapping("/jobs/create-job")
     public String createJobView(Model model) {
-        model.addAttribute("jobDTO", new CreateJobDTO());
+        model.addAttribute("jobDTO", new com.myweb.dto.CreateJobDTO());
         model.addAttribute("majors", majorService.getMajors());
         model.addAttribute("days", dayService.getDays());
-        List<Company> companies = companyService.getAllCompaniesForDropdown();
-        System.out.println("Number of companies passed to create-job: " + companies.size());
-        model.addAttribute("companies", companies);
+        model.addAttribute("companies", companyService.getAllCompaniesForDropdown());
         return "create-job";
     }
 
-    @PostMapping
-    public String createJob(@Valid @ModelAttribute("jobDTO") CreateJobDTO jobDTO, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+    // Xử lý tạo công việc mới
+    @PostMapping("/jobs")
+    public String createJob(@Valid @ModelAttribute("jobDTO") com.myweb.dto.CreateJobDTO jobDTO, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            logger.warn("Validation errors: {}", result.getAllErrors());
             model.addAttribute("majors", majorService.getMajors());
             model.addAttribute("days", dayService.getDays());
-            List<Company> companies = companyService.getAllCompaniesForDropdown();
-            System.out.println("Number of companies passed to create-job (on error): " + companies.size());
-            model.addAttribute("companies", companies);
-            model.addAttribute("errorMessage", result.getAllErrors().stream()
-                    .map(error -> error.getDefaultMessage())
-                    .collect(Collectors.joining("; ")));
+            model.addAttribute("companies", companyService.getAllCompaniesForDropdown());
             return "create-job";
         }
-
-        GetJobDTO createdJob = jobService.createJobDTO(jobDTO);
-        logger.info("Created job with ID: {}", createdJob.getId());
+        jobService.addJob(jobDTO);
         redirectAttributes.addFlashAttribute("successMessage", "Tạo công việc thành công!");
-        return "redirect:/job";
+        return "redirect:/jobs";
     }
 
-    @DeleteMapping("/api/job/{id}")
-    public ResponseEntity<Void> deleteJob(@PathVariable("id") int id) {
-        Job job = jobService.getJobById(id);
-        if (job == null) {
-            logger.warn("Attempted to delete non-existent job with ID: {}", id);
-            return ResponseEntity.notFound().build();
-        }
-
-        jobService.deleteJob(id);
-        logger.info("Deleted job with ID: {}", id);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/job/delete")
-    public String deleteJobs(@RequestParam(value = "jobIds", required = false) List<Integer> jobIds, Model model) {
-        if (jobIds == null || jobIds.isEmpty()) {
-            model.addAttribute("errorMessage", "Vui lòng chọn ít nhất một công việc để xóa!");
-            return "redirect:/job";
-        }
-
+    // Xử lý xóa nhiều công việc
+    @PostMapping("/jobs/delete")
+    public String deleteJobs(@RequestParam("jobIds") List<Integer> jobIds, Model model) {
         for (Integer jobId : jobIds) {
             jobService.deleteJob(jobId);
         }
-        model.addAttribute("successMessage", "Xóa " + jobIds.size() + " công việc thành công!");
-        return "redirect:/job";
+        return "redirect:/jobs";
+    }
+
+    // Xử lý cập nhật công việc
+    @PostMapping("/jobs/{jobId}/update")
+    public String updateJob(
+            @PathVariable("jobId") int jobId,
+            @RequestParam("jobName") String jobName,
+            @RequestParam("companyId") Integer companyId,
+            @RequestParam("salaryMin") BigInteger salaryMin,
+            @RequestParam("salaryMax") BigInteger salaryMax,
+            @RequestParam(value = "majorId", required = false) Integer majorId,
+            @RequestParam(value = "dayIds", required = false) List<Integer> dayIds,
+            @RequestParam("description") String description,
+            @RequestParam("jobRequired") String jobRequired,
+            @RequestParam(value = "ageFrom", required = false) Integer ageFrom,
+            @RequestParam(value = "ageTo", required = false) Integer ageTo,
+            @RequestParam(value = "experienceRequired", required = false) Integer experienceRequired,
+            @RequestParam("status") String status,
+            @RequestParam("isActive") boolean isActive,
+            RedirectAttributes redirectAttributes) {
+
+        // Validate required fields
+        if (jobName == null || jobName.trim().isEmpty() || companyId == null || salaryMin == null || salaryMax == null ||
+            majorId == null || dayIds == null || dayIds.isEmpty() || description == null || description.trim().isEmpty() ||
+            jobRequired == null || jobRequired.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Vui lòng điền đầy đủ các trường bắt buộc.");
+            return "redirect:/jobs/" + jobId;
+        }
+
+        // Validate salary range
+        if (salaryMax.compareTo(salaryMin) < 0) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lương không hợp lệ.");
+            return "redirect:/jobs/" + jobId;
+        }
+
+        Job existingJob = jobService.getOnlyJobById(jobId);
+        if (existingJob == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Công việc không tồn tại.");
+            return "redirect:/jobs/" + jobId;
+        }
+
+        existingJob.setJobName(jobName);
+
+        // Xử lý companyId
+        Company company = companyService.getCompany(companyId);
+        if (company == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Công ty không tồn tại.");
+            return "redirect:/jobs/" + jobId;
+        }
+        existingJob.setCompanyId(company);
+        existingJob.setFullAddress(company.getFullAddress());
+        existingJob.setCity(company.getCity());
+        existingJob.setDistrict(company.getDistrict());
+
+        existingJob.setSalaryMin(salaryMin);
+        existingJob.setSalaryMax(salaryMax);
+        existingJob.setDescription(description);
+        existingJob.setJobRequired(jobRequired);
+        existingJob.setAgeFrom(ageFrom);
+        existingJob.setAgeTo(ageTo);
+        existingJob.setExperienceRequired(experienceRequired);
+        existingJob.setStatus(status);
+        existingJob.setIsActive(isActive);
+        existingJob.setPostedDate(new Date());
+
+        // Xử lý MajorJob
+        jobService.deleteMajorJobsByJobId(jobId);
+        Collection<MajorJob> majorJobs = new ArrayList<>();
+        Major major = majorService.getMajorById(majorId);
+        if (major != null) {
+            MajorJob majorJob = new MajorJob();
+            majorJob.setJobId(existingJob);
+            majorJob.setMajorId(major);
+            majorJobs.add(majorJob);
+        }
+        existingJob.setMajorJobCollection(majorJobs);
+
+        // Xử lý DayJob
+        jobService.deleteDayJobsByJobId(jobId);
+        Collection<DayJob> dayJobs = new ArrayList<>();
+        for (Integer dayId : dayIds) {
+            Day day = dayService.getDayById(dayId);
+            if (day != null) {
+                DayJob dayJob = new DayJob();
+                dayJob.setJobId(existingJob);
+                dayJob.setDayId(day);
+                dayJobs.add(dayJob);
+            }
+        }
+        existingJob.setDayJobCollection(dayJobs);
+
+        jobService.addOrUpdateJob(existingJob);
+        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật công việc thành công!");
+        return "redirect:/jobs/" + jobId;
     }
 }

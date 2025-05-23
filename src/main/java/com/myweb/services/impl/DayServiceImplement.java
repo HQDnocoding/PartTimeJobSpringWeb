@@ -23,4 +23,9 @@ public class DayServiceImplement implements DayService {
     public List<Day> getDays() {
         return dayRepository.getDays();
     }
+
+    @Override
+    public Day getDayById(int id) {
+        return dayRepository.getDayById(id);
+    }
 }

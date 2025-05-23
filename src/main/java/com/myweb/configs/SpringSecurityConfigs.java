@@ -1,14 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.myweb.configs;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.myweb.filters.JwtFilters;
 import com.myweb.utils.GeneralUtils;
-import java.util.List;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -29,10 +26,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-/**
- *
- * @author huaquangdat
- */
+import java.util.List;
+
 @Configuration
 @EnableTransactionManagement
 @EnableWebSecurity
@@ -78,31 +73,40 @@ public class SpringSecurityConfigs {
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/admin/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
                 .requestMatchers("/api/admin/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
-                .requestMatchers(HttpMethod.PATCH, "/api/secure/applications/update-status")
-                .hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
-                .requestMatchers(HttpMethod.GET, "/api/secure/applications/**")
-                .hasAnyRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName(), GeneralUtils.Role.ROLE_COMPANY.getShortName())
-                .requestMatchers(HttpMethod.POST, "/api/secure/jobs/**")
-                .hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
-                .requestMatchers(HttpMethod.POST, "/api/secure/applications")
-                .hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
+                .requestMatchers("/", "/home").permitAll()
+                .requestMatchers("/login").permitAll()
+                .requestMatchers("/admin/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
+                .requestMatchers("/api/admin/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
+                .requestMatchers(HttpMethod.PATCH, "/api/secure/applications/update-status").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers(HttpMethod.GET, "/api/secure/applications/**").hasAnyRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName(), GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers(HttpMethod.POST, "/api/secure/jobs/**").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers(HttpMethod.POST, "/api/secure/applications").hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
+                .requestMatchers(HttpMethod.POST, "/api/candidate-reviews").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers(HttpMethod.PUT, "/api/candidate-reviews/**").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers(HttpMethod.DELETE, "/api/candidate-reviews/**").hasRole(GeneralUtils.Role.ROLE_COMPANY.getShortName())
+                .requestMatchers(HttpMethod.GET, "/api/candidate-reviews/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/company-reviews").hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
+                .requestMatchers(HttpMethod.PUT, "/api/company-reviews/**").hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
+                .requestMatchers(HttpMethod.DELETE, "/api/company-reviews/**").hasRole(GeneralUtils.Role.ROLE_CANDIDATE.getShortName())
+                .requestMatchers(HttpMethod.GET, "/api/company-reviews/**").permitAll()
                 .requestMatchers("/api/secure/**").authenticated()
                 .requestMatchers("/candidates/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
                 .requestMatchers("/applications/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
                 .requestMatchers("/company/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
-                .requestMatchers("/job/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
-                .requestMatchers("/candidates/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
+                .requestMatchers("/jobs/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
                 .requestMatchers("/companies/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
                 .requestMatchers("/report/**").hasRole(GeneralUtils.Role.ROLE_ADMIN.getShortName())
                 .requestMatchers("/js/**").permitAll()
                 .requestMatchers("/api/**").permitAll()
-                .anyRequest().authenticated())
+                .anyRequest().authenticated()
+                )
                 .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/", true)
                 .failureUrl("/login?error=true")
-                .permitAll())
+                .permitAll()
+                )
                 .logout(logout -> logout
                 .logoutSuccessUrl("/login")
                 .permitAll());
@@ -120,12 +124,11 @@ public class SpringSecurityConfigs {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOrigins(List.of("http://localhost:3000")); // frontend origin
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true); // Nếu dùng cookie/session
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

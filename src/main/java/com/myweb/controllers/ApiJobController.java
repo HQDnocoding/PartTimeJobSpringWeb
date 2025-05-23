@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.myweb.controllers;
 
 import com.myweb.dto.CreateJobDTO;
@@ -37,7 +41,7 @@ public class ApiJobController { // Đã đổi tên từ JobApiController thành
         System.out.println("go" + dto.getLatitude());
 
         try {
-            Object result = this.jobService.createJobDTO(dto);
+            Object result = this.jobService.addJob(dto);
             System.out.println(dto);
             return new ResponseEntity<>(Map.of("message", "Tạo bài tuyển dụng thành công", "data", result), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {

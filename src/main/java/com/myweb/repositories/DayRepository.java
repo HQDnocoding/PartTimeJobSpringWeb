@@ -9,7 +9,10 @@ import com.myweb.pojo.Day;
 import java.util.List;
 
 public interface DayRepository {
+
     List<Day> getDays();
 
     public Day getDayById(Integer dayId);
+
+    Day getDayById(int id);
 }

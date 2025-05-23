@@ -8,7 +8,6 @@ import jakarta.validation.Payload;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 
 import java.lang.annotation.ElementType;
@@ -56,24 +55,21 @@ public class CreateJobDTO {
     private Integer ageTo;
     private Integer experienceRequired;
 
-        private String fullAddress;
+    private String fullAddress;
     private String city;
+    private String district;
 
     // Custom validation annotation for salary range
     @Target({ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @Constraint(validatedBy = SalaryRangeValidator.class)
     @interface SalaryRange {
-
         String message() default "Lương tối đa phải lớn hơn hoặc bằng lương tối thiểu";
-
         Class<?>[] groups() default {};
-
         Class<? extends Payload>[] payload() default {};
     }
 
     static class SalaryRangeValidator implements ConstraintValidator<SalaryRange, CreateJobDTO> {
-
         @Override
         public boolean isValid(CreateJobDTO dto, ConstraintValidatorContext context) {
             if (dto.getSalaryMin() == null || dto.getSalaryMax() == null) {
@@ -88,16 +84,12 @@ public class CreateJobDTO {
     @Retention(RetentionPolicy.RUNTIME)
     @Constraint(validatedBy = LongitudeRangeValidator.class)
     @interface LongitudeRange {
-
         String message() default "Kinh độ phải từ -180 đến 180";
-
         Class<?>[] groups() default {};
-
         Class<? extends Payload>[] payload() default {};
     }
 
     static class LongitudeRangeValidator implements ConstraintValidator<LongitudeRange, Double> {
-
         @Override
         public boolean isValid(Double value, ConstraintValidatorContext context) {
             if (value == null) {
@@ -112,16 +104,12 @@ public class CreateJobDTO {
     @Retention(RetentionPolicy.RUNTIME)
     @Constraint(validatedBy = LatitudeRangeValidator.class)
     @interface LatitudeRange {
-
         String message() default "Vĩ độ phải từ -90 đến 90";
-
         Class<?>[] groups() default {};
-
         Class<? extends Payload>[] payload() default {};
     }
 
     static class LatitudeRangeValidator implements ConstraintValidator<LatitudeRange, Double> {
-
         @Override
         public boolean isValid(Double value, ConstraintValidatorContext context) {
             if (value == null) {
@@ -226,6 +214,14 @@ public class CreateJobDTO {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
     }
 
     public Integer getAgeFrom() {

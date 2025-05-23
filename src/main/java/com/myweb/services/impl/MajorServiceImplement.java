@@ -23,5 +23,8 @@ public class MajorServiceImplement implements MajorService {
         return majorRepository.getMajors();
     }
     
-    
+    @Override
+    public Major getMajorById(int id) {
+        return majorRepository.getMajorById(id);
+    }
 }

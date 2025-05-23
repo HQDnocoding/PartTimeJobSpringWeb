@@ -40,4 +40,10 @@ public class MajorRepositoryImplement implements MajorRepository {
         }
         return major;
     }
+    
+    @Override
+    public Major getMajorById(int id) {
+        Session session = sessionFactory.getCurrentSession();
+        return session.get(Major.class, id);
+    }
 }
