@@ -67,6 +67,15 @@
         .edit-mode .selected-company {
             display: none;
         }
+        /* Căn giữa tiêu đề "Chỉnh sửa công việc" */
+        .form-container h3 {
+            text-align: center;
+            background-color: #007bff;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -104,13 +113,20 @@
                     <p><strong>Mô tả:</strong> <span th:utext="${job.description != null} ? ${job.description} : '-'"></span></p>
                     <p><strong>Yêu cầu:</strong> <span th:utext="${job.jobRequired != null} ? ${job.jobRequired} : '-'"></span></p>
                     <p><strong>Ngày đăng:</strong> <span th:text="${job.postedDate != null} ? ${#dates.format(job.postedDate, 'dd/MM/yyyy HH:mm:ss')} : '-'"></span></p>
-                    <p><strong>Trạng thái:</strong> <span th:text="${job.status != null} ? ${job.status} : '-'"></span></p>
+                    <p><strong>Trạng thái:</strong> 
+                        <span class="badge" th:switch="${job.status}"
+                              th:classappend="
+                                  ${job.status == 'approved'} ? 'bg-success' :
+                                  (${job.status == 'refused'} ? 'bg-danger' : 'bg-warning')">
+                            <span th:case="'approved'" th:text="${job.status}"></span>
+                            <span th:case="'refused'" th:text="${job.status}"></span>
+                            <span th:case="*" th:text="${job.status != null ? job.status : '-'}"></span>
+                        </span>
+                    </p>
                     <p><strong>Trạng thái hoạt động:</strong> <span th:text="${job.isActive != null} ? (${job.isActive} ? 'Hoạt động' : 'Không hoạt động') : '-'"></span></p>
 
                     <div sec:authorize="hasRole('ROLE_ADMIN')" class="form-container">
-                        <div class="card-header bg-primary text-white">
-                            <h3 class="mb-0">Chỉnh sửa công việc</h3>
-                        </div>
+                        <h3 class="mb-3">Chỉnh sửa công việc</h3>
                         <form id="jobForm" th:object="${job}" th:action="@{'/jobs/' + ${job.id} + '/update'}" method="post">
                             <div class="row g-3">
                                 <div class="col-md-6">
@@ -199,7 +215,7 @@
                                                 <label for="status" class="form-label">Trạng thái</label>
                                             </div>
                                             <div class="col-auto">
-                                                <select id="status" name="status" th:field="*{status}">
+                                                <select id="status" class="form-select" th:field="*{status}">
                                                     <option value="pending" hidden>Chờ duyệt</option>
                                                     <option value="approved">Duyệt</option>
                                                     <option value="refused">Từ chối</option>

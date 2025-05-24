@@ -365,32 +365,32 @@ INSERT INTO `major` VALUES (1,'Bán lẻ & Kinh doanh'),(2,'Ẩm thực & Đồ 
 UNLOCK TABLES;
 
 --
--- Table structure for table `marjor_job`
+-- Table structure for table `major_job`
 --
 
-DROP TABLE IF EXISTS `marjor_job`;
+DROP TABLE IF EXISTS `major_job`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `marjor_job` (
+CREATE TABLE `major_job` (
   `id` int NOT NULL AUTO_INCREMENT,
   `major_id` int DEFAULT NULL,
   `job_id` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `job_id` (`job_id`,`major_id`),
   KEY `major_id` (`major_id`),
-  CONSTRAINT `marjor_job_ibfk_1` FOREIGN KEY (`major_id`) REFERENCES `major` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `marjor_job_ibfk_2` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`) ON DELETE CASCADE
+  CONSTRAINT `major_job_ibfk_1` FOREIGN KEY (`major_id`) REFERENCES `major` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `major_job_ibfk_2` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `marjor_job`
+-- Dumping data for table `major_job`
 --
 
-LOCK TABLES `marjor_job` WRITE;
-/*!40000 ALTER TABLE `marjor_job` DISABLE KEYS */;
-INSERT INTO `marjor_job` VALUES (1,11,1),(2,3,2),(3,5,3),(4,4,4),(5,8,5),(6,9,6),(7,13,7),(8,14,8),(9,15,9),(10,17,10),(11,18,11),(12,19,12),(13,20,13),(14,11,14),(15,12,15),(16,16,16),(17,17,17),(18,18,18),(19,19,19),(20,20,20);
-/*!40000 ALTER TABLE `marjor_job` ENABLE KEYS */;
+LOCK TABLES `major_job` WRITE;
+/*!40000 ALTER TABLE `major_job` DISABLE KEYS */;
+INSERT INTO `major_job` VALUES (1,11,1),(2,3,2),(3,5,3),(4,4,4),(5,8,5),(6,9,6),(7,13,7),(8,14,8),(9,15,9),(10,17,10),(11,18,11),(12,19,12),(13,20,13),(14,11,14),(15,12,15),(16,16,16),(17,17,17),(18,18,18),(19,19,19),(20,20,20);
+/*!40000 ALTER TABLE `major_job` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
