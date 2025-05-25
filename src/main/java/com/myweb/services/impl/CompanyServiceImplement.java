@@ -13,6 +13,7 @@ import com.myweb.pojo.User;
 import com.myweb.repositories.CompanyRepository;
 import com.myweb.repositories.UserRepository;
 import com.myweb.services.CompanyService;
+import com.myweb.services.EmailService;
 import com.myweb.utils.GeneralUtils;
 
 import java.util.Collection;
@@ -46,6 +47,9 @@ public class CompanyServiceImplement implements CompanyService {
     private Cloudinary cloudinary;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public Map<String, Object> getListCompany(Map<String, String> params) {
@@ -168,7 +172,24 @@ public class CompanyServiceImplement implements CompanyService {
         company.setImageWorkplaceCollection(imageList);
 
         try {
-            return companyRepository.createCompanyDTO(u, company);
+            Company createdCompany = companyRepository.createCompanyDTO(u, company);
+
+            // Gửi email thông báo
+            String subject = "Chào mừng bạn đến với hệ thống tìm kiếm việc làm bán thời gian!";
+            String body = String.format(
+                    "Chào %s,\n\n"
+                    + "Tài khoản công ty của bạn đã được tạo thành công. Hiện tại, tài khoản đang chờ xét duyệt.\n"
+                    + "Thông tin tài khoản:\n"
+                    + "- Tên đăng nhập: %s\n"
+                    + "- Email: %s\n"
+                    + "- Tên công ty: %s\n\n"
+                    + "Vui lòng chờ quản trị viên phê duyệt để bắt đầu đăng tuyển dụng.\n"
+                    + "Trân trọng,\nHệ thống tìm kiếm việc làm bán thời gian",
+                    company.getName(), c.getUsername(), c.getEmail(), company.getName()
+            );
+            emailService.sendEmail(c.getEmail(), subject, body);
+
+            return createdCompany;
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin.");
         }
@@ -203,5 +224,4 @@ public class CompanyServiceImplement implements CompanyService {
         return this.companyRepository.getCompanyByUserId(userId);
     }
 
-    
 }

@@ -6,17 +6,21 @@ package com.myweb.services.impl;
 
 import com.myweb.dto.CreateJobDTO;
 import com.myweb.dto.GetJobDTO;
+import com.myweb.pojo.Candidate;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.DayJob;
+import com.myweb.pojo.Follow;
 import com.myweb.pojo.Job;
 import com.myweb.pojo.Major;
 import com.myweb.pojo.MajorJob;
 import com.myweb.pojo.User;
 import com.myweb.repositories.CompanyRepository;
 import com.myweb.repositories.DayRepository;
+import com.myweb.repositories.FollowRepository;
 import com.myweb.repositories.JobRepository;
 import com.myweb.repositories.MajorRepository;
 import com.myweb.repositories.UserRepository;
+import com.myweb.services.EmailService;
 import com.myweb.services.JobService;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +50,12 @@ public class JobServiceImplement implements JobService {
 
     @Autowired
     private DayRepository dayRepository;
+    
+    @Autowired
+    private FollowRepository followRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     @Transactional(readOnly = true)
@@ -263,6 +273,31 @@ public class JobServiceImplement implements JobService {
         job = jobRepository.addJob(job);
         jobRepository.addDaysToJob(job, jobDTO.getDayIds());
 
+        // Gửi email thông báo đến các ứng viên đã follow công ty
+        List<Follow> followers = followRepository.getFollowers(company.getId());
+        for (Follow follow : followers) {
+            Candidate candidate = follow.getCandidateId();
+            String subject = "Công việc mới từ " + company.getName();
+            String body = String.format(
+                    "Chào %s,\n\n"
+                    + "Công ty %s vừa đăng một công việc mới: %s\n"
+                    + "Mô tả: %s\n"
+                    + "Lương: %s - %s\n"
+                    + "Địa điểm: %s, %s\n\n"
+                    + "Xem chi tiết công việc tại: [Link đến công việc]\n"
+                    + "Trân trọng,\nHệ thống tìm kiếm việc làm bán thời gian",
+                    candidate.getFullName(),
+                    company.getName(),
+                    job.getJobName(),
+                    job.getDescription().length() > 100 ? job.getDescription().substring(0, 100) + "..." : job.getDescription(),
+                    job.getSalaryMin(),
+                    job.getSalaryMax(),
+                    job.getDistrict(),
+                    job.getCity()
+            );
+            emailService.sendEmail(candidate.getEmail(), subject, body);
+        }
+
         return new GetJobDTO(job);
     }
 
@@ -293,13 +328,13 @@ public class JobServiceImplement implements JobService {
         }
         return jobRepository.addOrUpdateJob(job);
     }
-    
+
     @Override
     @Transactional
     public void deleteMajorJobsByJobId(int jobId) {
         jobRepository.deleteMajorJobsByJobId(jobId);
     }
-    
+
     @Override
     @Transactional
     public void deleteDayJobsByJobId(int jobId) {

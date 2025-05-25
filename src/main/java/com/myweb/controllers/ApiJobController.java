@@ -37,7 +37,8 @@ public class ApiJobController { // Đã đổi tên từ JobApiController thành
         }
     }
 
-    @PostMapping(path = "/secure/jobs", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)    public ResponseEntity<?> createJob(CreateJobDTO dto) {
+    @PostMapping(path = "/secure/jobs", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createJob(CreateJobDTO dto) {
         System.out.println("go" + dto.getLatitude());
 
         try {

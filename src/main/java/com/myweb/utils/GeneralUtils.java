@@ -6,6 +6,8 @@ package com.myweb.utils;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.myweb.pojo.Candidate;
+import com.myweb.pojo.Job;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -95,6 +97,7 @@ public class GeneralUtils {
     }
 
     private static final HttpClient client = HttpClient.newHttpClient();
+
     public static String getProvince() {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://provinces.open-api.vn/api/p/"))
@@ -112,7 +115,7 @@ public class GeneralUtils {
     }
 
     public static String getDistrict(Integer cityId) {
-        String url   = String.format("https://provinces.open-api.vn/api/p/%d/", cityId);
+        String url = String.format("https://provinces.open-api.vn/api/p/%d/", cityId);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -122,11 +125,22 @@ public class GeneralUtils {
 
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return response.body(); 
+            return response.body();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             return null;
         }
     }
 
+    public static String createJobNotificationEmail(Candidate candidate, Job job) {
+        return String.format(
+                "Chào %s,\n\nCông ty %s vừa đăng một tin tuyển dụng mới:\n\n"
+                + "Tên công việc: %s\nMô tả: %s\nĐịa điểm: %s, %s\nLương: %d - %d VND\n"
+                + "Xem chi tiết tại: http://localhost:3000/jobs/%d\n\n"
+                + "Trân trọng,\nHệ thống tìm kiếm việc làm bán thời gian",
+                candidate.getFullName(), job.getCompanyId().getName(), job.getJobName(),
+                job.getDescription(), job.getCity(), job.getDistrict(),
+                job.getSalaryMin(), job.getSalaryMax(), job.getId()
+        );
+    }
 }

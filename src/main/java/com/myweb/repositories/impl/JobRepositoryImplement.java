@@ -122,6 +122,12 @@ public class JobRepositoryImplement implements JobRepository {
             if (dayId != null && !dayId.isEmpty()) {
                 predicates.add(cb.equal(jobRoot.join("dayJobCollection").join("dayId").get("id"), Integer.parseInt(dayId)));
             }
+
+            String status = params.get("status");
+            if (status != null && !status.isEmpty()) {
+                predicates.add(cb.equal(jobRoot.get("status"), status));
+            }
+
         }
 
         return predicates;
@@ -369,7 +375,7 @@ public class JobRepositoryImplement implements JobRepository {
         session.flush();
         return mergedJob;
     }
-    
+
     @Override
     public void deleteMajorJobsByJobId(int jobId) {
         Session session = sessionFactory.getCurrentSession();
@@ -378,7 +384,7 @@ public class JobRepositoryImplement implements JobRepository {
                 .executeUpdate();
         session.flush();
     }
-    
+
     @Override
     public void deleteDayJobsByJobId(int jobId) {
         Session session = sessionFactory.getCurrentSession();
