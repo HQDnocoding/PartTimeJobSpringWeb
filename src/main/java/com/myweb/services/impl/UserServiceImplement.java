@@ -31,6 +31,11 @@ public class UserServiceImplement implements UserService {
     @Autowired
     private UserRepository userRepo;
 
+    @Override
+    public User getUserById(int id) {
+        return this.userRepo.getUserById(id);
+    }
+    
     // Lấy User theo username
     @Override
     public User getUserByUsername(String username) {

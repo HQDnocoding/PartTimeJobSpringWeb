@@ -6,7 +6,11 @@ package com.myweb.controllers;
 
 import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
+import com.myweb.pojo.User;
 import com.myweb.services.CompanyService;
+import com.myweb.services.EmailService;
+import com.myweb.services.UserService;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
@@ -31,6 +36,12 @@ public class CompanyController {
 
     @Autowired
     private CompanyService cpnyService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/companies")
     public String companyView(Model model, @RequestParam Map<String, String> params) {
@@ -62,10 +73,29 @@ public class CompanyController {
     }
 
     @PostMapping("/companies/{companyId}/update-status")
-    public String updateCompanyStatus(@PathVariable("companyId") int id, @RequestParam("status") String status) {
-        Company c = this.cpnyService.getCompany(id);
-        c.setStatus(status);
-        this.cpnyService.addOrUpdate(c);
+    public String updateCompanyStatus(@PathVariable("companyId") int id,
+            @RequestParam("status") String status,
+            RedirectAttributes redirectAttributes) {
+        Company company = cpnyService.getCompany(id);
+        company.setStatus(status);
+        cpnyService.addOrUpdate(company);
+
+        String email = company.getEmail(); 
+        String username = company.getUserId().getUsername(); 
+        String subject = status.equalsIgnoreCase("approved")
+                ? "Tài khoản công ty của bạn đã được duyệt"
+                : "Tài khoản công ty của bạn đã bị từ chối";
+        String body = String.format(
+                "Chào %s,\n\n"
+                + "Tài khoản công ty %s của bạn đã được %s vào lúc %s.\n"
+                + "Trân trọng,\nHệ thống JobHome",
+                username, company.getName(),
+                status.equalsIgnoreCase("approved") ? "duyệt" : "từ chối",
+                LocalDateTime.now()
+        );
+        emailService.sendEmail(email, subject, body);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật trạng thái công ty thành công.");
         return "redirect:/companies/" + id;
     }
 
