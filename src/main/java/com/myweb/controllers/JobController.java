@@ -43,6 +43,17 @@ public class JobController {
         model.addAttribute("headCols", List.of("", "Tên công việc", "Công ty", "Lương", "Thành phố", "Ngành nghề", "Thời gian làm việc", "Ngày đăng", "Hành động"));
         model.addAttribute("majors", majorService.getMajors());
         model.addAttribute("days", dayService.getDays());
+
+        // Thêm các tham số bộ lọc vào model để sử dụng trong template
+        model.addAttribute("keyword", params.get("keyword"));
+        model.addAttribute("selectedMajorId", params.get("majorId"));
+        model.addAttribute("salaryMin", params.get("salaryMin"));
+        model.addAttribute("salaryMax", params.get("salaryMax"));
+        model.addAttribute("city", params.get("city"));
+        model.addAttribute("district", params.get("district"));
+        model.addAttribute("fullAddress", params.get("fullAddress"));
+        model.addAttribute("selectedDayId", params.get("dayId"));
+        model.addAttribute("status", params.get("status"));
         return "job";
     }
 

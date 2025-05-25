@@ -45,6 +45,13 @@ public class CompanyController {
         model.addAttribute("totalItems", result.get("totalItems"));
         model.addAttribute("headCols", headCols);
 
+        // Thêm các tham số bộ lọc vào model để giữ trạng thái
+        model.addAttribute("name", params.get("name"));
+        model.addAttribute("taxCode", params.get("taxCode"));
+        model.addAttribute("status", params.get("status"));
+        model.addAttribute("city", params.get("city"));
+        model.addAttribute("district", params.get("district"));
+
         return "company";
     }
 

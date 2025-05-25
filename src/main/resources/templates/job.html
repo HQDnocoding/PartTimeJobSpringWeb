@@ -27,6 +27,9 @@
             align-items: center;
             width: 100%;
         }
+        .toast {
+            z-index: 1050 !important;
+        }
     </style>
 </head>
 <body>
@@ -54,13 +57,13 @@
                     <nav aria-label="Page navigation" th:if="${totalPages > 1}">
                         <ul class="pagination">
                             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                                <a class="page-link" th:href="@{/jobs(page=${currentPage - 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId})}">Previous</a>
+                                <a class="page-link" th:href="@{/jobs(page=${currentPage - 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId}, status=${status})}">Previous</a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
-                                <a class="page-link" th:href="@{/jobs(page=${i}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId})}" th:text="${i}"></a>
+                                <a class="page-link" th:href="@{/jobs(page=${i}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId}, status=${status})}" th:text="${i}"></a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                                <a class="page-link" th:href="@{/jobs(page=${currentPage + 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId})}">Next</a>
+                                <a class="page-link" th:href="@{/jobs(page=${currentPage + 1}, keyword=${keyword}, majorId=${selectedMajorId}, salaryMin=${salaryMin}, salaryMax=${salaryMax}, city=${city}, district=${district}, fullAddress=${fullAddress}, dayId=${selectedDayId}, status=${status})}">Next</a>
                             </li>
                         </ul>
                     </nav>
@@ -159,13 +162,12 @@
                 <div class="mb-3">
                     <label for="status" class="form-label">Trạng thái</label>
                     <select class="form-select" id="status" name="status">
-                        <option value="" th:selected="${param.status == null}">Tất cả</option>
-                        <option value="pending" th:selected="${param.status == 'pending'}">Pending</option>
-                        <option value="approved" th:selected="${param.status == 'approved'}">Approved</option>
-                        <option value="refused" th:selected="${param.status == 'refused'}">Refused</option>
+                        <option value="" th:selected="${status == null}">Tất cả</option>
+                        <option value="pending" th:selected="${status == 'pending'}">Pending</option>
+                        <option value="approved" th:selected="${status == 'approved'}">Approved</option>
+                        <option value="refused" th:selected="${status == 'refused'}">Refused</option>
                     </select>
                 </div>
-                <input type="hidden" name="page" th:value="${currentPage}">
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                     <a th:href="@{/jobs}" class="btn btn-secondary">Xóa bộ lọc</a>
@@ -175,13 +177,13 @@
     </main>
     <div th:replace="~{base :: footer}"></div>
 
-    <div th:if="${successMessage}" class="toast align-items-center text-white bg-success border-0 position-fixed top-0 end-0 m-3" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+    <div th:if="${successMessage}" class="toast align-items-center text-white bg-success border-0 position-fixed top-0 end-0 m-3" role="alert" data-bs-autohide="true" data-bs-delay="2000">
         <div class="d-flex">
             <div class="toast-body" th:text="${successMessage}"></div>
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
     </div>
-    <div th:if="${errorMessage}" class="toast align-items-center text-white bg-danger border-0 position-fixed top-0 end-0 m-3" role="alert" data-bs-autohide="true" data-bs-delay="1000">
+    <div th:if="${errorMessage}" class="toast align-items-center text-white bg-danger border-0 position-fixed top-0 end-0 m-3" role="alert" data-bs-autohide="true" data-bs-delay="2000">
         <div class="d-flex">
             <div class="toast-body" th:text="${errorMessage}"></div>
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
@@ -189,7 +191,17 @@
     </div>
 
     <script th:src="@{/js/cityDistrictLoad.js}"></script>
-    <script th:inline="javascript">
+    <script>
+        function removeEmptyParams(form) {
+            const inputs = form.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                if (!input.value || input.value === '') {
+                    input.disabled = true;
+                }
+            });
+            return true;
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             // Debug successMessage
             console.log("Success message: ", /*[[${successMessage}]]*/ null);

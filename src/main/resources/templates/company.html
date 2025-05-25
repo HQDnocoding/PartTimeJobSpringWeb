@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <title>Quản lý các công ty</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+    <title>Quản lý các công ty</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <th:block th:replace="base :: bootstrap"></th:block>
     <style>
         /* Định dạng container bảng */
@@ -73,13 +73,15 @@
             <div class="d-flex flex-column h-100">
                 <div class="header-section" style="flex: 0;">
                     <div class="d-flex justify-content-between align-items-center mb-3 w-100">
-                        <h5>List of Companies</h5>
+                        <h5>Danh sách công ty</h5>
                         <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle" type="button" id="actionDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 Hành động
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="actionDropdown">
-                                <li><a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/admin/companies} + '\',  \'.company-checkbox:checked\')'">Xóa</a></li>
+                                <li>
+                                    <a class="dropdown-item" th:attr="data-url=@{/api/admin/companies}" th:onclick="deleteRecord(event, this.getAttribute('data-url'), '.company-checkbox:checked')">Xóa</a>
+                                </li>
                                 <li><a class="dropdown-item" th:href="@{/companies/create-company}">Tạo mới</a></li>
                             </ul>
                         </div>
@@ -89,13 +91,13 @@
                     <nav aria-label="Page navigation" th:if="${totalPages > 1}">
                         <ul class="pagination">
                             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                                <a class="page-link" th:href="@{/companies(page=${currentPage - 1}, name=${param.name}, taxCode=${param.taxCode}, status=${param.status}, city=${param.city}, district=${param.district})}">Previous</a>
+                                <a class="page-link" th:href="@{/companies(page=${currentPage - 1}, name=${name}, taxCode=${taxCode}, status=${status}, city=${city}, district=${district})}">Previous</a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
-                                <a class="page-link" th:href="@{/companies(page=${i}, name=${param.name}, taxCode=${param.taxCode}, status=${param.status}, city=${param.city}, district=${param.district})}" th:text="${i}"></a>
+                                <a class="page-link" th:href="@{/companies(page=${i}, name=${name}, taxCode=${taxCode}, status=${status}, city=${city}, district=${district})}" th:text="${i}"></a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                                <a class="page-link" th:href="@{/companies(page=${currentPage + 1}, name=${param.name}, taxCode=${param.taxCode}, status=${param.status}, city=${param.city}, district=${param.district})}">Next</a>
+                                <a class="page-link" th:href="@{/companies(page=${currentPage + 1}, name=${name}, taxCode=${taxCode}, status=${status}, city=${city}, district=${district})}">Next</a>
                             </li>
                         </ul>
                     </nav>
@@ -110,9 +112,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="c,stat : ${companies}"  th:if="${c != null}">
+                            <tr th:each="c,stat : ${companies}" th:if="${c != null}">
                                 <td><input type="checkbox" class="company-checkbox" th:value="${c.id}"></td>
-                                <td th:text="${stat.count + (currentPage-1)*pageSize }"></td>
+                                <td th:text="${stat.count + (currentPage-1)*pageSize}"></td>
                                 <td><a th:href="@{/companies/{id}(id=${c.id})}" th:text="${c.name}"></a></td>
                                 <td th:text="${c.email}"></td>
                                 <td th:text="${c.fullAddress}"></td>
@@ -128,8 +130,6 @@
                                         <span th:case="*" th:text="${c.status}"></span>
                                     </span>
                                 </td>
-
-
                             </tr>
                             <tr th:if="${#lists.isEmpty(companies)}">
                                 <td colspan="7" class="text-center">Không có dữ liệu</td>
@@ -138,43 +138,40 @@
                     </table>
                 </div>
             </div>
-
-
         </div>
         <div style="flex-grow: 1">
             <form th:action="@{/companies}" method="get" class="p-3 bg-light rounded" onsubmit="removeEmptyParams(this)">
                 <h5 class="mb-3">Tìm kiếm công ty</h5>
                 <div class="mb-3">
                     <label for="name" class="form-label">Tên công ty</label>
-                    <input type="text" class="form-control" id="name" name="name" th:value="${param.name}" placeholder="Nhập tên công ty...">
+                    <input type="text" class="form-control" id="name" name="name" th:value="${name}" placeholder="Nhập tên công ty...">
                 </div>
                 <div class="mb-3">
                     <label for="taxCode" class="form-label">Mã số thuế</label>
-                    <input type="text" class="form-control" id="taxCode" name="taxCode" th:value="${param.taxCode}" placeholder="Nhập mã số thuế...">
+                    <input type="text" class="form-control" id="taxCode" name="taxCode" th:value="${taxCode}" placeholder="Nhập mã số thuế...">
                 </div>
                 <div class="mb-3">
                     <label for="status" class="form-label">Trạng thái</label>
                     <select class="form-select" id="status" name="status">
-                        <option value="" th:selected="${param.status == null}">Tất cả</option>
-                        <option value="pending" th:selected="${param.status == 'pending'}">Pending</option>
-                        <option value="approved" th:selected="${param.status == 'approved'}">Approved</option>
-                        <option value="refused" th:selected="${param.status == 'refused'}">Refused</option>
+                        <option value="" th:selected="${status == null}">Tất cả</option>
+                        <option value="pending" th:selected="${status == 'pending'}">Pending</option>
+                        <option value="approved" th:selected="${status == 'approved'}">Approved</option>
+                        <option value="refused" th:selected="${status == 'refused'}">Refused</option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="city" class="form-label">Thành phố</label>
                     <select class="form-select" id="city" name="city">
-                        <option value="" th:selected="${param.city == null}">Tất cả</option>
+                        <option value="" th:selected="${city == null}">Tất cả</option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="district" class="form-label">Quận/Huyện</label>
                     <select class="form-select" id="district" name="district">
-                        <option value="" th:selected="${param.district == null}">Tất cả</option>
+                        <option value="" th:selected="${district == null}">Tất cả</option>
                     </select>
                 </div>
                 <input type="hidden" name="page" th:value="${currentPage}">
-                <!--<input type="hidden" name="size" th:value="${pageSize}">-->
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                     <a th:href="@{/companies}" class="btn btn-secondary">Xóa bộ lọc</a>
@@ -186,6 +183,16 @@
 
     <script th:src="@{/js/cityDistrictLoad.js}"></script>
     <script>
+        function removeEmptyParams(form) {
+            const inputs = form.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                if (!input.value || input.value === '') {
+                    input.disabled = true;
+                }
+            });
+            return true;
+        }
+
         document.getElementById('selectAll').addEventListener('change', function () {
             document.querySelectorAll('.company-checkbox').forEach(checkbox => {
                 checkbox.checked = this.checked;

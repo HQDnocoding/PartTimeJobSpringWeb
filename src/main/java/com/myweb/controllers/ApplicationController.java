@@ -57,6 +57,11 @@ public class ApplicationController {
         model.addAttribute("totalItems", result.get("totalItems"));
         model.addAttribute("headCols", headCols);
 
+        // Thêm các tham số bộ lọc vào model để giữ trạng thái
+        model.addAttribute("status", params.get("status"));
+        model.addAttribute("candidateName", params.get("candidateName"));
+        model.addAttribute("jobName", params.get("jobName"));
+        
         return "application";
     }
 
