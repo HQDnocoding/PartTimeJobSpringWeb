@@ -181,7 +181,7 @@
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
     </div>
-    <div th:if="${errorMessage}" class="toast align-items-center text-white bg-danger border-0 position-fixed top-0 end-0 m-3" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+    <div th:if="${errorMessage}" class="toast align-items-center text-white bg-danger border-0 position-fixed top-0 end-0 m-3" role="alert" data-bs-autohide="true" data-bs-delay="1000">
         <div class="d-flex">
             <div class="toast-body" th:text="${errorMessage}"></div>
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
@@ -189,5 +189,16 @@
     </div>
 
     <script th:src="@{/js/cityDistrictLoad.js}"></script>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            // Debug successMessage
+            console.log("Success message: ", /*[[${successMessage}]]*/ null);
+            // Kích hoạt tất cả các toast
+            document.querySelectorAll('.toast').forEach(toast => {
+                console.log("Showing toast: ", toast);
+                new bootstrap.Toast(toast).show();
+            });
+        });
+    </script>
 </body>
 </html>
