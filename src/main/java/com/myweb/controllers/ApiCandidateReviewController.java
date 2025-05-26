@@ -16,19 +16,19 @@ import java.security.Principal;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/candidate-reviews")
+@RequestMapping("/api")
 public class ApiCandidateReviewController {
 
     @Autowired
     private CandidateReviewService reviewService;
 
-    @PostMapping
+    @PostMapping("/secure/candidate-reviews")
     public ResponseEntity<GetCandidateReviewDTO> createReview(@RequestBody CreateCandidateReviewDTO dto, Principal principal) {
         GetCandidateReviewDTO review = reviewService.createReview(dto, principal);
         return new ResponseEntity<>(review, HttpStatus.CREATED);
     }
 
-    @GetMapping("/candidate/{candidateId}")
+    @GetMapping("/candidate-reviews/candidate/{candidateId}")
     public ResponseEntity<Map<String, Object>> getListReview(
             @PathVariable("candidateId") Integer candidateId,
             @RequestParam(required = false) Map<String, String> params) {
@@ -36,13 +36,13 @@ public class ApiCandidateReviewController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/candidate-reviews/{id}")
     public ResponseEntity<GetCandidateReviewDTO> getReviewById(@PathVariable("id") Integer id) {
         GetCandidateReviewDTO review = reviewService.getReviewById(id);
         return new ResponseEntity<>(review, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/secure/candidate-reviews/{id}")
     public ResponseEntity<GetCandidateReviewDTO> updateReview(
             @PathVariable("id") Integer id,
             @RequestBody CreateCandidateReviewDTO dto,
@@ -51,13 +51,13 @@ public class ApiCandidateReviewController {
         return new ResponseEntity<>(review, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/secure/candidate-reviews/{id}")
     public ResponseEntity<Void> deleteReview(@PathVariable("id") Integer id, Principal principal) {
         reviewService.deleteReview(id, principal);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/candidate/{candidateId}/average")
+    @GetMapping("/candidate-reviews/candidate/{candidateId}/average")
     public ResponseEntity<Double> getAverageRating(@PathVariable("candidateId") Integer candidateId) {
         Double avgRating = reviewService.getAverageRating(candidateId);
         return new ResponseEntity<>(avgRating, HttpStatus.OK);

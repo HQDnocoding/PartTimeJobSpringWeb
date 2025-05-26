@@ -41,7 +41,8 @@
         <div class="card shadow">
             <div class="card-body p-4">
                 <h2 class="card-title text-center mb-4">Tạo nhà tuyển dụng</h2>
-                <form id="createCompanyForm" th:object="${companyDTO}" th:action="@{'/companies'}" method="post" class="row g-3" enctype="multipart/form-data">
+                <form id="createCompanyForm" th:object="${companyDTO}" th:action="@{'/companies'}" method="post"
+                      class="row g-3" enctype="multipart/form-data">
                     <!-- Thông tin công ty -->
                     <div id="message" class="mt-3 text-center">
                         <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
@@ -51,27 +52,35 @@
                     </div>
                     <div class="col-md-6">
                         <label for="name" class="form-label">Tên Công Ty *</label>
-                        <input type="text" class="form-control" id="name" th:field="*{name}" required placeholder="Nhập tên công ty">
+                        <input type="text" class="form-control" id="name" th:field="*{name}" required
+                               placeholder="Nhập tên công ty">
                     </div>
                     <div class="col-md-6">
                         <label for="email" class="form-label">Email *</label>
-                        <input type="email" class="form-control" id="email" th:field="*{email}" required placeholder="Nhập email công ty">
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required
+                               placeholder="Nhập email công ty">
                     </div>
                     <div class="col-md-6">
                         <label for="avatar" class="form-label">Hình Đại Diện * (JPG/PNG)</label>
-                        <input type="file" class="form-control" id="avatar" th:field="*{avatarFile}" accept="image/jpeg,image/png" required/>
+                        <input type="file" class="form-control" id="avatar" th:field="*{avatarFile}"
+                               accept="image/jpeg,image/png" required/>
                         <div class="mt-2 position-relative" style="max-width: 150px;">
-                            <img id="avatarPreview" class="img-fluid rounded" style="display: none;" alt="Xem trước ảnh đại diện" />
-                            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0" style="display: none;" onclick="removeAvatar()">×</button>
+                            <img id="avatarPreview" class="img-fluid rounded" style="display: none;"
+                                 alt="Xem trước ảnh đại diện"/>
+                            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0"
+                                    style="display: none;" onclick="removeAvatar()">×
+                            </button>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <label for="taxCode" class="form-label">Mã Số Thuế *</label>
-                        <input type="text" class="form-control" id="taxCode" th:field="*{taxCode}" required placeholder="Nhập mã số thuế">
+                        <input type="text" class="form-control" id="taxCode" th:field="*{taxCode}" required
+                               placeholder="Nhập mã số thuế">
                     </div>
                     <div class="col-12">
                         <label for="fullAddress" class="form-label">Địa Chỉ Đầy Đủ *</label>
-                        <input type="text" class="form-control" id="fullAddress" th:field="*{fullAddress}" required placeholder="Nhập địa chỉ đầy đủ">
+                        <input type="text" class="form-control" id="fullAddress" th:field="*{fullAddress}" required
+                               placeholder="Nhập địa chỉ đầy đủ">
                     </div>
                     <div class="col-md-6">
                         <label for="city" class="form-label">Thành Phố *</label>
@@ -89,11 +98,14 @@
                     </div>
                     <div class="col-12">
                         <label for="selfDescription" class="form-label">Mô Tả Công Ty</label>
-                        <textarea class="form-control" id="selfDescription" th:field="*{selfDescription}" rows="4" placeholder="Nhập mô tả công ty (tùy chọn)"></textarea>
+                        <textarea class="form-control" id="selfDescription" th:field="*{selfDescription}" rows="4"
+                                  placeholder="Nhập mô tả công ty (tùy chọn)"></textarea>
                     </div>
                     <div class="col-12">
-                        <label for="imageWorkplaceFiles" class="form-label">Hình Ảnh Nơi Làm Việc * (Tối thiểu 3 ảnh, JPG/PNG)</label>
-                        <input type="file" class="form-control" id="imageWorkplaceFiles" th:field="*{files}" accept="image/jpeg,image/png" multiple/>
+                        <label for="imageWorkplaceFiles" class="form-label">Hình Ảnh Nơi Làm Việc * (Tối thiểu 3 ảnh,
+                            JPG/PNG)</label>
+                        <input type="file" class="form-control" id="imageWorkplaceFiles" th:field="*{files}"
+                               accept="image/jpeg,image/png" multiple/>
                         <small class="form-text text-muted">Chọn ít nhất 3 hình ảnh nơi làm việc.</small>
 
                         <div id="imageWorkplacePreview" class="mt-3 d-flex flex-wrap gap-3"></div>
@@ -105,11 +117,13 @@
                     </div>
                     <div class="col-md-6">
                         <label for="username" class="form-label">Tên Đăng Nhập *</label>
-                        <input type="text" class="form-control" id="username" th:field="*{username}" required placeholder="Nhập tên đăng nhập">
+                        <input type="text" class="form-control" id="username" th:field="*{username}" required
+                               placeholder="Nhập tên đăng nhập">
                     </div>
                     <div class="col-md-6">
                         <label for="password" class="form-label">Mật Khẩu *</label>
-                        <input type="password" class="form-control" id="password" th:field="*{password}" required placeholder="Nhập mật khẩu">
+                        <input type="password" class="form-control" id="password" th:field="*{password}" required
+                               placeholder="Nhập mật khẩu">
                     </div>
                     <div class="col-12 mt-4">
                         <button type="submit" class="btn btn-primary w-100">Tạo</button>
@@ -199,6 +213,13 @@
             // Xóa ảnh khỏi giao diện
             previewContainer.removeChild(previewContainer.children[index]);
         }
+
+        document.getElementById('createCompanyForm').addEventListener('submit', function (e) {
+            const dt = new DataTransfer();
+            storedFiles.forEach(file => dt.items.add(file));
+            imageInput.files = dt.files;
+            console.log(dt);
+        });
 
     </script>
 

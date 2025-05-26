@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import java.math.BigInteger;
 import java.util.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -44,13 +43,27 @@ public class JobController {
         model.addAttribute("headCols", List.of("", "Tên công việc", "Công ty", "Lương", "Thành phố", "Ngành nghề", "Thời gian làm việc", "Ngày đăng", "Hành động"));
         model.addAttribute("majors", majorService.getMajors());
         model.addAttribute("days", dayService.getDays());
+
+        // Thêm các tham số bộ lọc vào model để sử dụng trong template
+        model.addAttribute("keyword", params.get("keyword"));
+        model.addAttribute("selectedMajorId", params.get("majorId"));
+        model.addAttribute("salaryMin", params.get("salaryMin"));
+        model.addAttribute("salaryMax", params.get("salaryMax"));
+        model.addAttribute("city", params.get("city"));
+        model.addAttribute("district", params.get("district"));
+        model.addAttribute("fullAddress", params.get("fullAddress"));
+        model.addAttribute("selectedDayId", params.get("dayId"));
+        model.addAttribute("status", params.get("status"));
         return "job";
     }
 
     // Hiển thị chi tiết công việc theo ID
     @GetMapping("/jobs/{id}")
     public String jobDetail(@PathVariable("id") int id, Model model) {
-        Job job = jobService.getJobById(id);
+        Job job = jobService.getOnlyJobById(id); // Sử dụng getOnlyJobById để lấy cả job ở trạng thái pending
+        if (job == null) {
+            model.addAttribute("errorMessage", "Công việc không tồn tại.");
+        }
         model.addAttribute("job", job);
         model.addAttribute("majors", majorService.getMajors());
         model.addAttribute("days", dayService.getDays());
@@ -95,32 +108,14 @@ public class JobController {
     @PostMapping("/jobs/{jobId}/update")
     public String updateJob(
             @PathVariable("jobId") int jobId,
-            @RequestParam("jobName") String jobName,
-            @RequestParam("companyId") Integer companyId,
-            @RequestParam("salaryMin") BigInteger salaryMin,
-            @RequestParam("salaryMax") BigInteger salaryMax,
+            @ModelAttribute("job") @Valid Job job,
+            BindingResult result,
             @RequestParam(value = "majorId", required = false) Integer majorId,
             @RequestParam(value = "dayIds", required = false) List<Integer> dayIds,
-            @RequestParam("description") String description,
-            @RequestParam("jobRequired") String jobRequired,
-            @RequestParam(value = "ageFrom", required = false) Integer ageFrom,
-            @RequestParam(value = "ageTo", required = false) Integer ageTo,
-            @RequestParam(value = "experienceRequired", required = false) Integer experienceRequired,
-            @RequestParam("status") String status,
-            @RequestParam("isActive") boolean isActive,
             RedirectAttributes redirectAttributes) {
 
-        // Validate required fields
-        if (jobName == null || jobName.trim().isEmpty() || companyId == null || salaryMin == null || salaryMax == null ||
-            majorId == null || dayIds == null || dayIds.isEmpty() || description == null || description.trim().isEmpty() ||
-            jobRequired == null || jobRequired.trim().isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Vui lòng điền đầy đủ các trường bắt buộc.");
-            return "redirect:/jobs/" + jobId;
-        }
-
-        // Validate salary range
-        if (salaryMax.compareTo(salaryMin) < 0) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Lương không hợp lệ.");
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Vui lòng kiểm tra lại các trường dữ liệu.");
             return "redirect:/jobs/" + jobId;
         }
 
@@ -130,10 +125,9 @@ public class JobController {
             return "redirect:/jobs/" + jobId;
         }
 
-        existingJob.setJobName(jobName);
-
-        // Xử lý companyId
-        Company company = companyService.getCompany(companyId);
+        // Cập nhật các trường từ đối tượng job
+        existingJob.setJobName(job.getJobName());
+        Company company = companyService.getCompany(job.getCompanyId().getId());
         if (company == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "Công ty không tồn tại.");
             return "redirect:/jobs/" + jobId;
@@ -143,39 +137,43 @@ public class JobController {
         existingJob.setCity(company.getCity());
         existingJob.setDistrict(company.getDistrict());
 
-        existingJob.setSalaryMin(salaryMin);
-        existingJob.setSalaryMax(salaryMax);
-        existingJob.setDescription(description);
-        existingJob.setJobRequired(jobRequired);
-        existingJob.setAgeFrom(ageFrom);
-        existingJob.setAgeTo(ageTo);
-        existingJob.setExperienceRequired(experienceRequired);
-        existingJob.setStatus(status);
-        existingJob.setIsActive(isActive);
+        existingJob.setSalaryMin(job.getSalaryMin());
+        existingJob.setSalaryMax(job.getSalaryMax());
+        existingJob.setDescription(job.getDescription());
+        existingJob.setJobRequired(job.getJobRequired());
+        existingJob.setAgeFrom(job.getAgeFrom());
+        existingJob.setAgeTo(job.getAgeTo());
+        existingJob.setExperienceRequired(job.getExperienceRequired());
+        existingJob.setStatus(job.getStatus());
+        existingJob.setIsActive(job.getIsActive());
         existingJob.setPostedDate(new Date());
 
         // Xử lý MajorJob
         jobService.deleteMajorJobsByJobId(jobId);
         Collection<MajorJob> majorJobs = new ArrayList<>();
-        Major major = majorService.getMajorById(majorId);
-        if (major != null) {
-            MajorJob majorJob = new MajorJob();
-            majorJob.setJobId(existingJob);
-            majorJob.setMajorId(major);
-            majorJobs.add(majorJob);
+        if (majorId != null) {
+            Major major = majorService.getMajorById(majorId);
+            if (major != null) {
+                MajorJob majorJob = new MajorJob();
+                majorJob.setJobId(existingJob);
+                majorJob.setMajorId(major);
+                majorJobs.add(majorJob);
+            }
         }
         existingJob.setMajorJobCollection(majorJobs);
 
         // Xử lý DayJob
         jobService.deleteDayJobsByJobId(jobId);
         Collection<DayJob> dayJobs = new ArrayList<>();
-        for (Integer dayId : dayIds) {
-            Day day = dayService.getDayById(dayId);
-            if (day != null) {
-                DayJob dayJob = new DayJob();
-                dayJob.setJobId(existingJob);
-                dayJob.setDayId(day);
-                dayJobs.add(dayJob);
+        if (dayIds != null) {
+            for (Integer dayId : dayIds) {
+                Day day = dayService.getDayById(dayId);
+                if (day != null) {
+                    DayJob dayJob = new DayJob();
+                    dayJob.setJobId(existingJob);
+                    dayJob.setDayId(day);
+                    dayJobs.add(dayJob);
+                }
             }
         }
         existingJob.setDayJobCollection(dayJobs);

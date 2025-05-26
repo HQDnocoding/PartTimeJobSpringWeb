@@ -18,9 +18,9 @@ import com.myweb.repositories.JobRepository;
 import com.myweb.repositories.UserRepository;
 import com.myweb.services.CompanyReviewService;
 import com.myweb.utils.GeneralUtils;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.Date;
@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional
 public class CompanyReviewServiceImplement implements CompanyReviewService {
 
     @Autowired
@@ -46,8 +47,11 @@ public class CompanyReviewServiceImplement implements CompanyReviewService {
     private UserRepository userRepository;
 
     @Override
-    @Transactional
     public GetCompanyReviewDTO createReview(CreateCompanyReviewDTO dto, Principal principal) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Review data is required.");
+        }
+
         User user = userRepository.getUserByUsername(principal.getName());
         if (!user.getRole().equals(GeneralUtils.Role.ROLE_CANDIDATE.toString())) {
             throw new SecurityException("Only candidates can create company reviews.");
@@ -64,7 +68,6 @@ public class CompanyReviewServiceImplement implements CompanyReviewService {
             throw new SecurityException("You are not authorized to create this review.");
         }
 
-        // Kiểm tra xem có Application liên quan với trạng thái approved
         List<Application> applications = applicationRepository.findByJobIdAndStatus(dto.getJobId(), GeneralUtils.Status.approved.toString());
         boolean validApplication = applications.stream().anyMatch(app -> app.getCandidateId().getId().equals(dto.getCandidateId()));
         if (!validApplication) {
@@ -101,8 +104,11 @@ public class CompanyReviewServiceImplement implements CompanyReviewService {
     }
 
     @Override
-    @Transactional
     public GetCompanyReviewDTO updateReview(Integer id, CreateCompanyReviewDTO dto, Principal principal) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Review data is required.");
+        }
+
         User user = userRepository.getUserByUsername(principal.getName());
         CompanyReview review = reviewRepository.getReviewById(id);
 
@@ -126,7 +132,6 @@ public class CompanyReviewServiceImplement implements CompanyReviewService {
     }
 
     @Override
-    @Transactional
     public void deleteReview(Integer id, Principal principal) {
         User user = userRepository.getUserByUsername(principal.getName());
         CompanyReview review = reviewRepository.getReviewById(id);

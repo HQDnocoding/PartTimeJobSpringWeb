@@ -36,13 +36,13 @@
                             <a class="nav-link" th:href="@{/companies}">Công ty</a>
                         </li>
                         <li class="nav-item " sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="nav-link" th:href="@{/jobs}">Việc làm</a>
+                        </li>
+                        <li class="nav-item " sec:authorize="hasRole('ROLE_ADMIN')">
                             <a class="nav-link" th:href="@{/candidates}">Ứng viên</a>
                         </li>
                         <li class="nav-item " sec:authorize="hasRole('ROLE_ADMIN')or hasRole('ROLE_COMPANY')">
                             <a class="nav-link" th:href="@{/applications}">Đơn ứng tuyển</a>
-                        </li>
-                        <li class="nav-item " sec:authorize="hasRole('ROLE_ADMIN')">
-                            <a class="nav-link" th:href="@{/jobs}">Việc làm</a>
                         </li>
                         <li class="nav-item " sec:authorize="hasRole('ROLE_ADMIN')">
                             <a class="nav-link" th:href="@{/report}">Thống kê</a>

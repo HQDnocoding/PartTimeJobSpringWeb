@@ -12,6 +12,7 @@ import com.myweb.pojo.Candidate;
 import com.myweb.pojo.User;
 import com.myweb.repositories.CandidateRepository;
 import com.myweb.repositories.UserRepository;
+import com.myweb.services.EmailService;
 import com.myweb.utils.GeneralUtils;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +44,9 @@ public class CandidateServiceImplement implements CandidateService {
     private Cloudinary cloudinary;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private SecureRandom sr;
@@ -149,7 +153,25 @@ public class CandidateServiceImplement implements CandidateService {
         can.setUserId(u);
 
         try {
-            return (Candidate) this.candidateRepository.createCandidate(u, can, false);
+
+            Candidate createdCandidate =  (Candidate)this.candidateRepository.createCandidate(u, can,false);
+
+            // Gửi email thông báo
+            String subject = "Chào mừng bạn đến với hệ thống tìm kiếm việc làm bán thời gian!";
+            String body = String.format(
+                    "Chào %s,\n\n"
+                    + "Tài khoản ứng viên của bạn đã được tạo thành công.\n"
+                    + "Thông tin tài khoản:\n"
+                    + "- Tên đăng nhập: %s\n"
+                    + "- Email: %s\n"
+                    + "- Họ và tên: %s\n\n"
+                    + "Bạn có thể bắt đầu tìm kiếm việc làm ngay bây giờ!\n"
+                    + "Trân trọng,\nHệ thống tìm kiếm việc làm bán thời gian",
+                    can.getFullName(), c.getUsername(), c.getEmail(), can.getFullName()
+            );
+            emailService.sendEmail(c.getEmail(), subject, body);
+
+            return createdCandidate;
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin.");
         }
@@ -173,7 +195,7 @@ public class CandidateServiceImplement implements CandidateService {
 
     @Override
     public Candidate getCandidateByUserId(int userId) {
-
+        
         return this.candidateRepository.getCandidateByUserId(userId);
     }
 
