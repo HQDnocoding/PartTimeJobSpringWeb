@@ -73,29 +73,10 @@ public class CompanyController {
     }
 
     @PostMapping("/companies/{companyId}/update-status")
-    public String updateCompanyStatus(@PathVariable("companyId") int id,
-            @RequestParam("status") String status,
-            RedirectAttributes redirectAttributes) {
-        Company company = cpnyService.getCompany(id);
-        company.setStatus(status);
-        cpnyService.addOrUpdate(company);
-
-        String email = company.getEmail(); 
-        String username = company.getUserId().getUsername(); 
-        String subject = status.equalsIgnoreCase("approved")
-                ? "Tài khoản công ty của bạn đã được duyệt"
-                : "Tài khoản công ty của bạn đã bị từ chối";
-        String body = String.format(
-                "Chào %s,\n\n"
-                + "Tài khoản công ty %s của bạn đã được %s vào lúc %s.\n"
-                + "Trân trọng,\nHệ thống JobHome",
-                username, company.getName(),
-                status.equalsIgnoreCase("approved") ? "duyệt" : "từ chối",
-                LocalDateTime.now()
-        );
-        emailService.sendEmail(email, subject, body);
-
-        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật trạng thái công ty thành công.");
+    public String updateCompanyStatus(@PathVariable("companyId") int id, @RequestParam("status") String status) {
+        Company c = this.cpnyService.getCompany(id);
+        c.setStatus(status);
+        this.cpnyService.addOrUpdate(c);
         return "redirect:/companies/" + id;
     }
 
@@ -124,6 +105,25 @@ public class CompanyController {
         try {
             System.out.println(company.getDistrict());
             Company updatedCompany = this.cpnyService.addOrUpdate(company);
+
+            // Gửi email nếu trạng thái thay đổi thành approved hoặc refused
+            if ("approved".equalsIgnoreCase(company.getStatus()) || "refused".equalsIgnoreCase(company.getStatus())) {
+                String email = company.getEmail();
+                String username = company.getUserId().getUsername();
+                String subject = "approved".equalsIgnoreCase(company.getStatus())
+                        ? "Tài khoản công ty của bạn đã được duyệt"
+                        : "Tài khoản công ty của bạn đã bị từ chối";
+                String body = String.format(
+                        "Chào %s,\n\n"
+                        + "Tài khoản công ty %s của bạn đã được %s vào lúc %s.\n"
+                        + "Trân trọng,\nHệ thống JobHome",
+                        username, company.getName(),
+                        "approved".equalsIgnoreCase(company.getStatus()) ? "duyệt" : "từ chối",
+                        LocalDateTime.now()
+                );
+                this.emailService.sendEmail(email, subject, body);
+            }
+
             System.out.println("City: " + updatedCompany.getCity() + ", District: " + updatedCompany.getDistrict());
             return "redirect:/companies/" + id;
         } catch (IllegalArgumentException e) {
