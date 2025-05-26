@@ -5,6 +5,7 @@
 package com.myweb.services.impl;
 
 import com.cloudinary.Cloudinary;
+import static com.fasterxml.jackson.databind.util.ClassUtil.name;
 import com.myweb.dto.CreateCandidateDTO;
 import com.myweb.services.CandidateService;
 import com.myweb.pojo.Candidate;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import static com.myweb.utils.ValidationUtils.isValidPassword;
 import static com.myweb.utils.ValidationUtils.isValidUsername;
+import java.security.SecureRandom;
 
 /**
  *
@@ -41,6 +43,9 @@ public class CandidateServiceImplement implements CandidateService {
     private Cloudinary cloudinary;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private SecureRandom sr;
 
     // Thêm hoặc cập nhật ứng viên
     @Override
@@ -144,7 +149,7 @@ public class CandidateServiceImplement implements CandidateService {
         can.setUserId(u);
 
         try {
-            return this.candidateRepository.createCandidate(u, can);
+            return (Candidate) this.candidateRepository.createCandidate(u, can, false);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin.");
         }
@@ -168,11 +173,32 @@ public class CandidateServiceImplement implements CandidateService {
 
     @Override
     public Candidate getCandidateByUserId(int userId) {
-        
+
         return this.candidateRepository.getCandidateByUserId(userId);
     }
-    
-    
-    
+
+    @Override
+    public User createCandidateByGoogleAccount(Map<String, String> params) {
+        String email = params.get("email");
+        String name = params.get("name");
+        String avatar = params.get("avatar");
+        // Tạo User
+        User user = new User();
+        user.setUsername(email);
+        user.setPassword(this.passwordEncoder.encode(String.valueOf(sr.nextInt(90000) + 10000)));
+        user.setRegisterDate(new Date());
+        user.setRole(GeneralUtils.Role.ROLE_CANDIDATE.toString());
+        user.setIsActive(true);
+
+        // Tạo Candidate
+        Candidate candidate = new Candidate();
+        candidate.setEmail(email);
+        candidate.setFullName(name != null ? name : email.split("@")[0]);
+        candidate.setUserId(user);
+        candidate.setAvatar(avatar);
+
+        return (User) this.candidateRepository.createCandidate(user, candidate, true);
+
+    }
 
 }

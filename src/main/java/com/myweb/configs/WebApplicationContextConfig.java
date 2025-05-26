@@ -5,7 +5,6 @@
 package com.myweb.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.myweb.formatters.CandidateFormatter;
@@ -109,5 +108,6 @@ public class WebApplicationContextConfig implements WebMvcConfigurer {
         slr.setDefaultLocale(new Locale("vi", "VN"));
         return slr;
     }
+
 
 }

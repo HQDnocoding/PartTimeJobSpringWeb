@@ -6,6 +6,7 @@ import com.myweb.filters.JwtFilters;
 import com.myweb.utils.GeneralUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.security.SecureRandom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -61,6 +62,12 @@ public class SpringSecurityConfigs {
                 "api_secret", "HsIK1yhx7av6BeoVqVjKKVceikY",
                 "secure", true));
         return cloudinary;
+    }
+
+    @Bean
+    public SecureRandom create() {
+        SecureRandom secureRandom = new SecureRandom();
+        return secureRandom;
     }
 
     @Bean

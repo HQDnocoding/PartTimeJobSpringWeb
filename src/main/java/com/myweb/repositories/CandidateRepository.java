@@ -16,12 +16,12 @@ import java.util.Map;
 public interface CandidateRepository {
 
     Candidate addOrUpdateCandidate(Candidate c);
-
+    
     Map<String, Object> getListCandidate(Map<String, String> params);
 
     Candidate getCandidateById(int candidateId);
 
-    Candidate createCandidate(User u, Candidate c);
+    Object createCandidate(User u, Candidate c, boolean isGoogleSignIn);
 
     Candidate getCandidateByEmail(String email);
 

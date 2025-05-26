@@ -42,13 +42,13 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         Session session = this.factory.getObject().getCurrentSession();
         try {
             if (c.getId() == null) {
+                session.persist(c.getUserId());
                 session.persist(c);
             } else {
                 session.merge(c);
             }
             return c;
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -157,7 +157,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
 
     // Tạo ứng viên và tài khoản người dùng
     @Override
-    public Candidate createCandidate(User u, Candidate c) {
+    public Object createCandidate(User u, Candidate c, boolean flag) {
         Session s = this.factory.getObject().getCurrentSession();
         try {
             s.persist(u);
@@ -168,7 +168,8 @@ public class CandidateRepositoryImplement implements CandidateRepository {
             e.printStackTrace();
             throw new RuntimeException("Lỗi: " + e.getMessage());
         }
-        return c;
+
+        return flag ? c.getUserId() : c;
     }
 
     // Kiểm tra ứng viên theo email 

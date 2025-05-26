@@ -6,6 +6,7 @@ package com.myweb.services;
 
 import com.myweb.dto.CreateCandidateDTO;
 import com.myweb.pojo.Candidate;
+import com.myweb.pojo.User;
 import java.util.List;
 import java.util.Map;
 
@@ -34,4 +35,6 @@ public interface CandidateService {
     void deleteCandidate(int id);
     
     Candidate getCandidateByUserId(int userId);
+    
+    User createCandidateByGoogleAccount(Map<String,String> params);
 }
