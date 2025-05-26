@@ -6,6 +6,7 @@ package com.myweb.controllers;
 
 import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
+import com.myweb.pojo.User;
 import com.myweb.services.CompanyService;
 import com.myweb.services.EmailService;
 import com.myweb.services.UserService;
@@ -73,6 +74,10 @@ public class CompanyController {
     }
 
     @PostMapping("/companies/{companyId}/update-status")
+    public String updateCompanyStatus(@PathVariable("companyId") int id, @RequestParam("status") String status) {
+        Company c = this.cpnyService.getCompany(id);
+        c.setStatus(status);
+        this.cpnyService.addOrUpdate(c);
     public String updateCompanyStatus(@PathVariable("companyId") int id,
             @RequestParam("status") String status,
             RedirectAttributes redirectAttributes) {
@@ -108,7 +113,6 @@ public class CompanyController {
     @PostMapping("/companies")
     public String createCompany(Model model, @ModelAttribute(value = "companyDTO") CreateCompanyDTO companyDTO) {
         try {
-            System.out.println("controller" + companyDTO.getFiles().get(0).getName());
             Company company = this.cpnyService.createCompanyDTO(companyDTO);
             return "redirect:/companies/" + company.getId();
         } catch (IllegalArgumentException e) {
@@ -125,6 +129,25 @@ public class CompanyController {
         try {
             System.out.println(company.getDistrict());
             Company updatedCompany = this.cpnyService.addOrUpdate(company);
+
+            // Gửi email nếu trạng thái thay đổi thành approved hoặc refused
+            if ("approved".equalsIgnoreCase(company.getStatus()) || "refused".equalsIgnoreCase(company.getStatus())) {
+                String email = company.getEmail();
+                String username = company.getUserId().getUsername();
+                String subject = "approved".equalsIgnoreCase(company.getStatus())
+                        ? "Tài khoản công ty của bạn đã được duyệt"
+                        : "Tài khoản công ty của bạn đã bị từ chối";
+                String body = String.format(
+                        "Chào %s,\n\n"
+                        + "Tài khoản công ty %s của bạn đã được %s vào lúc %s.\n"
+                        + "Trân trọng,\nHệ thống JobHome",
+                        username, company.getName(),
+                        "approved".equalsIgnoreCase(company.getStatus()) ? "duyệt" : "từ chối",
+                        LocalDateTime.now()
+                );
+                this.emailService.sendEmail(email, subject, body);
+            }
+
             System.out.println("City: " + updatedCompany.getCity() + ", District: " + updatedCompany.getDistrict());
             return "redirect:/companies/" + id;
         } catch (IllegalArgumentException e) {
