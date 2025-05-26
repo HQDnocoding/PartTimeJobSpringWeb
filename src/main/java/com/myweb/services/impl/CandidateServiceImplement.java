@@ -55,7 +55,7 @@ public class CandidateServiceImplement implements CandidateService {
     @Override
     public Candidate addOrUpdateCandidate(Candidate c) {
         if (c.getId() != null) {
-            if (!c.getAvatarFile().isEmpty()) {
+            if (!c.getCurriculumVitaeFile().isEmpty()) {
                 c.setCurriculumVitae(GeneralUtils.uploadFileToCloud(cloudinary, c.getCurriculumVitaeFile()));
             }
             if (!c.getAvatarFile().isEmpty()) {

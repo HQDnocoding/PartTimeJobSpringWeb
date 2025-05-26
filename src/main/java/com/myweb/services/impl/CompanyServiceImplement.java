@@ -135,7 +135,9 @@ public class CompanyServiceImplement implements CompanyService {
             throw new IllegalArgumentException("Vui lòng nhập mô tả về công ty.");
         }
 
-        if (c.getFiles() == null || c.getFiles().size() < 3) {
+        if (c.getFiles().isEmpty() || c.getFiles().size() < 3) {
+            System.out.println("service" + c.getFiles().isEmpty());
+            System.out.println("size" + c.getFiles().size());
             throw new IllegalArgumentException("Vui lòng cung cấp tối thiểu 3 hình của nơi làm việc.");
         }
 

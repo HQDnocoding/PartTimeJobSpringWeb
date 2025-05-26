@@ -6,7 +6,6 @@ package com.myweb.controllers;
 
 import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
-import com.myweb.pojo.User;
 import com.myweb.services.CompanyService;
 import com.myweb.services.EmailService;
 import com.myweb.services.UserService;
@@ -57,11 +56,12 @@ public class CompanyController {
         model.addAttribute("headCols", headCols);
 
         // Thêm các tham số bộ lọc vào model để giữ trạng thái
-        model.addAttribute("name", params.get("name"));
-        model.addAttribute("taxCode", params.get("taxCode"));
-        model.addAttribute("status", params.get("status"));
-        model.addAttribute("city", params.get("city"));
-        model.addAttribute("district", params.get("district"));
+//        model.addAttribute("name", params.get("name"));
+//        model.addAttribute("taxCode", params.get("taxCode"));
+//        model.addAttribute("status", params.get("status"));
+//        model.addAttribute("city", params.get("city"));
+//        model.addAttribute("district", params.get("district"));
+//        model.addAttribute("page", result.get("currentPage"));
 
         return "company";
     }
@@ -80,8 +80,8 @@ public class CompanyController {
         company.setStatus(status);
         cpnyService.addOrUpdate(company);
 
-        String email = company.getEmail(); 
-        String username = company.getUserId().getUsername(); 
+        String email = company.getEmail();
+        String username = company.getUserId().getUsername();
         String subject = status.equalsIgnoreCase("approved")
                 ? "Tài khoản công ty của bạn đã được duyệt"
                 : "Tài khoản công ty của bạn đã bị từ chối";
@@ -108,6 +108,7 @@ public class CompanyController {
     @PostMapping("/companies")
     public String createCompany(Model model, @ModelAttribute(value = "companyDTO") CreateCompanyDTO companyDTO) {
         try {
+            System.out.println("controller" + companyDTO.getFiles().get(0).getName());
             Company company = this.cpnyService.createCompanyDTO(companyDTO);
             return "redirect:/companies/" + company.getId();
         } catch (IllegalArgumentException e) {

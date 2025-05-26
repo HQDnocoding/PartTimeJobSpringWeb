@@ -47,6 +47,8 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
     // Lấy danh sách đơn ứng tuyển với các tiêu chí lọc và phân trang
     @Override
     public Map<String, Object> getListApplication(Map<String, String> params, User user) {
+        boolean flag = false;
+
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder cb = s.getCriteriaBuilder();
 
@@ -96,6 +98,7 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
 
         // Áp dụng điều kiện
         if (!predicates.isEmpty()) {
+            flag = true;
             cq.where(cb.and(predicates.toArray(Predicate[]::new)));
         }
 
@@ -104,15 +107,16 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
 
         //sắp xếp
         switch (sortBy) {
-            case "candidateId.name" ->                 {
-                    Path<String> sortPath = applicationRoot.get("candidateId").get("name");
-                    cq.orderBy(sortOrder.equalsIgnoreCase("asc") ? cb.asc(sortPath) : cb.desc(sortPath));
-                }
-            case "jobId.jobName" ->                 {
-                    Path<String> sortPath = applicationRoot.get("jobId").get("jobName");
-                    cq.orderBy(sortOrder.equalsIgnoreCase("asc") ? cb.asc(sortPath) : cb.desc(sortPath));
-                }
-            default -> cq.orderBy(sortOrder.equalsIgnoreCase("asc")
+            case "candidateId.name" -> {
+                Path<String> sortPath = applicationRoot.get("candidateId").get("name");
+                cq.orderBy(sortOrder.equalsIgnoreCase("asc") ? cb.asc(sortPath) : cb.desc(sortPath));
+            }
+            case "jobId.jobName" -> {
+                Path<String> sortPath = applicationRoot.get("jobId").get("jobName");
+                cq.orderBy(sortOrder.equalsIgnoreCase("asc") ? cb.asc(sortPath) : cb.desc(sortPath));
+            }
+            default ->
+                cq.orderBy(sortOrder.equalsIgnoreCase("asc")
                         ? cb.asc(applicationRoot.get(sortBy))
                         : cb.desc(applicationRoot.get(sortBy)));
         }
@@ -127,18 +131,19 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
         } catch (NumberFormatException e) {
             System.out.println("Invalid page number, defaulting to 1");
         }
-        int start = (page - 1) * GeneralUtils.PAGE_SIZE;
+        int start = flag ? 0 : (page - 1) >= 1 ? (page - 1) * GeneralUtils.PAGE_SIZE : 0;
 
         query.setFirstResult(start);
         query.setMaxResults(GeneralUtils.PAGE_SIZE);
 
         // Lấy danh sách kết quả
         List<Application> results = query.getResultList();
-        System.out.println("Results: " + results);
 
         // Tính tổng số trang
         int totalPages = (int) Math.ceil((double) totalRecords / GeneralUtils.PAGE_SIZE);
-
+        if (totalPages < page || page <= 0) {
+            page = 1;
+        }
         // Tạo kết quả trả về
         Map<String, Object> result = new HashMap<>();
         result.put("applications", results);
@@ -168,7 +173,7 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
         s.remove(a);
     }
 
-     @Override
+    @Override
     public List<Application> findByJobIdAndStatus(Integer jobId, String status) {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
