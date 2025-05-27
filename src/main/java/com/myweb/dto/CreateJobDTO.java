@@ -55,8 +55,13 @@ public class CreateJobDTO {
     private Integer ageTo;
     private Integer experienceRequired;
 
+    @NotBlank(message = "Địa chỉ đầy đủ không được để trống")
     private String fullAddress;
+    
+    @NotBlank(message = "Thành phố không được để trống")
     private String city;
+    
+    @NotBlank(message = "Quận/Huyện không được để trống")
     private String district;
 
     // Custom validation annotation for salary range

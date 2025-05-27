@@ -45,7 +45,7 @@ public class CompanyController {
 
     @GetMapping("/companies")
     public String companyView(Model model, @RequestParam Map<String, String> params) {
-        Collection<String> headCols = new ArrayList<>(List.of("STT", "Tên công ty", "Địa chỉ", "Mã số thuế", "Ngày đăng ký", "Trạng thái"));
+        Collection<String> headCols = new ArrayList<>(List.of("STT", "Tên công ty", "Email", "Địa chỉ", "Mã số thuế", "Ngày đăng ký", "Trạng thái"));
 
         Map<String, Object> result = cpnyService.getListCompany(params);
 
@@ -116,7 +116,7 @@ public class CompanyController {
     @PostMapping("/companies/{companyId}/update")
     public String updateCompany(Model model, @PathVariable("companyId") int id, @ModelAttribute(value = "company") Company company) {
         try {
-            System.out.println(company.getStatus());
+            System.out.println(company.getDistrict());
             Company updatedCompany = this.cpnyService.addOrUpdate(company);
 
             // Gửi email nếu trạng thái thay đổi thành approved hoặc refused
