@@ -10,6 +10,7 @@ import com.myweb.services.CompanyService;
 import com.myweb.services.DayService;
 import com.myweb.services.JobService;
 import com.myweb.services.MajorService;
+import com.myweb.utils.StringUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -68,6 +69,8 @@ public class JobController {
         model.addAttribute("majors", majorService.getMajors());
         model.addAttribute("days", dayService.getDays());
         model.addAttribute("companies", companyService.getAllCompaniesForDropdown());
+        model.addAttribute("selectedCity", job != null ? job.getCity() : "");
+        model.addAttribute("selectedDistrict", job != null ? job.getDistrict() : "");
         return "job-detail";
     }
 
@@ -112,6 +115,9 @@ public class JobController {
             BindingResult result,
             @RequestParam(value = "majorId", required = false) Integer majorId,
             @RequestParam(value = "dayIds", required = false) List<Integer> dayIds,
+            @RequestParam(value = "city", required = true) String city,
+            @RequestParam(value = "district", required = true) String district,
+            @RequestParam(value = "fullAddress", required = true) String fullAddress,
             RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
@@ -133,10 +139,9 @@ public class JobController {
             return "redirect:/jobs/" + jobId;
         }
         existingJob.setCompanyId(company);
-        existingJob.setFullAddress(company.getFullAddress());
-        existingJob.setCity(company.getCity());
-        existingJob.setDistrict(company.getDistrict());
-
+        existingJob.setFullAddress(fullAddress); 
+        existingJob.setCity(StringUtils.normalizeLocation(city)); 
+        existingJob.setDistrict(StringUtils.normalizeLocation(district));
         existingJob.setSalaryMin(job.getSalaryMin());
         existingJob.setSalaryMax(job.getSalaryMax());
         existingJob.setDescription(job.getDescription());
