@@ -70,6 +70,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
     // Lấy danh sách ứng viên với các tiêu chí lọc và phân trang.
     @Override
     public Map<String, Object> getListCandidate(Map<String, String> params) {
+        boolean flag = false;
         // Lấy session hiện tại từ Hibernate
         Session s = this.factory.getObject().getCurrentSession();
         // Khởi tạo CriteriaBuilder để xây dựng truy vấn động
@@ -108,6 +109,7 @@ public class CandidateRepositoryImplement implements CandidateRepository {
             }
         }
         if (!predicates.isEmpty()) {
+            flag = true;
             cq.where(cb.and(predicates.toArray(Predicate[]::new)));
         }
 
@@ -117,12 +119,9 @@ public class CandidateRepositoryImplement implements CandidateRepository {
 
         // Xử lý phân trang
         int page = 1;
-        try {
-            page = Integer.parseInt(params.getOrDefault("page", "1"));
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid page number, defaulting to 1");
-        }
-        int start = (page - 1) * GeneralUtils.PAGE_SIZE;
+        page = Integer.parseInt(params.getOrDefault("page", "1"));
+
+        int start = flag ? 0 : (page - 1) >= 1 ? (page - 1) * GeneralUtils.PAGE_SIZE : 0;
 
         // Thiết lập phân trang cho truy vấn
         query.setFirstResult(start);
@@ -130,9 +129,11 @@ public class CandidateRepositoryImplement implements CandidateRepository {
 
         // Lấy danh sách ứng viên
         List<Candidate> results = query.getResultList();
-        System.out.println("Results: " + results);
 
         int totalPages = (int) Math.ceil((double) totalRecords / GeneralUtils.PAGE_SIZE);
+        if (totalPages < page || page <= 0) {
+            page = 1;
+        }
 
         Map<String, Object> result = new HashMap<>();
         result.put("candidates", results);

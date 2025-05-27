@@ -52,16 +52,18 @@ public class ApplicationController {
 
         model.addAttribute("applications", result.get("applications"));
         model.addAttribute("currentPage", result.get("currentPage"));
+        System.out.println("crrent" + result.get("currentPage"));
         model.addAttribute("pageSize", result.get("pageSize"));
         model.addAttribute("totalPages", result.get("totalPages"));
         model.addAttribute("totalItems", result.get("totalItems"));
         model.addAttribute("headCols", headCols);
 
         // Thêm các tham số bộ lọc vào model để giữ trạng thái
-        model.addAttribute("status", params.get("status"));
-        model.addAttribute("candidateName", params.get("candidateName"));
-        model.addAttribute("jobName", params.get("jobName"));
-        
+//        model.addAttribute("status", params.get("status"));
+//        model.addAttribute("candidateName", params.get("candidateName"));
+//        model.addAttribute("jobName", params.get("jobName"));
+        model.addAttribute("page", result.get("currentPage"));
+
         return "application";
     }
 
@@ -116,7 +118,7 @@ public class ApplicationController {
             return "forward:/applications/create-application";
         }
     }
-    
+
     @PostMapping("/applications/{appliId}/update")
     public String updateCompany(Model model, @PathVariable("appliId") int id, @ModelAttribute(value = "appli") Application app) {
         try {

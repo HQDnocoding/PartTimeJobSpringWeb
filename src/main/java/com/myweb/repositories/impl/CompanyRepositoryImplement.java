@@ -77,6 +77,8 @@ public class CompanyRepositoryImplement implements CompanyRepository {
     // Lấy danh sách công ty với lọc/phân trang
     @Override
     public Map<String, Object> getListCompany(Map<String, String> params) {
+        boolean flag = false;
+
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder cb = s.getCriteriaBuilder();
 
@@ -115,6 +117,7 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         }
 
         if (!predicates.isEmpty()) {
+            flag = true;
             cq.where(cb.and(predicates.toArray(Predicate[]::new)));
         }
 
@@ -127,15 +130,16 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         } catch (NumberFormatException e) {
             System.out.println("Invalid page number, defaulting to 1");
         }
-        int start = (page - 1) * GeneralUtils.PAGE_SIZE;
-
+        int start = flag ? 0 : (page - 1) >= 1 ? (page - 1) * GeneralUtils.PAGE_SIZE : 0;
         query.setFirstResult(start);
         query.setMaxResults(GeneralUtils.PAGE_SIZE);
 
         List<Company> results = query.getResultList();
-        System.out.println("Results: " + results);
 
         int totalPages = (int) Math.ceil((double) totalRecords / GeneralUtils.PAGE_SIZE);
+        if (totalPages < page || page <= 0) {
+            page = 1;
+        }
 
         Map<String, Object> result = new HashMap<>();
         result.put("companies", results);
