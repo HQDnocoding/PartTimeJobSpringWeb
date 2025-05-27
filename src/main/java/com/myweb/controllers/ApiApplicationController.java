@@ -7,11 +7,13 @@ package com.myweb.controllers;
 import com.myweb.dto.CreateApplicationDTO;
 import com.myweb.pojo.Application;
 import com.myweb.services.ApplicationService;
+import com.myweb.services.EmailService;
 import com.myweb.services.UserService;
 import com.myweb.utils.GeneralUtils;
 import java.security.Principal;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +43,8 @@ public class ApiApplicationController {
     @Autowired
     private ApplicationService applicationService;
 
+    @Autowired
+    private EmailService emailService;
 
     @DeleteMapping("/admin/applications/{applicationId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -55,8 +59,10 @@ public class ApiApplicationController {
             Object result = this.applicationService.addApplicationDto(dto);
             return new ResponseEntity<>(Map.of("message", "Đăng ký thành công", "data", result), HttpStatus.CREATED);
         } catch (IllegalArgumentException | NullPointerException e) {
+            e.printStackTrace();
             return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(Map.of("message", "Tạo thất thất bại: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -72,11 +78,24 @@ public class ApiApplicationController {
         }
     }
 
-
     @PatchMapping(path = "/secure/applications/update-status", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateStatusApplication(@RequestBody Application application, Principal p) {
         System.out.println("Fff" + p.getName());
         Application a = this.applicationService.updateStatus(application, p.getName());
+        System.out.println("jobname "+ a.getCandidateId().getUserId().getUsername()+"congy "+a.getJobId().getCompanyId().getName());
+        if (a != null) {
+            try {
+                String subject = "Chào mừng bạn đến với hệ thống tìm kiếm việc làm bán thời gian!";
+                String body = String.format(
+                        "Chào bạn"
+                        + "Hồ sơ ứng tuyển cho công việc %s tại công ty %s đã được cập nhật. Hãy truy cập hồ sơ để xem.\n",
+                        a.getJobId().getJobName(), a.getJobId().getCompanyId().getName()
+                );
+                emailService.sendEmail(a.getCandidateId().getUserId().getUsername(), subject, body);
+            } catch (DataIntegrityViolationException e) {
+                throw new IllegalArgumentException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin.");
+            }
+        }
         System.out.println(a.getId());
         try {
             if (a != null) {

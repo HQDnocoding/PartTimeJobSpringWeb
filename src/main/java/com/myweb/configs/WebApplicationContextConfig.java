@@ -75,7 +75,7 @@ public class WebApplicationContextConfig implements WebMvcConfigurer {
 
         ObjectMapper mapper = new ObjectMapper();
         SimpleFilterProvider filters = new SimpleFilterProvider().addFilter("CompanyFilter", SimpleBeanPropertyFilter.serializeAll())
-                .addFilter("UserFilter", SimpleBeanPropertyFilter.serializeAllExcept("password", "isActive", "username", "registerDate", "id"));
+                .addFilter("UserFilter", SimpleBeanPropertyFilter.serializeAllExcept("password", "isActive", "registerDate", "id"));
         mapper.setFilterProvider(filters);
         jsonConverter.setObjectMapper(mapper);
 

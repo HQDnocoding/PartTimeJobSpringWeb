@@ -24,8 +24,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.myweb.utils.ValidationUtils.isValidPassword;
-import static com.myweb.utils.ValidationUtils.isValidUsername;
 import java.security.SecureRandom;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -82,16 +82,16 @@ public class CandidateServiceImplement implements CandidateService {
     public Candidate createCandidateDTO(CreateCandidateDTO c) {
         // Kiểm tra các trường bắt buộc không được null hoặc rỗng
         if (c.getUsername() == null || c.getUsername().trim().isEmpty()) {
-            throw new IllegalArgumentException("Vui lòng nhập tên đăng nhập.");
+            throw new IllegalArgumentException("Vui lòng nhập email.");
         }
         if (userRepository.getUserByUsername(c.getUsername()) != null) {
-            throw new IllegalArgumentException("Tên đăng nhập đã được sử dụng.");
+            throw new IllegalArgumentException("Email đã được sử dụng.");
+        }
+        if(!Pattern.matches("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", c.getUsername())){
+            throw new IllegalArgumentException("Sai định dạng email");
         }
         if (!isValidPassword(c.getPassword())) {
             throw new IllegalArgumentException("Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ thường, chữ hoa và số.");
-        }
-        if (!isValidUsername(c.getUsername())) {
-            throw new IllegalArgumentException("Tên đăng nhập phải trên 8 ký tự, bắt đầu bằng chữ cái và không chứa khoảng trắng.");
         }
 
         if (c.getPassword() == null || c.getPassword().trim().isEmpty()) {
@@ -102,26 +102,8 @@ public class CandidateServiceImplement implements CandidateService {
             throw new IllegalArgumentException("Vui lòng nhập họ và tên.");
         }
 
-        if (c.getEmail() == null || c.getEmail().trim().isEmpty()) {
-            throw new IllegalArgumentException("Vui lòng nhập email.");
-        }
-        if (candidateRepository.getCandidateByEmail(c.getEmail()) != null) {
-            throw new IllegalArgumentException("Email đã được sử dụng.");
-        }
-
-        if (c.getPhone() == null || c.getPhone().trim().isEmpty()) {
-            throw new IllegalArgumentException("Vui lòng nhập số điện thoại.");
-        }
-        if (candidateRepository.getCandidateByPhone(c.getPhone()) != null) {
+        if (c.getPhone() != null && candidateRepository.getCandidateByPhone(c.getPhone()) != null) {
             throw new IllegalArgumentException("Số điện thoại này đã được sử dụng.");
-        }
-
-        if (c.getCity() == null || c.getCity().trim().isEmpty()) {
-            throw new IllegalArgumentException("Vui lòng chọn thành phố.");
-        }
-
-        if (c.getDateOfBirth() == null) {
-            throw new IllegalArgumentException("Vui lòng chọn ngày sinh.");
         }
 
         if (c.getAvatarFile() == null || c.getAvatarFile().isEmpty()) {
@@ -141,7 +123,6 @@ public class CandidateServiceImplement implements CandidateService {
         can.setCity(c.getCity());
         can.setFullName(c.getFullName());
         can.setAvatar(GeneralUtils.uploadFileToCloud(cloudinary, c.getAvatarFile()));
-        can.setEmail(c.getEmail());
         can.setDateOfBirth(c.getDateOfBirth());
         can.setPhone(c.getPhone());
         can.setSelfDescription(c.getSelfDescription());
@@ -154,7 +135,7 @@ public class CandidateServiceImplement implements CandidateService {
 
         try {
 
-            Candidate createdCandidate =  (Candidate)this.candidateRepository.createCandidate(u, can,false);
+            Candidate createdCandidate = (Candidate) this.candidateRepository.createCandidate(u, can, false);
 
             // Gửi email thông báo
             String subject = "Chào mừng bạn đến với hệ thống tìm kiếm việc làm bán thời gian!";
@@ -162,14 +143,13 @@ public class CandidateServiceImplement implements CandidateService {
                     "Chào %s,\n\n"
                     + "Tài khoản ứng viên của bạn đã được tạo thành công.\n"
                     + "Thông tin tài khoản:\n"
-                    + "- Tên đăng nhập: %s\n"
                     + "- Email: %s\n"
                     + "- Họ và tên: %s\n\n"
                     + "Bạn có thể bắt đầu tìm kiếm việc làm ngay bây giờ!\n"
                     + "Trân trọng,\nHệ thống tìm kiếm việc làm bán thời gian",
-                    can.getFullName(), c.getUsername(), c.getEmail(), can.getFullName()
+                    can.getFullName(), c.getUsername(), can.getFullName()
             );
-            emailService.sendEmail(c.getEmail(), subject, body);
+            emailService.sendEmail(c.getUsername(), subject, body);
 
             return createdCandidate;
         } catch (DataIntegrityViolationException e) {
@@ -195,7 +175,7 @@ public class CandidateServiceImplement implements CandidateService {
 
     @Override
     public Candidate getCandidateByUserId(int userId) {
-        
+
         return this.candidateRepository.getCandidateByUserId(userId);
     }
 
@@ -214,7 +194,6 @@ public class CandidateServiceImplement implements CandidateService {
 
         // Tạo Candidate
         Candidate candidate = new Candidate();
-        candidate.setEmail(email);
         candidate.setFullName(name != null ? name : email.split("@")[0]);
         candidate.setUserId(user);
         candidate.setAvatar(avatar);

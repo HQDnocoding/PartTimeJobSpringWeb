@@ -9,6 +9,7 @@ import com.myweb.pojo.Candidate;
 import com.myweb.pojo.Job;
 import com.myweb.services.ApplicationService;
 import com.myweb.services.CandidateService;
+import com.myweb.services.EmailService;
 import com.myweb.services.JobService;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +42,9 @@ public class ApplicationController {
 
     @Autowired
     private JobService jobService;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/applications")
     public String applicationView(Model model, @RequestParam Map<String, String> params, Principal principal) {
@@ -123,6 +128,20 @@ public class ApplicationController {
     public String updateCompany(Model model, @PathVariable("appliId") int id, @ModelAttribute(value = "appli") Application app) {
         try {
             Application updatedApp = this.applicationService.addOrUpdateApplication(app);
+            System.out.println("jobname " + updatedApp.getCandidateId().getUserId().getUsername() + "congy " + updatedApp.getJobId().getCompanyId().getName());
+            if (updatedApp != null) {
+                try {
+                    String subject = "Chào mừng bạn đến với hệ thống tìm kiếm việc làm bán thời gian!";
+                    String body = String.format(
+                            "Chào bạn"
+                            + "Hồ sơ ứng tuyển cho công việc %s tại công ty %s đã được cập nhật. Hãy truy cập hồ sơ để xem.\n",
+                            updatedApp.getJobId().getJobName(), updatedApp.getJobId().getCompanyId().getName()
+                    );
+                    emailService.sendEmail(updatedApp.getCandidateId().getUserId().getUsername(), subject, body);
+                } catch (DataIntegrityViolationException e) {
+                    throw new IllegalArgumentException("Dữ liệu không hợp lệ, vui lòng kiểm tra lại thông tin.");
+                }
+            }
             return "redirect:/applications/" + id;
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());

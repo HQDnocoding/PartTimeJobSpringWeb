@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class CreateCandidateDTO {
 
     private String fullName;
-    private String email;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateOfBirth;
     private String city;
@@ -25,6 +24,8 @@ public class CreateCandidateDTO {
     private MultipartFile curriculumVitaeFile;
     private String username;
     private String password;
+    private String confirmPassword;
+    private String otp;
 
     /**
      * @return the fullName
@@ -38,20 +39,6 @@ public class CreateCandidateDTO {
      */
     public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    /**
-     * @return the email
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email the email to set
-     */
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     /**
@@ -164,6 +151,34 @@ public class CreateCandidateDTO {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * @return the otp
+     */
+    public String getOtp() {
+        return otp;
+    }
+
+    /**
+     * @param otp the otp to set
+     */
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
+    /**
+     * @return the confirmPassword
+     */
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    /**
+     * @param confirmPassword the confirmPassword to set
+     */
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 
 

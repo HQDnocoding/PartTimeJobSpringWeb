@@ -1,29 +1,61 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <title>Chi tiết công ty</title>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <head>
+        <title>Chi tiết công ty</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <th:block th:replace="base :: bootstrap"></th:block>
     <script th:inline="javascript">
         var object = /*[[${company}]]*/ {};
     </script>
     <script th:src="@{/js/cityDistrictLoad.js}"></script>
     <style>
-        .company-avatar { max-width: 200px; border-radius: 10px; object-fit: cover; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .form-label { font-weight: 500; }
-        .carousel img { max-height: 400px; object-fit: cover; }
-        .image-preview { position: relative; display: inline-block; margin: 10px; }
-        .image-preview img { max-width: 150px; border-radius: 5px; }
-        .image-preview .remove-btn { position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; }
-        .url-input-container { display: flex; gap: 10px; margin-bottom: 10px; }
+        .company-avatar {
+            max-width: 200px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .carousel img {
+            max-height: 400px;
+            object-fit: cover;
+        }
+        .image-preview {
+            position: relative;
+            display: inline-block;
+            margin: 10px;
+        }
+        .image-preview img {
+            max-width: 150px;
+            border-radius: 5px;
+        }
+        .image-preview .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+        }
+        .url-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <div th:replace="base :: header"></div>
 
     <main class="container my-5">
-        <form th:action="@{'/companies/' + ${company.id} + '/update'}" method="post" enctype="multipart/form-data" th:object="${company}">
+        <form id="updateCompany" th:action="@{'/companies/' + ${company.id} + '/update'}" method="post" enctype="multipart/form-data" th:object="${company}">
             <div class="card shadow-lg border-0">
                 <div id="errorAlert" th:if="${errorMessage}" class="alert alert-danger" role="alert">
                     <span th:text="${errorMessage}"></span>
@@ -59,7 +91,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" id="email" name="email" class="form-control" th:field="*{email}" required/>
+                                <input type="email" id="email" disabled class="form-control" th:field="*{userId.username}" required/>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-6">
@@ -94,7 +126,7 @@
                     <h4>Mô tả công ty</h4>
                     <div class="mb-3">
                         <label for="selfDescription" class="form-label">Mô tả</label>
-                        <textarea id="selfDescription" name="selfDescription" class="form-control" rows="5" th:field="*{selfDescription}" required></textarea>
+                        <textarea id="selfDescription" name="selfDescription" class="form-control" rows="5" th:field="*{selfDescription}" ></textarea>
                     </div>
 
                     <!-- Hình ảnh nơi làm việc -->
@@ -163,9 +195,9 @@
 
                 <!-- Footer nút thao tác -->
                 <div class="card-footer d-flex justify-content-end gap-2">
-                    <button type="submit" class="btn btn-primary">Lưu</button>
-                    <a th:href="@{'/company/delete/' + ${company.id}}" class="btn btn-danger"
-                       onclick="return confirm('Bạn có chắc muốn xóa công ty này?')">Xóa</a>
+                    <button id="submitButton" type="submit" class="btn btn-primary">Lưu</button>
+                    <a   th:onclick="'deleteObject(event, \'' + @{/api/admin/companies} + '\', ' + *{id} + ')'" class="btn btn-danger"
+                       >Xóa</a>
                     <a th:href="@{/companies}" class="btn btn-secondary">Quay lại danh sách</a>
                 </div>
             </div>
@@ -176,7 +208,6 @@
     </main>
 
     <div th:replace="base :: footer"></div>
-
     <script>
         function removeImage(index) {
             const container = document.querySelector(`#imagePreviewContainer .image-preview:nth-child(${index + 1})`);
@@ -213,6 +244,11 @@
                 return false;
             }
         }
+
+        document.getElementById('updateCompany').addEventListener('submit', function (e) {
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
+        });
     </script>
 </body>
 </html>

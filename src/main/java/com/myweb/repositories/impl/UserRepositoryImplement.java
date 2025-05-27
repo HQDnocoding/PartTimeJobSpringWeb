@@ -70,7 +70,7 @@ public class UserRepositoryImplement implements UserRepository {
     @Override
     public User authenticate(String username, String password) {
         User u = this.getUserByUsername(username);
-
+        
         if (this.passwordEncoder.matches(password, u.getPassword())) {
             return u;
         }

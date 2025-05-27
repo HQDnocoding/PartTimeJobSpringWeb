@@ -17,7 +17,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
  * @author Admin
  */
 public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherServletInitializer {
-    
+
     // Xác định các lớp cấu hình cho ứng dụng
     @Override
     protected Class<?>[] getRootConfigClasses() {
@@ -25,7 +25,9 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
             ThymeleafConfig.class,
             HibernateConfigs.class,
             SpringSecurityConfigs.class,
-            EnvConfig.class};
+            EnvConfig.class,
+            CacheConfig.class};
+
     }
 
     @Override
@@ -34,7 +36,7 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
             WebApplicationContextConfig.class
         };
     }
-    
+
     // Xử lý các yêu cầu tới các URL ("/")
     @Override
     protected String[] getServletMappings() {
@@ -56,6 +58,6 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
 
     @Override
     protected Filter[] getServletFilters() {
-        return new Filter[] { new JwtFilters() }; // Filter sẽ áp dụng cho mọi request
+        return new Filter[]{new JwtFilters()}; // Filter sẽ áp dụng cho mọi request
     }
 }

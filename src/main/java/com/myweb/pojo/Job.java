@@ -122,7 +122,7 @@ public class Job implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
     @JsonIgnore
     private Collection<MajorJob> majorJobCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId",fetch = FetchType.EAGER)
     @JsonIgnore
     private Collection<CandidateReview> candidateReviewCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId", fetch = FetchType.EAGER)

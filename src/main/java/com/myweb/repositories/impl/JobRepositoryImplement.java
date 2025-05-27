@@ -178,13 +178,13 @@ public class JobRepositoryImplement implements JobRepository {
                 cb.equal(jobRoot.get("id"), jobId),
                 cb.equal(jobRoot.get("isActive"), true),
                 cb.equal(jobRoot.get("status"), GeneralUtils.Status.approved.toString()),
-                cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.pending.toString())
+                cb.equal(jobRoot.get("companyId").get("status"), GeneralUtils.Status.approved.toString())
         );
 
         Job job = session.createQuery(cq).uniqueResult();
 
-        Hibernate.initialize(job.getMajorJobCollection());
-        Hibernate.initialize(job.getDayJobCollection());
+//        Hibernate.initialize(job.getMajorJobCollection());
+//        Hibernate.initialize(job.getDayJobCollection());
 
         return job;
     }
