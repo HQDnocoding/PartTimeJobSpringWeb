@@ -114,7 +114,6 @@
                                 <td><input type="checkbox" class="company-checkbox" th:value="${c.id}"></td>
                                 <td th:text="${stat.count + (currentPage-1)*pageSize }"></td>
                                 <td><a th:href="@{/companies/{id}(id=${c.id})}" th:text="${c.name}"></a></td>
-                                <td th:text="${c.email}"></td>
                                 <td th:text="${c.fullAddress}"></td>
                                 <td th:text="${c.taxCode}"></td>
                                 <td th:text="${c.userId.registerDate}"></td>

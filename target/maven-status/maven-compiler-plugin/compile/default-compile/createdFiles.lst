@@ -2,6 +2,7 @@ com\myweb\controllers\ApiJobController.class
 com\myweb\configs\DispatcherServletInit.class
 com\myweb\repositories\impl\ApplicationRepositoryImplement.class
 com\myweb\event\JobCreatedEvent.class
+com\myweb\services\impl\OTPServiceImplement.class
 com\myweb\utils\JwtUtils.class
 com\myweb\dto\GetCompanyReviewDTO.class
 com\myweb\services\impl\CompanyReviewServiceImplement.class
@@ -11,10 +12,11 @@ com\myweb\configs\EnvConfig.class
 com\myweb\repositories\impl\UserRepositoryImplement.class
 com\myweb\services\JobService.class
 com\myweb\dto\CreateJobDTO$LatitudeRangeValidator.class
-OAuth2Controller.class
 com\myweb\services\DayService.class
 com\myweb\event\JobEventListener.class
 com\myweb\controllers\ApiCandidateReviewController.class
+com\myweb\controllers\ApiOtpController.class
+com\myweb\dto\GetCompanyDTO.class
 com\myweb\configs\HibernateConfigs.class
 com\myweb\dto\CreateJobDTO$SalaryRangeValidator.class
 com\myweb\dto\GetReportDTO.class
@@ -28,6 +30,7 @@ com\myweb\repositories\impl\MajorRepositoryImplement.class
 com\myweb\configs\ThymeleafConfig.class
 com\myweb\controllers\ApiCompanyReviewController.class
 com\myweb\services\ReportService.class
+com\myweb\services\OTPService.class
 com\myweb\dto\CreateJobDTO$LatitudeRange.class
 com\myweb\repositories\UserRepository.class
 com\myweb\dto\CreateJobDTO$LongitudeRangeValidator.class
@@ -62,6 +65,7 @@ com\myweb\controllers\ApiCompanyController.class
 com\myweb\dto\CreateCompanyReviewDTO.class
 com\myweb\repositories\ReportRepository.class
 com\myweb\utils\GeneralUtils$Role.class
+com\myweb\configs\CacheConfig.class
 com\myweb\controllers\ApiFollowController.class
 com\myweb\repositories\impl\JobRepositoryImplement.class
 com\myweb\controllers\ApiDayController.class
@@ -113,7 +117,6 @@ com\myweb\pojo\CandidateReview.class
 com\myweb\services\impl\ReportServiceImplement.class
 com\myweb\repositories\JobRepository.class
 com\myweb\formatters\JobFormatter.class
-test.class
 com\myweb\filters\JwtFilters.class
 com\myweb\services\impl\UserServiceImplement.class
 com\myweb\pojo\Application.class
