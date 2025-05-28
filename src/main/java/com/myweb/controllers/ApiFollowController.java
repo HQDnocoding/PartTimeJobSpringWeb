@@ -53,9 +53,9 @@ public class ApiFollowController {
             String companyName = follow.getCompanyId().getName();
             String subject = "Bạn đã theo dõi " + companyName;
             String body = String.format(
-                "Chào %s,\n\nBạn đã theo dõi công ty %s thành công.\nBạn sẽ nhận được thông báo khi công ty đăng công việc mới.\n\n" +
-                "Trân trọng,\nHệ thống tìm kiếm việc làm bán thời gian",
-                follow.getCandidateId().getFullName(), companyName
+                    "Chào %s,\n\nBạn đã theo dõi công ty %s thành công.\nBạn sẽ nhận được thông báo khi công ty đăng công việc mới.\n\n"
+                    + "Trân trọng,\nHệ thống tìm kiếm việc làm bán thời gian",
+                    follow.getCandidateId().getFullName(), companyName
             );
             emailService.sendEmail(candidateEmail, subject, body);
 
@@ -71,7 +71,17 @@ public class ApiFollowController {
     public ResponseEntity<Map<String, Object>> unfollowCompany(@PathVariable("companyId") int companyId, Principal principal) {
         try {
             int candidateId = getCandidateIdFromPrincipal(principal);
+            Candidate candidate = candidateRepository.getCandidateById(candidateId);
+            Company company = companyRepository.getCompanyById(companyId);
             followService.unfollowCompany(candidateId, companyId);
+            String candidateEmail = candidate.getUserId().getUsername();
+            String companyName = company.getName();
+            String subject = "Bạn đã hủy theo dõi " + companyName;
+            String body = String.format(
+                    "Chào %s,\n\nBạn đã hủy theo dõi công ty %s thành công.\nBạn sẽ không nhận được thông báo khi công ty đăng công việc mới nữa.\n\nTrân trọng,\nHệ thống tìm kiếm việc làm bán thời gian",
+                    candidate.getFullName(), companyName
+            );
+            emailService.sendEmail(candidateEmail, subject, body);
             return new ResponseEntity<>(Map.of("message", "Bỏ theo dõi công ty thành công"), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);

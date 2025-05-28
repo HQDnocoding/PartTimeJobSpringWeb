@@ -6,6 +6,7 @@ package com.myweb.pojo;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -118,11 +119,11 @@ public class Job implements Serializable {
 
     @Column(name = "latitude")
     private Double latitude;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
-    @JsonIgnore
+    @JsonManagedReference
     private Collection<MajorJob> majorJobCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId",fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId", fetch = FetchType.EAGER)
     @JsonIgnore
     private Collection<CandidateReview> candidateReviewCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId", fetch = FetchType.EAGER)
