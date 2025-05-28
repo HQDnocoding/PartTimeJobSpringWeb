@@ -1,5 +1,6 @@
 package com.myweb.pojo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,6 +35,7 @@ public class MajorJob implements Serializable {
 
     @JoinColumn(name = "job_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonBackReference
     private Job jobId;
 
     @JoinColumn(name = "major_id", referencedColumnName = "id")
