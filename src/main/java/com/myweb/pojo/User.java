@@ -4,7 +4,7 @@
  */
 package com.myweb.pojo;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -18,7 +18,9 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -27,9 +29,9 @@ import java.util.Date;
  *
  * @author dat
  */
-@JsonFilter("UserFilter")
 @Entity
 @Table(name = "user")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
@@ -52,12 +54,14 @@ public class User implements Serializable {
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "username")
+    @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message = "Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     private String username;
 
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "password")
+    @JsonIgnore
     private String password;
 
     @Basic(optional = false)
@@ -78,10 +82,16 @@ public class User implements Serializable {
     private boolean isActive;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "userId")
+//    @JsonBackReference
     private Candidate candidate;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "userId")
+//    @JsonBackReference
     private Company company;
+
+    
+    @Transient
+    private String clientPassword;
 
     public User() {
     }
@@ -186,6 +196,20 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.myweb.pojo.User[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the clientPassword
+     */
+    public String getClientPassword() {
+        return clientPassword;
+    }
+
+    /**
+     * @param clientPassword the clientPassword to set
+     */
+    public void setClientPassword(String clientPassword) {
+        this.clientPassword = clientPassword;
     }
 
 }

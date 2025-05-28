@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
@@ -36,28 +37,28 @@ public class JobEventListener {
         Job job = event.getJob();
         List<Follow> followers = followService.getFollowers(job.getCompanyId().getId());
 
-        logger.info("Processing JobCreatedEvent for job ID: " + job.getId() + ", company ID: " + job.getCompanyId().getId());
+        logger.log(Level.INFO, "Processing JobCreatedEvent for job ID: {0}, company ID: {1}", new Object[]{job.getId(), job.getCompanyId().getId()});
 
         for (Follow follow : followers) {
             if (follow.getIsActive() && follow.getIsCandidateFollowed()) {
                 try {
                     MimeMessage message = mailSender.createMimeMessage();
                     MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-                    helper.setTo(follow.getCandidateId().getEmail());
+                    helper.setTo(follow.getCandidateId().getUserId().getUsername());
                     helper.setSubject("Tin tuyển dụng mới từ " + job.getCompanyId().getName());
                     helper.setText(
-                            "<h3>Tin tuyển dụng mới!</h3>" +
-                            "<p>Công ty <strong>" + job.getCompanyId().getName() + "</strong> vừa đăng tuyển vị trí: <strong>" + job.getJobName() + "</strong>.</p>" +
-                            "<p><a href='" + jobDetailUrl + job.getId() + "'>Xem chi tiết</a></p>",
+                            "<h3>Tin tuyển dụng mới!</h3>"
+                            + "<p>Công ty <strong>" + job.getCompanyId().getName() + "</strong> vừa đăng tuyển vị trí: <strong>" + job.getJobName() + "</strong>.</p>"
+                            + "<p><a href='" + jobDetailUrl + job.getId() + "'>Xem chi tiết</a></p>",
                             true
                     );
                     mailSender.send(message);
-                    logger.info("Email sent to: " + follow.getCandidateId().getEmail());
+                    logger.log(Level.INFO, "Email sent to: {0}", follow.getCandidateId().getUserId().getUsername());
                 } catch (MessagingException e) {
-                    logger.severe("Failed to send email to: " + follow.getCandidateId().getEmail() + ", error: " + e.getMessage());
+                    logger.log(Level.SEVERE, "Failed to send email to: {0}, error: {1}", new Object[]{follow.getCandidateId().getUserId().getUsername(), e.getMessage()});
                 }
             } else {
-                logger.info("Skipping email for candidate ID: " + follow.getCandidateId().getId() + " (isActive=" + follow.getIsActive() + ", isCandidateFollowed=" + follow.getIsCandidateFollowed() + ")");
+                logger.log(Level.INFO, "Skipping email for candidate ID: {0} (isActive={1}, isCandidateFollowed={2})", new Object[]{follow.getCandidateId().getId(), follow.getIsActive(), follow.getIsCandidateFollowed()});
             }
         }
     }

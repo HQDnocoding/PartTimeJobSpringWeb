@@ -9,6 +9,7 @@ import com.myweb.dto.CreateCompanyDTO;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.Job;
 import com.myweb.services.CompanyService;
+import com.myweb.services.OTPService;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,8 +36,9 @@ public class ApiCompanyController {
 
     @Autowired
     private CompanyService cpnyService;
-    
-    
+    @Autowired
+    private OTPService otpService;
+
     @DeleteMapping("/admin/companies/{companyId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompany(@PathVariable(value = "companyId") int companyId) {
@@ -50,8 +52,14 @@ public class ApiCompanyController {
     @PostMapping(path = "/register-company", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createCompany(CreateCompanyDTO dto) {
         try {
-            Object result = this.cpnyService.createCompanyDTO(dto);
-            return new ResponseEntity<>(Map.of("message", "Đăng ký thành công", "data", result), HttpStatus.CREATED);
+            boolean isValid = this.otpService.verifyOtp(dto.getUsername(), dto.getOtp());
+            if (isValid) {
+                Object result = this.cpnyService.createCompanyDTO(dto);
+                this.otpService.removeOTP(dto.getUsername());
+                return new ResponseEntity<>(Map.of("message", "Đăng ký thành công", "data", result), HttpStatus.CREATED);
+            } else {
+                return ResponseEntity.badRequest().body("Invalid or expired OTP");
+            }
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {

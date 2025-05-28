@@ -4,9 +4,7 @@
  */
 package com.myweb.pojo;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -34,11 +32,11 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Entity
 @Table(name = "company")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NamedQueries({
     @NamedQuery(name = "Company.findAll", query = "SELECT c FROM Company c"),
     @NamedQuery(name = "Company.findById", query = "SELECT c FROM Company c WHERE c.id = :id"),
     @NamedQuery(name = "Company.findByName", query = "SELECT c FROM Company c WHERE c.name = :name"),
-    @NamedQuery(name = "Company.findByEmail", query = "SELECT c FROM Company c WHERE c.email = :email"),
     @NamedQuery(name = "Company.findByAvatar", query = "SELECT c FROM Company c WHERE c.avatar = :avatar"),
     @NamedQuery(name = "Company.findBySelfDescription", query = "SELECT c FROM Company c WHERE c.selfDescription = :selfDescription"),
     @NamedQuery(name = "Company.findByTaxCode", query = "SELECT c FROM Company c WHERE c.taxCode = :taxCode"),
@@ -61,13 +59,7 @@ public class Company implements Serializable {
     @Column(name = "name")
     private String name;
 
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
-    @Column(name = "email", unique = true)
-    private String email;
-
+  
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
@@ -122,7 +114,7 @@ public class Company implements Serializable {
 
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     @OneToOne(optional = false)
-    @JsonBackReference
+//    @JsonManagedReference
     private User userId;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyId")
@@ -139,10 +131,9 @@ public class Company implements Serializable {
         this.id = id;
     }
 
-    public Company(Integer id, String name, String email, String avatar, String taxCode, String fullAddress, String city, String district, String status) {
+    public Company(Integer id, String name,String avatar, String taxCode, String fullAddress, String city, String district, String status) {
         this.id = id;
         this.name = name;
-        this.email = email;
         this.avatar = avatar;
         this.taxCode = taxCode;
         this.fullAddress = fullAddress;
@@ -167,13 +158,6 @@ public class Company implements Serializable {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getAvatar() {
         return avatar;

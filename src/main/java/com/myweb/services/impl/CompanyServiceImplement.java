@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.myweb.utils.ValidationUtils.isValidPassword;
-import static com.myweb.utils.ValidationUtils.isValidUsername;
 import java.util.HashMap;
 
 /**
@@ -67,12 +67,15 @@ public class CompanyServiceImplement implements CompanyService {
     }
 
     @Override
-    public Company addOrUpdate(Company c) {
-        System.out.println(String.format("id %s distr %s", c.getId(), c.getDistrict()));
+    public Company addOrUpdate(Company c) {      
+        System.out.println(c.getStatus());
+
         if (!c.getAvatarFile().isEmpty()) {
             c.setAvatar(GeneralUtils.uploadFileToCloud(cloudinary, c.getAvatarFile()));
         }
-        return this.companyRepository.addOrUpdateCompany(c);
+        this.companyRepository.addOrUpdateCompany(c);
+        Company newCompany = this.getCompany(c.getId());
+        return newCompany;
     }
 
     @Override
@@ -84,57 +87,41 @@ public class CompanyServiceImplement implements CompanyService {
     public Company createCompanyDTO(CreateCompanyDTO c) {
         // Kiểm tra các trường bắt buộc
         if (c.getUsername() == null || c.getUsername().trim().isEmpty()) {
-            throw new IllegalArgumentException("Vui lòng nhập tên đăng nhập.");
+            throw new IllegalArgumentException("Vui lòng email.");
         }
         if (userRepository.getUserByUsername(c.getUsername()) != null) {
-            throw new IllegalArgumentException("Tên đăng nhập đã được sử dụng.");
+            throw new IllegalArgumentException("Email đã được sử dụng.");
+        }
+        if( !Pattern.matches("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", c.getUsername())){
+            throw new IllegalArgumentException("Sai định dạng email");
         }
         if (!isValidPassword(c.getPassword())) {
             throw new IllegalArgumentException("Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ thường, chữ hoa và số.");
         }
-
-        if (!isValidUsername(c.getUsername())) {
-            throw new IllegalArgumentException("Tên đăng nhập phải trên 8 ký tự, bắt đầu bằng chữ cái và không chứa khoảng trắng.");
-        }
-
         if (c.getPassword() == null || c.getPassword().trim().isEmpty()) {
             throw new IllegalArgumentException("Vui lòng nhập mật khẩu.");
         }
-
         if (c.getName() == null || c.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("Vui lòng nhập tên công ty.");
         }
-
-        if (c.getEmail() == null || c.getEmail().trim().isEmpty()) {
-            throw new IllegalArgumentException("Vui lòng nhập email.");
-        }
-        if (companyRepository.getCompanyByEmail(c.getEmail()) != null) {
-            throw new IllegalArgumentException("Email đã được sử dụng.");
-        }
-
         if (c.getTaxCode() == null || c.getTaxCode().trim().isEmpty()) {
             throw new IllegalArgumentException("Vui lòng nhập mã số thuế.");
         }
         if (companyRepository.getCompanyByTaxCode(c.getTaxCode()) != null) {
             throw new IllegalArgumentException("Mã số thuế đã được sử dụng.");
         }
-
+        if (c.getTaxCode().length() != 13 && c.getTaxCode().length() != 10) {
+            throw new IllegalArgumentException("Mã số thuế không hợp lệ (phải có 10 hoặc 13 chữ số).");
+        }
         if (c.getCity() == null || c.getCity().trim().isEmpty()) {
             throw new IllegalArgumentException("Vui lòng chọn thành phố.");
         }
-
         if (c.getDistrict() == null || c.getDistrict().trim().isEmpty()) {
             throw new IllegalArgumentException("Vui lòng nhập quận/huyện.");
         }
-
         if (c.getFullAddress() == null || c.getFullAddress().trim().isEmpty()) {
             throw new IllegalArgumentException("Vui lòng nhập địa chỉ đầy đủ.");
         }
-
-        if (c.getSelfDescription() == null || c.getSelfDescription().trim().isEmpty()) {
-            throw new IllegalArgumentException("Vui lòng nhập mô tả về công ty.");
-        }
-
         if (c.getFiles().isEmpty() || c.getFiles().size() < 3) {
             System.out.println("service" + c.getFiles().isEmpty());
             System.out.println("size" + c.getFiles().size());
@@ -158,7 +145,6 @@ public class CompanyServiceImplement implements CompanyService {
         company.setName(c.getName());
         company.setCity(c.getCity());
         company.setDistrict(c.getDistrict());
-        company.setEmail(c.getEmail());
         company.setAvatar(GeneralUtils.uploadFileToCloud(cloudinary, c.getAvatarFile()));
         company.setSelfDescription(c.getSelfDescription());
         company.setFullAddress(c.getFullAddress());
@@ -179,17 +165,16 @@ public class CompanyServiceImplement implements CompanyService {
             // Gửi email thông báo
             String subject = "Chào mừng bạn đến với hệ thống tìm kiếm việc làm bán thời gian!";
             String body = String.format(
-                    "Chào %s,\n\n"
+                    "Chào bạn"
                     + "Tài khoản công ty của bạn đã được tạo thành công. Hiện tại, tài khoản đang chờ xét duyệt.\n"
                     + "Thông tin tài khoản:\n"
-                    + "- Tên đăng nhập: %s\n"
                     + "- Email: %s\n"
                     + "- Tên công ty: %s\n\n"
                     + "Vui lòng chờ quản trị viên phê duyệt để bắt đầu đăng tuyển dụng.\n"
                     + "Trân trọng,\nHệ thống tìm kiếm việc làm bán thời gian",
-                    company.getName(), c.getUsername(), c.getEmail(), company.getName()
+                    c.getUsername(), company.getName()
             );
-            emailService.sendEmail(c.getEmail(), subject, body);
+            emailService.sendEmail(c.getUsername(), subject, body);
 
             return createdCompany;
         } catch (DataIntegrityViolationException e) {

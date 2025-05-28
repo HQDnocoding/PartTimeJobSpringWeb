@@ -66,8 +66,9 @@ public class ApiUserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User u) {
         try {
+            System.out.println(String.format("username %s pw %s", u.getUsername(), u.getPassword()));
             // Xác thực người dùng
-            User user = userService.authenticate(u.getUsername(), u.getPassword());
+            User user = userService.authenticate(u.getUsername(), u.getClientPassword());
 
             String token = JwtUtils.generateToken(user.getUsername(), List.of(user.getRole()));
 
@@ -83,7 +84,7 @@ public class ApiUserController {
                     .body(Map.of("error", e.getMessage()));
 
         } catch (Exception e) {
-            // Xử lý lỗi hệ thống (ví dụ: lỗi tạo JWT)
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Lỗi hệ thống: " + e.getMessage()));
         }

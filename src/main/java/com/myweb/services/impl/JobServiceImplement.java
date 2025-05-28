@@ -296,7 +296,7 @@ public class JobServiceImplement implements JobService {
                     job.getDistrict(),
                     job.getCity()
             );
-            emailService.sendEmail(candidate.getEmail(), subject, body);
+            emailService.sendEmail(candidate.getUserId().getUsername(), subject, body);
         }
 
         return new GetJobDTO(job);

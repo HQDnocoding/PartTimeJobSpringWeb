@@ -56,11 +56,6 @@
                                placeholder="Nhập tên công ty">
                     </div>
                     <div class="col-md-6">
-                        <label for="email" class="form-label">Email *</label>
-                        <input type="email" class="form-control" id="email" th:field="*{email}" required
-                               placeholder="Nhập email công ty">
-                    </div>
-                    <div class="col-md-6">
                         <label for="avatar" class="form-label">Hình Đại Diện * (JPG/PNG)</label>
                         <input type="file" class="form-control" id="avatar" th:field="*{avatarFile}"
                                accept="image/jpeg,image/png" required/>
@@ -117,7 +112,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="username" class="form-label">Tên Đăng Nhập *</label>
-                        <input type="text" class="form-control" id="username" th:field="*{username}" required
+                        <input type="email" class="form-control" id="username" th:field="*{username}" required
                                placeholder="Nhập tên đăng nhập">
                     </div>
                     <div class="col-md-6">
@@ -126,7 +121,7 @@
                                placeholder="Nhập mật khẩu">
                     </div>
                     <div class="col-12 mt-4">
-                        <button type="submit" class="btn btn-primary w-100">Tạo</button>
+                        <button id="submitButton" type="submit" class="btn btn-primary w-100">Tạo</button>
                     </div>
                 </form>
                 <div id="message" class="mt-3 text-center"></div>
@@ -215,10 +210,13 @@
         }
 
         document.getElementById('createCompanyForm').addEventListener('submit', function (e) {
+
             const dt = new DataTransfer();
             storedFiles.forEach(file => dt.items.add(file));
             imageInput.files = dt.files;
             console.log(dt);
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
         });
 
     </script>

@@ -49,7 +49,7 @@ public class ApiFollowController {
             Follow follow = followService.followCompany(candidateId, companyId);
 
             // Gửi email thông báo
-            String candidateEmail = follow.getCandidateId().getEmail();
+            String candidateEmail = follow.getCandidateId().getUserId().getUsername();
             String companyName = follow.getCompanyId().getName();
             String subject = "Bạn đã theo dõi " + companyName;
             String body = String.format(

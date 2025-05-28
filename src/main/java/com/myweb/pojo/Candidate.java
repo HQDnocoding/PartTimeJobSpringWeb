@@ -4,8 +4,7 @@
  */
 package com.myweb.pojo;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -38,11 +37,11 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Entity
 @Table(name = "candidate")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NamedQueries({
     @NamedQuery(name = "Candidate.findAll", query = "SELECT c FROM Candidate c"),
     @NamedQuery(name = "Candidate.findById", query = "SELECT c FROM Candidate c WHERE c.id = :id"),
     @NamedQuery(name = "Candidate.findByFullName", query = "SELECT c FROM Candidate c WHERE c.fullName = :fullName"),
-    @NamedQuery(name = "Candidate.findByEmail", query = "SELECT c FROM Candidate c WHERE c.email = :email"),
     @NamedQuery(name = "Candidate.findByDateOfBirth", query = "SELECT c FROM Candidate c WHERE c.dateOfBirth = :dateOfBirth"),
     @NamedQuery(name = "Candidate.findByCity", query = "SELECT c FROM Candidate c WHERE c.city = :city"),
     @NamedQuery(name = "Candidate.findByAvatar", query = "SELECT c FROM Candidate c WHERE c.avatar = :avatar"),
@@ -61,13 +60,6 @@ public class Candidate implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "full_name")
     private String fullName;
-
-    @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message = "Invalid email")//if the field contains email address consider using this annotation to enforce field validation
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
-    @Column(name = "email")
-    private String email;
 
     @Column(name = "date_of_birth")
     @Temporal(TemporalType.DATE)
@@ -103,7 +95,7 @@ public class Candidate implements Serializable {
 
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     @OneToOne(optional = false)
-    @JsonBackReference
+//    @JsonManagedReference
     private User userId;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "candidateId")
@@ -127,10 +119,9 @@ public class Candidate implements Serializable {
         this.id = id;
     }
 
-    public Candidate(Integer id, String fullName, String email, Date dateOfBirth, String city, String avatar, String phone) {
+    public Candidate(Integer id, String fullName,  Date dateOfBirth, String city, String avatar, String phone) {
         this.id = id;
         this.fullName = fullName;
-        this.email = email;
         this.dateOfBirth = dateOfBirth;
         this.city = city;
         this.avatar = avatar;
@@ -151,14 +142,6 @@ public class Candidate implements Serializable {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public Date getDateOfBirth() {

@@ -16,7 +16,6 @@ public class GetCandidateDTO {
 
     private Integer id;
     private String fullName;
-    private String email;
     private Date dateOfBirth;
     private String city;
     private String avatar;
@@ -29,7 +28,6 @@ public class GetCandidateDTO {
         this.city = candidate.getCity();
         this.curriculumVitae = candidate.getCurriculumVitae();
         this.dateOfBirth = candidate.getDateOfBirth();
-        this.email = candidate.getEmail();
         this.fullName = candidate.getFullName();
         this.phone = candidate.getPhone();
         this.selfDescription = candidate.getSelfDescription();
@@ -62,20 +60,6 @@ public class GetCandidateDTO {
      */
     public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    /**
-     * @return the email
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email the email to set
-     */
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     /**

@@ -56,13 +56,7 @@ public class CompanyController {
         model.addAttribute("totalItems", result.get("totalItems"));
         model.addAttribute("headCols", headCols);
 
-        // Thêm các tham số bộ lọc vào model để giữ trạng thái
-//        model.addAttribute("name", params.get("name"));
-//        model.addAttribute("taxCode", params.get("taxCode"));
-//        model.addAttribute("status", params.get("status"));
-//        model.addAttribute("city", params.get("city"));
-//        model.addAttribute("district", params.get("district"));
-//        model.addAttribute("page", result.get("currentPage"));
+
         return "company";
     }
 
@@ -73,10 +67,29 @@ public class CompanyController {
     }
 
     @PostMapping("/companies/{companyId}/update-status")
-    public String updateCompanyStatus(@PathVariable("companyId") int id, @RequestParam("status") String status) {
-        Company c = this.cpnyService.getCompany(id);
-        c.setStatus(status);
-        this.cpnyService.addOrUpdate(c);
+    public String updateCompanyStatus(@PathVariable("companyId") int id,
+            @RequestParam("status") String status,
+            RedirectAttributes redirectAttributes) {
+        Company company = cpnyService.getCompany(id);
+        company.setStatus(status);
+        cpnyService.addOrUpdate(company);
+
+        String email = company.getUserId().getUsername();
+        String username = company.getUserId().getUsername();
+        String subject = status.equalsIgnoreCase("approved")
+                ? "Tài khoản công ty của bạn đã được duyệt"
+                : "Tài khoản công ty của bạn đã bị từ chối";
+        String body = String.format(
+                "Chào %s,\n\n"
+                + "Tài khoản công ty %s của bạn đã được %s vào lúc %s.\n"
+                + "Trân trọng,\nHệ thống JobHome",
+                username, company.getName(),
+                status.equalsIgnoreCase("approved") ? "duyệt" : "từ chối",
+                LocalDateTime.now()
+        );
+        emailService.sendEmail(email, subject, body);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật trạng thái công ty thành công.");
         return "redirect:/companies/" + id;
     }
 
@@ -108,20 +121,20 @@ public class CompanyController {
 
             // Gửi email nếu trạng thái thay đổi thành approved hoặc refused
             if ("approved".equalsIgnoreCase(company.getStatus()) || "refused".equalsIgnoreCase(company.getStatus())) {
-                String email = company.getEmail();
-                String username = company.getUserId().getUsername();
+                String username = updatedCompany.getUserId().getUsername();
+                System.out.println("hehe "+username);
                 String subject = "approved".equalsIgnoreCase(company.getStatus())
                         ? "Tài khoản công ty của bạn đã được duyệt"
                         : "Tài khoản công ty của bạn đã bị từ chối";
                 String body = String.format(
-                        "Chào %s,\n\n"
+                        "Chào bạn"
                         + "Tài khoản công ty %s của bạn đã được %s vào lúc %s.\n"
                         + "Trân trọng,\nHệ thống JobHome",
-                        username, company.getName(),
+                        company.getName(),
                         "approved".equalsIgnoreCase(company.getStatus()) ? "duyệt" : "từ chối",
                         LocalDateTime.now()
                 );
-                this.emailService.sendEmail(email, subject, body);
+                this.emailService.sendEmail(username, subject, body);
             }
 
             System.out.println("City: " + updatedCompany.getCity() + ", District: " + updatedCompany.getDistrict());

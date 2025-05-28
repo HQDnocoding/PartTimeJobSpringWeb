@@ -46,13 +46,6 @@ public class CandidateController {
         model.addAttribute("totalItems", result.get("totalItems"));
         model.addAttribute("headCols", headCols);
 
-        // Thêm các tham số bộ lọc vào model để giữ trạng thái
-//        model.addAttribute("fullName", params.get("fullName"));
-//        model.addAttribute("email", params.get("email"));
-//        model.addAttribute("city", params.get("city"));
-//        model.addAttribute("phone", params.get("phone"));
-//        model.addAttribute("page", result.get("currentPage"));
-
         return "candidate";
     }
 

@@ -1,31 +1,44 @@
-package com.myweb.dto;
-
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Date;
-import java.util.List;
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+package com.myweb.dto;
+
+import com.myweb.pojo.Company;
+import com.myweb.pojo.ImageWorkplace;
+import java.util.Collection;
+
 /**
  *
  * @author huaquangdat
  */
+public class GetCompanyDTO {
 
-public class CreateCompanyDTO{
+    private Integer id;
     private String name;
     private String taxCode;
     private String fullAddress;
     private String city;
     private String district;
     private String selfDescription;
-    private String username;
-    private String password;
-    private List<MultipartFile> files;
-    private MultipartFile avatarFile;
-    private String otp;
+    private String status;
+    private String avatar;
+    private Collection<ImageWorkplace> imageWorkplaceCollection;
+    private String email;
+
+    public GetCompanyDTO(Company c) {
+        this.id = c.getId();
+        this.name = c.getName();
+        this.taxCode = c.getTaxCode();
+        this.avatar = c.getAvatar();
+        this.fullAddress = c.getFullAddress();
+        this.email = c.getUserId().getUsername();
+        this.city = c.getCity();
+        this.district = c.getDistrict();
+        this.status = c.getStatus();
+        this.imageWorkplaceCollection = c.getImageWorkplaceCollection();
+        this.selfDescription = c.getSelfDescription();
+    }
 
     /**
      * @return the name
@@ -40,8 +53,6 @@ public class CreateCompanyDTO{
     public void setName(String name) {
         this.name = name;
     }
-
-
 
     /**
      * @return the taxCode
@@ -114,76 +125,72 @@ public class CreateCompanyDTO{
     }
 
     /**
-     * @return the username
+     * @return the status
      */
-    public String getUsername() {
-        return username;
+    public String getStatus() {
+        return status;
     }
 
     /**
-     * @param username the username to set
+     * @param status the status to set
      */
-    public void setUsername(String username) {
-        this.username = username;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     /**
-     * @return the password
+     * @return the avatar
      */
-    public String getPassword() {
-        return password;
+    public String getAvatar() {
+        return avatar;
     }
 
     /**
-     * @param password the password to set
+     * @param avatar the avatar to set
      */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     /**
-     * @return the files
+     * @return the imageWorkplaceCollection
      */
-    public List<MultipartFile> getFiles() {
-        return files;
+    public Collection<ImageWorkplace> getImageWorkplaceCollection() {
+        return imageWorkplaceCollection;
     }
 
     /**
-     * @param files the files to set
+     * @param imageWorkplaceCollection the imageWorkplaceCollection to set
      */
-    public void setFiles(List<MultipartFile> files) {
-        this.files = files;
+    public void setImageWorkplaceCollection(Collection<ImageWorkplace> imageWorkplaceCollection) {
+        this.imageWorkplaceCollection = imageWorkplaceCollection;
     }
 
     /**
-     * @return the avatarFile
+     * @return the email
      */
-    public MultipartFile getAvatarFile() {
-        return avatarFile;
+    public String getEmail() {
+        return email;
     }
 
     /**
-     * @param avatarFile the avatarFile to set
+     * @param email the email to set
      */
-    public void setAvatarFile(MultipartFile avatarFile) {
-        this.avatarFile = avatarFile;
-    }
-
-
-    /**
-     * @return the otp
-     */
-    public String getOtp() {
-        return otp;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     /**
-     * @param otp the otp to set
+     * @return the id
      */
-    public void setOtp(String otp) {
-        this.otp = otp;
+    public Integer getId() {
+        return id;
     }
 
- 
-
+    /**
+     * @param id the id to set
+     */
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }
