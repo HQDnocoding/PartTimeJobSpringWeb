@@ -87,4 +87,6 @@ public interface JobService {
 
     // Lấy danh sách công việc của công ty đã xác thực
     List<Job> getJobByAuthenticateCompany(Principal principal);
+
+    Map<String, Object> getCompanyJobs(Principal principal, Map<String, String> params);
 }

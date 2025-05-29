@@ -46,7 +46,7 @@
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="actionDropdown">
                                 <li>
-                                    <a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/jobs} + '\', \'.job-checkbox:checked\')'" id="deleteSelected">Xóa</a>
+                                    <a class="dropdown-item" th:onclick="'deleteRecord(event, \'' + @{/api/admin/jobs} + '\', \'.job-checkbox:checked\')'" id="deleteSelected">Xóa</a>
                                 </li>
                                 <li><a class="dropdown-item" th:href="@{/jobs/create-job}">Tạo mới</a></li>
                             </ul>

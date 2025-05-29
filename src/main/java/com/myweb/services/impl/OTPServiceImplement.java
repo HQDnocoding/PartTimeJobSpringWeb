@@ -39,10 +39,7 @@ public class OTPServiceImplement implements OTPService {
             if (valueWrapper == null) {
                 return false;
             }
-            System.out.println("ỏp"+otp);
-            System.out.println("valueWrapper" + valueWrapper);
             String storedOtp = (String) valueWrapper.get();
-            System.out.println("storedOtp.equals(otp)" + storedOtp.equals(otp));
             return storedOtp.equals(otp);
         } catch (Exception e) {
             return false;

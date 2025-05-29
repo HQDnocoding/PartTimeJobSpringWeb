@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class JobServiceImplement implements JobService {
 
     @Autowired
     private DayRepository dayRepository;
-    
+
     @Autowired
     private FollowRepository followRepository;
 
@@ -340,5 +341,20 @@ public class JobServiceImplement implements JobService {
     @Transactional
     public void deleteDayJobsByJobId(int jobId) {
         jobRepository.deleteDayJobsByJobId(jobId);
+    }
+
+    @Override
+    public Map<String, Object> getCompanyJobs(Principal principal, Map<String, String> params) {
+        User user = userRepo.getUserByUsername(principal.getName());
+        if (user.getCompany() == null) {
+            throw new IllegalStateException("Người dùng không phải là công ty");
+        }
+        int companyId = user.getCompany().getId();
+        Map<String, String> effectiveParams = new HashMap<>(params != null ? params : new HashMap<>());
+        effectiveParams.putIfAbsent("page", "1");
+        effectiveParams.putIfAbsent("sort", "desc");
+        Map<String, Object> result = jobRepository.getCompanyJobs(companyId, effectiveParams);
+        List<Job> jobs = (List<Job>) result.get("jobs");
+        return result;
     }
 }

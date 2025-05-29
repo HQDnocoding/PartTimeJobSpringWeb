@@ -108,7 +108,7 @@ public class ApplicationRepositoryImplement implements ApplicationRepository {
         //sắp xếp
         switch (sortBy) {
             case "candidateId.name" -> {
-                Path<String> sortPath = applicationRoot.get("candidateId").get("name");
+                Path<String> sortPath = applicationRoot.get("candidateId").get("fullName");
                 cq.orderBy(sortOrder.equalsIgnoreCase("asc") ? cb.asc(sortPath) : cb.desc(sortPath));
             }
             case "jobId.jobName" -> {

@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
  * @author huaquangdat
  */
 public class CreateCandidateDTO {
-
     private String fullName;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateOfBirth;

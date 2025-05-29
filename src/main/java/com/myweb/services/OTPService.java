@@ -19,4 +19,5 @@ public interface OTPService {
     void clearOtp(String email);
 
     void removeOTP (String email);
+    
 }

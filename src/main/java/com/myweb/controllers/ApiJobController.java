@@ -25,7 +25,7 @@ public class ApiJobController {
     @Autowired
     private JobService jobService;
 
-    @DeleteMapping("/jobs/{id}")
+    @DeleteMapping("/admin/jobs/{id}")
     public ResponseEntity<?> deleteJob(@PathVariable("id") int id) {
         try {
             jobService.deleteJob(id);
@@ -70,4 +70,44 @@ public class ApiJobController {
             return new ResponseEntity<>(Map.of("message", "Lấy thông tin thất bại " + e), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(path = "/jobs", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAllJobs(@RequestParam Map<String, String> params) {
+        try {
+            Map<String, Object> result = jobService.searchJobs(params);
+            return new ResponseEntity<>(Map.of("message", "Lấy danh sách công việc thành công", "data", result), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("message", "Lấy danh sách công việc thất bại: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/secure/jobs/{id}")
+    public ResponseEntity<?> deleteJob(@RequestParam Map<String, String> params, @PathVariable(value = "id") int id, Principal principal) {
+        try {
+            System.out.println(String.format("%s %s", principal.getName(), params.get("username")));
+            if (!params.get("username").equals( principal.getName())) {
+                return new ResponseEntity<>(Map.of("message", "Không có quyền xóa"), HttpStatus.FORBIDDEN);
+            }
+            this.jobService.deleteJob(id);
+            return new ResponseEntity<>(Map.of("message", "Xóa thành công"), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(Map.of("message", "Lỗi hệ thống"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(path = "/secure/company/jobs", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getCompanyJobs(
+            Principal principal,
+            @RequestParam Map<String, String> params
+    ) {
+        System.err.println("pa" + params.get("status"));
+        try {
+            Map<String, Object> result = jobService.getCompanyJobs(principal, params);
+            return new ResponseEntity<>(Map.of("message", "Lấy danh sách công việc thành công", "data", result), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("message", "Lấy danh sách công việc thất bại: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

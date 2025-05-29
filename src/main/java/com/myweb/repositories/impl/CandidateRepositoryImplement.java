@@ -237,4 +237,22 @@ public class CandidateRepositoryImplement implements CandidateRepository {
         }
     }
 
+    @Override
+    public Candidate updateCandidate(Candidate can) {
+        try {
+            Session session = this.factory.getObject().getCurrentSession();
+
+            if (can.getId() != null) {
+                session.merge(can);
+                System.out.println("ok2");
+
+                return can;
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

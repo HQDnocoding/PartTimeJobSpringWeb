@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.myweb.services.OTPService;
+import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -55,7 +56,7 @@ public class ApiCandidateController {
     public ResponseEntity<?> createCandidate(CreateCandidateDTO dto) {
         try {
             boolean isValid = this.otpService.verifyOtp(dto.getUsername(), dto.getOtp());
-         
+
             if (isValid) {
                 Object result = this.candidateService.createCandidateDTO(dto);
                 this.otpService.removeOTP(dto.getUsername());
@@ -73,15 +74,33 @@ public class ApiCandidateController {
     }
 
     @GetMapping("/secure/candidates/{userId}/infor-by-userId")
-    public ResponseEntity<?> getCandidateByUserId(@PathVariable(value = "userId") int userId) {
+    public ResponseEntity<?> getCandidateByUserId(@PathVariable(value = "userId") int userId, Principal principal) {
         try {
             Candidate candidate = this.candidateService.getCandidateByUserId(userId);
+            GetCandidateDTO dto = new GetCandidateDTO(candidate);
             if (candidate == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Candidate not found");
             }
-            return ResponseEntity.ok(candidate);
+            return ResponseEntity.ok(dto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching candidate: " + e.getMessage());
+        }
+    }
+
+    @PutMapping(path = "/secure/candidates/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateCanidate(Candidate candidate, Principal principal, @PathVariable(value = "id") int id) {
+        try {
+            Candidate updatedCandidate = this.candidateService.updateCadidate(candidate, principal, id);
+            System.out.println(candidate.getAvatarFile());
+//            System.out.println(updatedCandidate.getAvatar());
+
+            if (updatedCandidate != null) {
+                return ResponseEntity.ok(updatedCandidate);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error : " + e.getMessage());
         }
     }
 

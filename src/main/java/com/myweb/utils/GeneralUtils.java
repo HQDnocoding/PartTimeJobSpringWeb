@@ -15,15 +15,11 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.codec.Charsets;
 
 /**
  *
@@ -142,5 +138,20 @@ public class GeneralUtils {
                 job.getDescription(), job.getCity(), job.getDistrict(),
                 job.getSalaryMin(), job.getSalaryMax(), job.getId()
         );
+    }
+
+
+    public static String convertToInternationalFormat(String phoneNumber) {
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            return null;
+        }
+
+        phoneNumber = phoneNumber.trim();
+
+        if (phoneNumber.startsWith("0") && phoneNumber.length() >= 10) {
+            return "+84" + phoneNumber.substring(1);
+        }
+
+        return phoneNumber;
     }
 }

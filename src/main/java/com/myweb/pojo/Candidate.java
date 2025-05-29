@@ -111,6 +111,15 @@ public class Candidate implements Serializable {
 
     @Transient
     private MultipartFile avatarFile;
+    
+    @Transient
+    private String email;
+    
+    @Transient
+    private String otpMail;
+    
+    @Transient
+    private String otpPhone;
 
     public Candidate() {
     }
@@ -275,6 +284,48 @@ public class Candidate implements Serializable {
      */
     public void setAvatarFile(MultipartFile avatarFile) {
         this.avatarFile = avatarFile;
+    }
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return the otpMail
+     */
+    public String getOtpMail() {
+        return otpMail;
+    }
+
+    /**
+     * @param otpMail the otpMail to set
+     */
+    public void setOtpMail(String otpMail) {
+        this.otpMail = otpMail;
+    }
+
+    /**
+     * @return the otpPhone
+     */
+    public String getOtpPhone() {
+        return otpPhone;
+    }
+
+    /**
+     * @param otpPhone the otpPhone to set
+     */
+    public void setOtpPhone(String otpPhone) {
+        this.otpPhone = otpPhone;
     }
 
 }

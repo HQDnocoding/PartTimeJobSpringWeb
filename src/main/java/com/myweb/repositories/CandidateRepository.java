@@ -32,5 +32,7 @@ public interface CandidateRepository {
     void deleteCandidate(int id);
 
     Candidate getCandidateByUserId(int userId);
+    
+    Candidate updateCandidate(Candidate can);
 
 }

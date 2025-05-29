@@ -7,6 +7,7 @@ package com.myweb.services;
 import com.myweb.dto.CreateCandidateDTO;
 import com.myweb.pojo.Candidate;
 import com.myweb.pojo.User;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -37,4 +38,6 @@ public interface CandidateService {
     Candidate getCandidateByUserId(int userId);
     
     User createCandidateByGoogleAccount(Map<String,String> params);
+    
+    Candidate updateCadidate(Candidate candidate, Principal principal,int id);
 }

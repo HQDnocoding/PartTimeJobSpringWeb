@@ -185,7 +185,6 @@ public class JobRepositoryImplement implements JobRepository {
 
 //        Hibernate.initialize(job.getMajorJobCollection());
 //        Hibernate.initialize(job.getDayJobCollection());
-
         return job;
     }
 
@@ -392,5 +391,67 @@ public class JobRepositoryImplement implements JobRepository {
                 .setParameter("jobId", jobId)
                 .executeUpdate();
         session.flush();
+    }
+
+    @Override
+    public Map<String, Object> getCompanyJobs(int companyId, Map<String, String> params) {
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+
+        // Count total records
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<Job> countRoot = countQuery.from(Job.class);
+        countQuery.select(cb.count(countRoot)).where(buildCompanyPredicates(companyId, params, cb, countRoot).toArray(new Predicate[0]));
+        Long totalRecords = session.createQuery(countQuery).getSingleResult();
+
+        // Fetch jobs with pagination
+        CriteriaQuery<Job> cq = cb.createQuery(Job.class);
+        Root<Job> jobRoot = cq.from(Job.class);
+        jobRoot.fetch("companyId", JoinType.LEFT);
+        cq.where(buildCompanyPredicates(companyId, params, cb, jobRoot).toArray(new Predicate[0]));
+
+        // Sorting by postedDate
+        String sort = params.getOrDefault("sort", "desc");
+        if (sort.equalsIgnoreCase("asc")) {
+            cq.orderBy(cb.asc(jobRoot.get("postedDate")));
+        } else {
+            cq.orderBy(cb.desc(jobRoot.get("postedDate")));
+        }
+
+        int page = Integer.parseInt(params.getOrDefault("page", "1"));
+        int start = (page - 1) * GeneralUtils.PAGE_SIZE;
+        List<Job> jobs = session.createQuery(cq)
+                .setFirstResult(start)
+                .setMaxResults(GeneralUtils.PAGE_SIZE)
+                .getResultList();
+
+        int totalPages = (int) Math.ceil((double) totalRecords / GeneralUtils.PAGE_SIZE);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("jobs", jobs);
+        result.put("currentPage", page);
+        result.put("pageSize", GeneralUtils.PAGE_SIZE);
+        result.put("totalPages", totalPages);
+        result.put("totalItems", totalRecords);
+
+        return result;
+    }
+
+    private List<Predicate> buildCompanyPredicates(int companyId, Map<String, String> params, CriteriaBuilder cb, Root<Job> jobRoot) {
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(jobRoot.get("companyId").get("id"), companyId));
+        predicates.add(cb.equal(jobRoot.get("isActive"), true));
+
+        String status = params.get("status");
+        if (status != null && !status.isEmpty()) {
+            predicates.add(cb.equal(jobRoot.get("status"), status));
+        }
+
+        String keyword = params.get("keyword");
+        if (keyword != null && !keyword.isEmpty()) {
+            predicates.add(cb.like(cb.lower(jobRoot.get("jobName")), "%" + keyword.toLowerCase() + "%"));
+        }
+
+        return predicates;
     }
 }

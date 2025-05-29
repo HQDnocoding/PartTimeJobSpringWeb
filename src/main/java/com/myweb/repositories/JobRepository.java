@@ -81,4 +81,5 @@ public interface JobRepository {
 
     // Lấy danh sách công việc của một công ty đã xác thực
     List<Job> getJobByAuthenticateCompany(int companyId);
+    Map<String, Object> getCompanyJobs(int companyId, Map<String, String> params);
 }
