@@ -274,8 +274,7 @@ public class JobServiceImplement implements JobService {
 
         job = jobRepository.addJob(job);
         jobRepository.addDaysToJob(job, jobDTO.getDayIds());
-
-        // Gửi email thông báo đến các ứng viên đã follow công ty
+       // Gửi email thông báo đến các ứng viên đã follow công ty
         List<Follow> followers = followRepository.getFollowers(company.getId());
         for (Follow follow : followers) {
             Candidate candidate = follow.getCandidateId();

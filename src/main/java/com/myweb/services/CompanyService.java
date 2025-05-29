@@ -5,6 +5,7 @@
 package com.myweb.services;
 
 import com.myweb.dto.CreateCompanyDTO;
+import com.myweb.dto.GetJobDTO;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.Job;
 
@@ -24,7 +25,7 @@ public interface CompanyService {
     // Lấy chi tiết công ty theo ID
     Company getCompany(int companyId);
 
-    Collection<Job> getCompanyWithJobs(int companyId);
+    Collection<GetJobDTO> getCompanyWithJobs(int companyId);
 
     // Thêm mới hoặc cập nhật công ty
     Company addOrUpdate(Company p);

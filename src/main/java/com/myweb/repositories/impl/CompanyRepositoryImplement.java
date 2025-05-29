@@ -4,16 +4,19 @@
  */
 package com.myweb.repositories.impl;
 
+import com.myweb.dto.GetJobDTO;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.Job;
 import com.myweb.pojo.User;
 import com.myweb.repositories.CompanyRepository;
 import com.myweb.utils.GeneralUtils;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -77,20 +80,18 @@ public class CompanyRepositoryImplement implements CompanyRepository {
     // Lấy danh sách công ty với lọc/phân trang
     @Override
     public Map<String, Object> getListCompany(Map<String, String> params) {
-        boolean flag = false;
-
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder cb = s.getCriteriaBuilder();
-
         CriteriaQuery<Company> cq = cb.createQuery(Company.class);
         Root<Company> companyRoot = cq.from(Company.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
         if (params != null) {
-            String name = params.get("name");
-            if (name != null && !name.isEmpty()) {
-                predicates.add(cb.like(companyRoot.get("name"), String.format("%%%s%%", name)));
+            // Sửa từ "name" thành "keyword" để khớp với frontend
+            String keyword = params.get("keyword");
+            if (keyword != null && !keyword.isEmpty()) {
+                predicates.add(cb.like(companyRoot.get("name"), "%" + keyword + "%"));
             }
             String taxCode = params.get("taxCode");
             if (taxCode != null && !taxCode.isEmpty()) {
@@ -117,12 +118,12 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         }
 
         if (!predicates.isEmpty()) {
-            flag = true;
             cq.where(cb.and(predicates.toArray(Predicate[]::new)));
         }
 
         Query query = s.createQuery(cq);
-        int totalRecords = query.getResultList().size();
+        List<Company> allResults = query.getResultList();
+        int totalRecords = allResults.size();
 
         int page = 1;
         try {
@@ -130,21 +131,22 @@ public class CompanyRepositoryImplement implements CompanyRepository {
         } catch (NumberFormatException e) {
             System.out.println("Invalid page number, defaulting to 1");
         }
-        int start = flag ? 0 : (page - 1) >= 1 ? (page - 1) * GeneralUtils.PAGE_SIZE : 0;
-        query.setFirstResult(start);
-        query.setMaxResults(GeneralUtils.PAGE_SIZE);
-
-        List<Company> results = query.getResultList();
-
-        int totalPages = (int) Math.ceil((double) totalRecords / GeneralUtils.PAGE_SIZE);
-        if (totalPages < page || page <= 0) {
+        int pageSize = GeneralUtils.PAGE_SIZE;
+        int start = (page - 1) * pageSize;
+        if (start >= totalRecords) {
+            start = 0;
             page = 1;
         }
+        query.setFirstResult(start);
+        query.setMaxResults(pageSize);
+
+        List<Company> results = query.getResultList();
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
         Map<String, Object> result = new HashMap<>();
         result.put("companies", results);
         result.put("currentPage", page);
-        result.put("pageSize", GeneralUtils.PAGE_SIZE);
+        result.put("pageSize", pageSize);
         result.put("totalPages", totalPages);
         result.put("totalItems", totalRecords);
 
@@ -247,29 +249,31 @@ public class CompanyRepositoryImplement implements CompanyRepository {
     }
 
     @Override
-    public Collection<Job> getCompanyWithJobs(int id) {
+    public Collection<GetJobDTO> getCompanyWithJobs(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder cb = s.getCriteriaBuilder();
-
         CriteriaQuery<Company> cq = cb.createQuery(Company.class);
         Root<Company> companyRoot = cq.from(Company.class);
-
         companyRoot.fetch("jobCollection", JoinType.LEFT);
-
         Join<Company, User> userJoin = companyRoot.join("userId");
         List<Predicate> predicates = new ArrayList<>();
-
         predicates.add(cb.equal(companyRoot.get("id"), id));
         predicates.add(cb.equal(companyRoot.get("status"), "approved"));
         predicates.add(cb.equal(userJoin.get("isActive"), true));
         cq.where(predicates.toArray(Predicate[]::new));
-
         try {
             Company company = s.createQuery(cq).getSingleResult();
-            return company.getJobCollection();
-
+            System.out.println("Fetched company: " + company);
+            System.out.println("Jobs collection: " + company.getJobCollection());
+            return company.getJobCollection().stream()
+                    .map(job -> new GetJobDTO(job))
+                    .collect(Collectors.toList());
+        } catch (NoResultException e) {
+            System.out.println("No company found for ID: " + id + " with status approved and active user");
+            return Collections.emptyList();
         } catch (Exception e) {
-            return Collections.EMPTY_LIST;
+            System.out.println("Error in getCompanyWithJobs: " + e.getMessage());
+            return Collections.emptyList();
         }
     }
 

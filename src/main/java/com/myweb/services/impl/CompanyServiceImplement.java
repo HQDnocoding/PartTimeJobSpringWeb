@@ -6,6 +6,7 @@ package com.myweb.services.impl;
 
 import com.cloudinary.Cloudinary;
 import com.myweb.dto.CreateCompanyDTO;
+import com.myweb.dto.GetJobDTO;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.ImageWorkplace;
 import com.myweb.pojo.Job;
@@ -193,7 +194,7 @@ public class CompanyServiceImplement implements CompanyService {
     }
 
     @Override
-    public Collection<Job> getCompanyWithJobs(int companyId) {
+    public Collection<GetJobDTO> getCompanyWithJobs(int companyId) {
         return this.companyRepository.getCompanyWithJobs(companyId);
     }
 
