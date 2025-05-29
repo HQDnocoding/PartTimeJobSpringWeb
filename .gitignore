@@ -1,6 +1,5 @@
+/shelf/
+/workspace.xml
 .env
 .idea/
 target/
-
-/shelf/
-/workspace.xml

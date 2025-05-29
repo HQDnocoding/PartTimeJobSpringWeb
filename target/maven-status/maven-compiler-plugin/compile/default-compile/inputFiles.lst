@@ -20,6 +20,7 @@ P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApiMajorCo
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApiOtpController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApiUserController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\ApplicationController.java
+P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\cacheManager.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\CandidateController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\CompanyController.java
 P:\SpringWeb\PartTimeJobSpringWeb\src\main\java\com\myweb\controllers\IndexController.java

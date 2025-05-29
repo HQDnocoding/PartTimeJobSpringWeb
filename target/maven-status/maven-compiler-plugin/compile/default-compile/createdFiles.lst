@@ -53,6 +53,7 @@ com\myweb\utils\GeneralUtils.class
 com\myweb\pojo\ImageWorkplace.class
 com\myweb\services\impl\CompanyServiceImplement.class
 com\myweb\dto\CreateJobDTO$LongitudeRange.class
+com\myweb\controllers\cacheManager.class
 com\myweb\dto\CreateCandidateDTO.class
 com\myweb\services\impl\ApplicationServiceImplement.class
 com\myweb\services\CompanyReviewService.class
