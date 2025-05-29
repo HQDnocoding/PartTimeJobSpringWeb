@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -38,6 +39,16 @@ public class ApiCompanyController {
     private CompanyService cpnyService;
     @Autowired
     private OTPService otpService;
+
+    @GetMapping(path = "/companies", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAllCompanies(@RequestParam Map<String, String> params) {
+        try {
+            Map<String, Object> result = cpnyService.getListCompany(params);
+            return new ResponseEntity<>(Map.of("message", "Lấy danh sách công ty thành công", "data", result), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("message", "Lấy danh sách công ty thất bại: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @DeleteMapping("/admin/companies/{companyId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

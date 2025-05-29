@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -31,6 +32,9 @@ public class JobController {
     private DayService dayService;
     @Autowired
     private CompanyService companyService;
+    
+    @Value("${heremap.api.key}")
+    private String hereMapApiKey;
 
     // Lấy danh sách công việc với bộ lọc và phân trang
     @GetMapping("/jobs")
@@ -71,6 +75,7 @@ public class JobController {
         model.addAttribute("companies", companyService.getAllCompaniesForDropdown());
         model.addAttribute("selectedCity", job != null ? job.getCity() : "");
         model.addAttribute("selectedDistrict", job != null ? job.getDistrict() : "");
+        model.addAttribute("hereMapApiKey", hereMapApiKey);
         return "job-detail";
     }
 
@@ -81,6 +86,7 @@ public class JobController {
         model.addAttribute("majors", majorService.getMajors());
         model.addAttribute("days", dayService.getDays());
         model.addAttribute("companies", companyService.getAllCompaniesForDropdown());
+        model.addAttribute("hereMapApiKey", hereMapApiKey);
         return "create-job";
     }
 
@@ -118,6 +124,8 @@ public class JobController {
             @RequestParam(value = "city", required = true) String city,
             @RequestParam(value = "district", required = true) String district,
             @RequestParam(value = "fullAddress", required = true) String fullAddress,
+            @RequestParam(value = "longitude", required = false) Double longitude,
+            @RequestParam(value = "latitude", required = false) Double latitude,
             RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
@@ -142,6 +150,8 @@ public class JobController {
         existingJob.setFullAddress(fullAddress); 
         existingJob.setCity(StringUtils.normalizeLocation(city)); 
         existingJob.setDistrict(StringUtils.normalizeLocation(district));
+        existingJob.setLongitude(longitude);
+        existingJob.setLatitude(latitude);
         existingJob.setSalaryMin(job.getSalaryMin());
         existingJob.setSalaryMax(job.getSalaryMax());
         existingJob.setDescription(job.getDescription());

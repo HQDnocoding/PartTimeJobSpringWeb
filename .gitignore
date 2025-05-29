@@ -3,3 +3,5 @@
 .env
 .idea/
 target/
+application.properties
+mail.properties

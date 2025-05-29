@@ -25,6 +25,16 @@ public class ApiJobController {
     @Autowired
     private JobService jobService;
 
+    @GetMapping(path = "/jobs", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAllJobs(@RequestParam Map<String, String> params) {
+        try {
+            Map<String, Object> result = jobService.searchJobs(params);
+            return new ResponseEntity<>(Map.of("message", "Lấy danh sách công việc thành công", "data", result), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Map.of("message", "Lấy danh sách công việc thất bại: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @DeleteMapping("/admin/jobs/{id}")
     public ResponseEntity<?> deleteJob(@PathVariable("id") int id) {
         try {
@@ -71,15 +81,6 @@ public class ApiJobController {
         }
     }
 
-    @GetMapping(path = "/jobs", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllJobs(@RequestParam Map<String, String> params) {
-        try {
-            Map<String, Object> result = jobService.searchJobs(params);
-            return new ResponseEntity<>(Map.of("message", "Lấy danh sách công việc thành công", "data", result), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(Map.of("message", "Lấy danh sách công việc thất bại: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
     @DeleteMapping("/secure/jobs/{id}")
     public ResponseEntity<?> deleteJob(@RequestParam Map<String, String> params, @PathVariable(value = "id") int id, Principal principal) {
