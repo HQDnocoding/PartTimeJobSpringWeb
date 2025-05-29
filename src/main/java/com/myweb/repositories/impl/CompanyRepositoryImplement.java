@@ -4,16 +4,19 @@
  */
 package com.myweb.repositories.impl;
 
+import com.myweb.dto.GetJobDTO;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.Job;
 import com.myweb.pojo.User;
 import com.myweb.repositories.CompanyRepository;
 import com.myweb.utils.GeneralUtils;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -247,29 +250,31 @@ public class CompanyRepositoryImplement implements CompanyRepository {
     }
 
     @Override
-    public Collection<Job> getCompanyWithJobs(int id) {
+    public Collection<GetJobDTO> getCompanyWithJobs(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder cb = s.getCriteriaBuilder();
-
         CriteriaQuery<Company> cq = cb.createQuery(Company.class);
         Root<Company> companyRoot = cq.from(Company.class);
-
         companyRoot.fetch("jobCollection", JoinType.LEFT);
-
         Join<Company, User> userJoin = companyRoot.join("userId");
         List<Predicate> predicates = new ArrayList<>();
-
         predicates.add(cb.equal(companyRoot.get("id"), id));
         predicates.add(cb.equal(companyRoot.get("status"), "approved"));
         predicates.add(cb.equal(userJoin.get("isActive"), true));
         cq.where(predicates.toArray(Predicate[]::new));
-
         try {
             Company company = s.createQuery(cq).getSingleResult();
-            return company.getJobCollection();
-
+            System.out.println("Fetched company: " + company);
+            System.out.println("Jobs collection: " + company.getJobCollection());
+            return company.getJobCollection().stream()
+                    .map(job -> new GetJobDTO(job))
+                    .collect(Collectors.toList());
+        } catch (NoResultException e) {
+            System.out.println("No company found for ID: " + id + " with status approved and active user");
+            return Collections.emptyList();
         } catch (Exception e) {
-            return Collections.EMPTY_LIST;
+            System.out.println("Error in getCompanyWithJobs: " + e.getMessage());
+            return Collections.emptyList();
         }
     }
 

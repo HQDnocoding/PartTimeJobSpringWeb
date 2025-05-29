@@ -4,6 +4,7 @@
  */
 package com.myweb.repositories;
 
+import com.myweb.dto.GetJobDTO;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.ImageWorkplace;
 import com.myweb.pojo.Job;
@@ -44,7 +45,7 @@ public interface CompanyRepository {
 
     Company getCompanyApproved(int id);
 
-    Collection<Job> getCompanyWithJobs(int id);
+    Collection<GetJobDTO> getCompanyWithJobs(int id);
 
     User getUser(int id);
     

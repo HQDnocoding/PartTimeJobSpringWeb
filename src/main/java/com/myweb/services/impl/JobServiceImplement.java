@@ -272,9 +272,8 @@ public class JobServiceImplement implements JobService {
         job.setMajorJobCollection(new HashSet<>(List.of(majorJob)));
 
         job = jobRepository.addJob(job);
-        jobRepository.addDaysToJob(job, jobDTO.getDayIds());
-
-        // Gửi email thông báo đến các ứng viên đã follow công ty
+        jobRepository.addDaysToJob(job, jobDTO.getDayIds()); 
+       // Gửi email thông báo đến các ứng viên đã follow công ty
         List<Follow> followers = followRepository.getFollowers(company.getId());
         for (Follow follow : followers) {
             Candidate candidate = follow.getCandidateId();
@@ -298,7 +297,6 @@ public class JobServiceImplement implements JobService {
             );
             emailService.sendEmail(candidate.getUserId().getUsername(), subject, body);
         }
-
         return new GetJobDTO(job);
     }
 

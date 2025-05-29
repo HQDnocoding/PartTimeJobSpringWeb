@@ -6,6 +6,7 @@ package com.myweb.controllers;
 
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.myweb.dto.CreateCompanyDTO;
+import com.myweb.dto.GetJobDTO;
 import com.myweb.pojo.Company;
 import com.myweb.pojo.Job;
 import com.myweb.services.CompanyService;
@@ -95,7 +96,7 @@ public class ApiCompanyController {
     @GetMapping("/companies/{companyId}/jobs")
     public ResponseEntity<?> getJobs(@PathVariable(value = "companyId") int companyId) {
         try {
-            Collection<Job> jobs = this.cpnyService.getCompanyWithJobs(companyId);
+            Collection<GetJobDTO> jobs = this.cpnyService.getCompanyWithJobs(companyId);
             if (jobs.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Company not found");
             }
