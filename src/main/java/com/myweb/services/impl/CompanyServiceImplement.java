@@ -194,7 +194,7 @@ public class CompanyServiceImplement implements CompanyService {
     }
 
     @Override
-    public Collection<GetJobDTO> getCompanyWithJobs(int companyId) {
+    public Collection<Job> getCompanyWithJobs(int companyId) {
         return this.companyRepository.getCompanyWithJobs(companyId);
     }
 

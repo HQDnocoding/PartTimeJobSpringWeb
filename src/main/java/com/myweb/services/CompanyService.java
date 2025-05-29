@@ -25,7 +25,7 @@ public interface CompanyService {
     // Lấy chi tiết công ty theo ID
     Company getCompany(int companyId);
 
-    Collection<GetJobDTO> getCompanyWithJobs(int companyId);
+    Collection<Job> getCompanyWithJobs(int companyId);
 
     // Thêm mới hoặc cập nhật công ty
     Company addOrUpdate(Company p);

@@ -76,7 +76,7 @@ public class ApiUserController {
 
         } catch (AuthenticationException e) {
             // Xử lý lỗi xác thực
-            if (e.getMessage().equals("Tài khoản tuyển dụng chưa được xét duyệt")) {
+            if (e.getMessage().equals("Tài khoản tuyển dụng chưa được xét duyệt") || e.getMessage().equals("Tài khoản này không được phép đăng nhập ở đây.")) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body(Map.of("error", e.getMessage()));
             }

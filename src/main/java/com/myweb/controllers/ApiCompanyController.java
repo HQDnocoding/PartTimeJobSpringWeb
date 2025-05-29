@@ -96,7 +96,7 @@ public class ApiCompanyController {
     @GetMapping("/companies/{companyId}/jobs")
     public ResponseEntity<?> getJobs(@PathVariable(value = "companyId") int companyId) {
         try {
-            Collection<GetJobDTO> jobs = this.cpnyService.getCompanyWithJobs(companyId);
+            Collection<Job> jobs = this.cpnyService.getCompanyWithJobs(companyId);
             if (jobs.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Company not found");
             }

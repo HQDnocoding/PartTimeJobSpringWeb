@@ -55,6 +55,9 @@ public class CompanyController {
         model.addAttribute("totalPages", result.get("totalPages"));
         model.addAttribute("totalItems", result.get("totalItems"));
         model.addAttribute("headCols", headCols);
+        
+        
+        
 
 
         return "company";

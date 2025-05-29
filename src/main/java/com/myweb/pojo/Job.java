@@ -120,7 +120,6 @@ public class Job implements Serializable {
     private Double latitude;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId",fetch = FetchType.EAGER)
-    @JsonIgnore
     private Collection<MajorJob> majorJobCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "jobId")
     @JsonIgnore

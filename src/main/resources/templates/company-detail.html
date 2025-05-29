@@ -138,7 +138,7 @@
                             <div class="carousel-inner">
                                 <div th:each="img, iterStat : ${company.imageWorkplaceCollection}"
                                      th:class="'carousel-item' + (${iterStat.first} ? ' active' : '')">
-                                    <img th:src="${img.imageUrl}" class="d-block w-100 rounded" alt="Hình ảnh nơi làm việc"/>
+                                    <img th:src="${img.imageUrl}" style="object-fit: contain" class="d-block w-100 rounded" alt="Hình ảnh nơi làm việc"/>
                                 </div>
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#carouselWorkplace" data-bs-slide="prev">
@@ -156,18 +156,18 @@
                     </div>
 
                     <!-- Quản lý hình ảnh nơi làm việc -->
-                    <hr/>
-                    <h4>Quản lý hình ảnh nơi làm việc</h4>
+                    <!--<hr/>-->
+<!--                    <h4>Quản lý hình ảnh nơi làm việc</h4>
                     <div id="imagePreviewContainer" class="mb-3">
                         <div th:each="img, iterStat : ${company.imageWorkplaceCollection}" class="image-preview">
                             <img th:src="${img.imageUrl}" alt="Hình ảnh nơi làm việc"/>
                             <button type="button" class="remove-btn" th:onclick="'removeImage(' + ${iterStat.index} + ')'">X</button>
                         </div>
-                    </div>
-                    <div class="url-input-container">
+                    </div>-->
+<!--                    <div class="url-input-container">
                         <input type="url" id="newImageUrl" class="form-control" placeholder="Nhập URL ảnh"/>
                         <button type="button" class="btn btn-secondary" onclick="addImageUrl()">Thêm URL</button>
-                    </div>
+                    </div>-->
 
                     <!-- Duyệt hồ sơ -->
                     <hr/>

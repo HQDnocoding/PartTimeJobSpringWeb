@@ -45,7 +45,7 @@ public interface CompanyRepository {
 
     Company getCompanyApproved(int id);
 
-    Collection<GetJobDTO> getCompanyWithJobs(int id);
+    Collection<Job> getCompanyWithJobs(int id);
 
     User getUser(int id);
     

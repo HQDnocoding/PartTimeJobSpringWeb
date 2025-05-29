@@ -5,3 +5,6 @@
 target/
 application.properties
 mail.properties
+/target/
+target
+/target

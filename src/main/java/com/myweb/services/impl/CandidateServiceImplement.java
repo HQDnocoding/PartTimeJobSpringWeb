@@ -215,16 +215,12 @@ public class CandidateServiceImplement implements CandidateService {
         boolean isValidOTPMail = false, isValidOTPPhone = false;
 
         try {
-            System.out.println("ok14");
             Candidate can = this.candidateRepository.getCandidateById(candidate.getId());
 
             User user = this.userRepository.getUserByUsername(principal.getName());
-            System.out.println("can" + can);
             if (id != user.getId()) {
                 throw new Exception("Không có quyền cập nhật");
             } else {
-                System.out.println("ok133");
-                System.out.println(candidate.getPhone());
                 if (candidate.getPhone() != null && Pattern.matches("^0[0-9]{9}$", candidate.getPhone())) {
                     if (can.getPhone() == null || !can.getPhone().equals(candidate.getPhone())) {
 
@@ -241,8 +237,6 @@ public class CandidateServiceImplement implements CandidateService {
                         }
                     }
                 }
-                System.out.println("ok1");
-
                 if (candidate.getEmail() != null && Pattern.matches("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", candidate.getEmail())) {
                     if (can.getUserId().getUsername() == null || !can.getUserId().getUsername().equals(candidate.getEmail())) {
                         if (candidate.getOtpMail() != null && !candidate.getOtpMail().isBlank()) {
@@ -263,8 +257,6 @@ public class CandidateServiceImplement implements CandidateService {
                 if (isValidOTPPhone) {
                     can.setPhone(candidate.getPhone());
                 }
-                System.out.println("ok3");
-
                 can.setDateOfBirth(candidate.getDateOfBirth());
                 can.setFullName(candidate.getFullName());
                 can.setCity(candidate.getCity());

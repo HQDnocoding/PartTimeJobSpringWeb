@@ -35,7 +35,7 @@ public class UserServiceImplement implements UserService {
     public User getUserById(int id) {
         return this.userRepo.getUserById(id);
     }
-    
+
     // Lấy User theo username
     @Override
     public User getUserByUsername(String username) {
@@ -119,9 +119,11 @@ public class UserServiceImplement implements UserService {
                 && !user.getCompany().getStatus().equals(GeneralUtils.Status.approved.name())) {
             throw new AuthenticationException("Tài khoản tuyển dụng chưa được xét duyệt");
         }
+        if (user.getRole().equals(GeneralUtils.Role.ROLE_ADMIN.name())) {
+            throw new AuthenticationException("Tài khoản này không được phép đăng nhập ở đây.");
+        }
 
         return user;
     }
 
 }
-
